@@ -1,0 +1,323 @@
+{
+  "components": {
+    "header": {
+      "nav": [
+        {
+          "name": "Home",
+          "link": "#home"
+        },
+        {
+          "name": "About",
+          "link": "#about"
+        },
+        {
+          "name": "Works",
+          "link": "#portfolio"
+        },
+        {
+          "name": "Contact us",
+          "link": "#contacts"
+        }
+      ],
+      "buttonPc": "Let's Talk!",
+      "buttonPh": "Let's talk"
+    },
+    "menu": {
+      "social": {
+        "title": "Social",
+        "links": [
+          {
+            "name": "Dribbble",
+            "link": "https://dribbble.com/qclay"
+          },
+          {
+            "name": "Behance",
+            "link": "https://www.behance.net/qclay"
+          },
+          {
+            "name": "TikTok",
+            "link": "https://www.tiktok.com/@qclay.design"
+          },
+          {
+            "name": "Instagram",
+            "link": "https://www.instagram.com/qclaydesign"
+          },
+          {
+            "name": "Linkedln",
+            "link": "https://www.linkedin.com/company/qclay-design/"
+          }
+        ]
+      },
+      "nav": {
+        "title": "Menu",
+        "links": [
+          {
+            "name": "About Us",
+            "link": "#home"
+          },
+          {
+            "name": "What We Do",
+            "link": "#about"
+          },
+          {
+            "name": "Our Works",
+            "link": "#portfolio"
+          },
+          {
+            "name": "Contact Us",
+            "link": "#contacts"
+          }
+        ]
+      },
+      "connect": {
+        "text": "Get in touch",
+        "mail": "info@qclay.design",
+        "question": "Want to work with us?",
+        "privacy": "Privacy Policy & Cookies",
+        "copyright": "© QClay Design  2023"
+      }
+    },
+    "burger": {
+      "open": "menu",
+      "close": "Close"
+    },
+    "modal": {
+      "title": "Thank You! 🤝 ",
+      "subtitle": "Your request has been successfully sent 😉 Wait for a response from our manager. If the manager didn’t answer, he will contact you within the next 24 hours"
+    }
+  },
+  "pages": {
+    "home": {
+      "components": {
+        "main": {
+          "title": {
+            "desktop": [
+              "Global design agency that creates",
+              "holistic, well-balanced design",
+              "solutions for inspiring brands"
+            ],
+            "mobile": [
+              "Global design agency that",
+              "creates holistic, well-balanced",
+              "design solutions for inspiring",
+              "brands"
+            ]
+          },
+          "text_1": "WEB DEVELOPMENT / BRANDING / UX / UI /",
+          "text_2": "3D MODELING /ILLUSTRATION / STRATEGY",
+          "play": " Play",
+          "reel": "Reel!",
+          "paragraph": "Our work is best experienced in motion. Don`t forget to put on your headphones."
+        }
+      }
+    },
+    "about": {
+      "title_1": "About",
+      "title_2": "ApexTechEra",
+      "cards": [
+        {
+          "id": "1-about",
+          "color": "#F7F4F4",
+          "title": "We build digital products",
+          "text": "Websites, mobile apps, AI/ML solutions, and custom software designed to solve real problems and create real business value."
+        },
+        {
+          "id": "2-about",
+          "color": "#EFFBF9",
+          "title": "We build with your team",
+          "text": "We collaborate with freelancers, agencies, startups, and companies to bring projects to life — as your technology partner or an extension of your team."
+        },
+        {
+          "id": "3-about",
+          "color": "#F2EDF4",
+          "title": "We turn ideas into products",
+          "text": "From first concept to launch, we combine strategy, design, and engineering to transform ideas into scalable digital experiences."
+        },
+        {
+          "id": "4-about",
+          "color": "#F4F7ED",
+          "title": "We think beyond launch",
+          "text": "We build with scalability, performance, and long-term growth in mind — so your product is ready for what's next."
+        }
+      ]
+    },
+    "create": {
+      "text": "WHAT SERVICES WE PROVIDE"
+    },
+    "whatCreate": {
+      "title": "WHAT SERVICES WE PROVIDE",
+      "points": [
+        "Full Stack",
+        "UI/UX",
+        "Android/iOS",
+        "Software"
+      ],
+      "button": {
+        "first": "ApexTechEra ",
+        "second": " Agency"
+      }
+    },
+    "designers": {
+      "title": {
+        "first": "Each of our designers",
+        "second": "was the best among ",
+        "third": "several",
+        "fourth": "others",
+        "thousand": "thousand"
+      },
+      "titleMobile": {
+        "first": "Each of our",
+        "second": "designers was",
+        "third": "the best among",
+        "fourth": "several",
+        "fifth": "others",
+        "thousand": "thousand"
+      }
+    },
+    "portfolio": {
+      "title": {
+        "desktop": [
+          "Majority of people can$run a 100 meter dash,$but only a dozen can$do it in under 9.8$seconds"
+        ],
+        "mobile": [
+          "Majority of people can run$a 100 meter dash, but only a dozen$can do it in under$9.8 seconds"
+        ]
+      },
+      "message": "Each of our designers was the best among several thousand others in his niche",
+      "socials": [
+        {
+          "id": "1-social",
+          "link": "https://dribbble.com/qclay"
+        },
+        {
+          "id": "2-social",
+          "link": "https://www.behance.net/qclay"
+        }
+      ],
+      "slides": [
+        {
+          "id": "1-slide",
+          "title": [
+            "Samudai web3",
+            "landing page"
+          ]
+        },
+        {
+          "id": "2-slide",
+          "title": [
+            "Samudai web3",
+            "landing page"
+          ]
+        },
+        {
+          "id": "3-slide",
+          "title": [
+            "Samudai web3",
+            "landing page"
+          ]
+        }
+      ]
+    },
+    "following": {
+      "weFollowed": "we’re followed by 150k designers",
+      "weFollowed2": "we’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designerswe’re followed by 150k designers"
+    },
+    "preview": {
+      "title": {
+        "start": "Hey! Tell us all the things you have in    ",
+        "end": "mind."
+      },
+      "button": "Bring your ideas to life"
+    },
+    "startups": {
+      "title": "Our studio is a safe space where startups grow and shine",
+      "title_1": "Our studio is a safe space",
+      "title_2": "where startups",
+      "title_3": " grow and shine",
+      "p_title_1": "Have",
+      "p_title_2": "a great idea?"
+    },
+    "reqForm": {
+      "aside": {
+        "question_1": "Have ",
+        "question_2": "great idea?",
+        "text": "Tell us about it.",
+        "follow": "Follow us:",
+        "trust": "Clients trust us",
+        "contact": "Contact us",
+        "email": "info@qclay.design",
+        "socials": [
+          {
+            "id": "1-social",
+            "link": "https://dribbble.com/qclay"
+          },
+          {
+            "id": "2-social",
+            "link": "https://www.behance.net/qclay"
+          },
+          {
+            "id": "3-social",
+            "link": "https://www.tiktok.com/@qclay.design"
+          },
+          {
+            "id": "4-social",
+            "link": "https://www.instagram.com/qclaydesign"
+          }
+        ]
+      },
+      "form": {
+        "inputs": {
+          "name": {
+            "label": "Name & Company",
+            "placeholder": "John from Apple"
+          },
+          "mail": {
+            "label": "Your Email",
+            "placeholder": "john@apple.com"
+          },
+          "project": {
+            "label": "Tell us more about your project",
+            "placeholder": "Something about your great idea"
+          }
+        },
+        "interested": {
+          "title": "I'm interested in...",
+          "checkbox": [
+            "Web Development",
+            "App from scratch",
+            "UX/UI Design",
+            "Branding",
+            "Site from scratch",
+            "App Development",
+            "Maintenance"
+          ]
+        },
+        "budget": {
+          "title": "Project budget (USD)",
+          "radio": [
+            "≤ $5K",
+            "$10K-$20K",
+            "$30K-$40K",
+            "$50K-$60K",
+            ">$100K"
+          ]
+        },
+        "button": {
+          "submit": "Submit",
+          "the": "the",
+          "request": "request",
+          "mobile": "bring your ideas to life"
+        },
+        "text": "bring your ideas to life"
+      },
+      "footer": {
+        "address": "Dubai Digital Park, Dubai Silicon Oasis, Dubai, UAE",
+        "privacy": {
+          "text": "Privacy and Policy",
+          "link": "#"
+        },
+        "right": "All right are reserved © QClay Design"
+      }
+    }
+  }
+}
