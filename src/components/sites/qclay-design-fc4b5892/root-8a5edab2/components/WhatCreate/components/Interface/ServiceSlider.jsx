@@ -6,7 +6,11 @@ import SimpleVideoSlider from './SimpleVideoSlider'
 const VIDEOS_PATH = '/sites/qclay-design-fc4b5892/root-8a5edab2/video/services'
 
 // The persistent fullscreen surface cycles through these videos in order.
+// The first entry is the brand/agency intro animation — it has no caption
+// pill on purpose (empty caption), so the pill row visually starts with
+// "Full Stack Web Development" once that video comes up.
 const SLIDER_ORDER = [
+  { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, caption: '' },
   { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, caption: 'Full Stack Web Development' },
   { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, caption: 'UI / UX Design' },
   { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, caption: 'Android & iOS App Development' },
