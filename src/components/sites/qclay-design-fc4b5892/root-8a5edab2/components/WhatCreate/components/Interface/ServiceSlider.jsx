@@ -47,24 +47,30 @@ const ServiceSlider = () => {
     const onWheel = (e) => {
       const host = hostRef.current
       if (!host) { return }
-      const rect = host.getBoundingClientRect()
       if (sequenceExitingRef.current) {
         e.preventDefault()
         e.stopImmediatePropagation()
         return
       }
-      // The original right-side video first grows naturally. At this point it
-      // becomes a real viewport overlay and stays there for all six videos.
-      const readyForFullscreen = rect.height >= window.innerHeight * 0.85
-      if (!sequenceActiveRef.current && !readyForFullscreen) { return }
-      // After exiting the fullscreen sequence, the underlying slot can still
-      // measure as "ready" for a moment (the real page scroll hasn't moved
-      // yet). Without this lock, the very next wheel tick re-enters
-      // fullscreen immediately and the dashboard never becomes visible.
-      if (!sequenceActiveRef.current && Date.now() < reentryLockedUntilRef.current) {
-        return
-      }
+
+      // Only the "not yet in fullscreen" branch needs a live rect (to check
+      // readiness and to seed the expand-from-here frame). Once the sequence
+      // is active, rect is never read below — so measuring it every single
+      // wheel tick while scrolling through all six videos was a pure-waste
+      // forced layout reflow on the hottest part of this flow.
       if (!sequenceActiveRef.current) {
+        const rect = host.getBoundingClientRect()
+        // The original right-side video first grows naturally. At this point it
+        // becomes a real viewport overlay and stays there for all six videos.
+        const readyForFullscreen = rect.height >= window.innerHeight * 0.85
+        if (!readyForFullscreen) { return }
+        // After exiting the fullscreen sequence, the underlying slot can still
+        // measure as "ready" for a moment (the real page scroll hasn't moved
+        // yet). Without this lock, the very next wheel tick re-enters
+        // fullscreen immediately and the dashboard never becomes visible.
+        if (Date.now() < reentryLockedUntilRef.current) {
+          return
+        }
         sequenceActiveRef.current = true
         sequenceStartRef.current = indexRef.current
         wheelRef.current = { carry: 0, direction: 0, lockedUntil: Date.now() + 900 }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useTransform } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/hooks/useTransform/index"
 import { screens } from "../../../../constants"
 import { itl } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Animator/js/utils/itl"
@@ -7,6 +7,11 @@ import { isElementVisible } from "../../../../../../../../lib/sites/qclay-design
 import { context } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/utils/context"
 
 const Animate = ({ parent, target, initRefs, children }) => {
+    // Caches slider/mainInterface measurements so the per-scroll-tick
+    // Timeline() calc doesn't force a synchronous layout reflow on every
+    // wheel event (getBoundingClientRect right after a style write is
+    // the classic forced-reflow jank source). Invalidated on resize.
+    const dimsCache = useRef(null)
     useTransform({ onChange, onResize }, { id: screens.WHATCREATE, parent, target })
     useEffect(() => {
         const showSkeleton = () => {
@@ -33,6 +38,7 @@ const Animate = ({ parent, target, initRefs, children }) => {
             // fullscreen point. Reset every property that normally arrives via
             // the controller so the existing Stage 1 dashboard is genuinely
             // visible when the sixth video leaves.
+            dimsCache.current = null
             const dashboardWidth = refs.mainInterface.getBoundingClientRect().width
                 || refs.content.getBoundingClientRect().width
             refs.container.style.transform = 'translate3d(0, 0, 0) scale(1)'
@@ -55,10 +61,19 @@ const Animate = ({ parent, target, initRefs, children }) => {
         if ( !refs.mounted ) { return }
         animate({ wheel, ...refs })
     }
-    function onResize() {}
+    function onResize() {
+        dimsCache.current = null
+    }
 
     function animate(refs) {
-        const timeline = Timeline(refs)
+        if (!dimsCache.current) {
+            dimsCache.current = {
+                sliderWidth: refs.slider.getBoundingClientRect().width,
+                interfaceWidth: refs.mainInterface.getBoundingClientRect().width,
+                interfaceHeight: refs.mainInterface.getBoundingClientRect().height,
+            }
+        }
+        const timeline = Timeline(refs, dimsCache.current)
         const t = itl(timeline, refs.wheel)
         // console.log(t)
 

@@ -4,12 +4,14 @@ import { isElementVisible } from "../../../coords/index"
 import { isElementHovered, getMouseCoordsFromElement } from "../../../renderer"
 import { Lerp } from "../../../tween/easing"
 
+let stickToMouseIdCounter = 0
+
 export const useStickToMouse = ({ onMouseMove, onMouseLeave, minWidth = 577 } = {}) => {
   const current = { x: 0, y: 0 }
   const parent = useRef()
   const target = useRef({})
   useEffect(() => {
-    const label = 'useStickToMouse' + Date.now()
+    const label = `useStickToMouse${Date.now()}-${stickToMouseIdCounter++}`
     setToRender({
       label,
       handler: () => {

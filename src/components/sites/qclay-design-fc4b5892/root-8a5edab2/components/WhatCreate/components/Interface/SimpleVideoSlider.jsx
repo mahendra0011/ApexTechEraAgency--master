@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 /*
- * Lightweight replacement for the reactbits MorphSlider.
+ * Lightweight replacement for a previous WebGL-based morph slider.
  * Same public API (next/prev/goToIndex + onIndexChange), but implemented
  * with plain CSS opacity/scale crossfade instead of a WebGL canvas.
  * This avoids the canvas/GL sizing issues that were causing the

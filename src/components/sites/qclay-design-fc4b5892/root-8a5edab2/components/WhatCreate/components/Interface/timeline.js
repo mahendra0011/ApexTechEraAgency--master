@@ -1,6 +1,7 @@
 
-const Timeline = (refs) => {
-    const dist = refs.slider.getBoundingClientRect().width - window.innerWidth
+const Timeline = (refs, cache) => {
+    const sliderWidth = cache ? cache.sliderWidth : refs.slider.getBoundingClientRect().width
+    const dist = sliderWidth - window.innerWidth
 
     // const START = 0
     // const A = window.innerWidth
@@ -28,7 +29,9 @@ const Timeline = (refs) => {
     const END = dist
 
 
-    const desktopWidth = refs.mainInterface.getBoundingClientRect().width
+    const interfaceWidth = cache ? cache.interfaceWidth : refs.mainInterface.getBoundingClientRect().width
+    const interfaceHeight = cache ? cache.interfaceHeight : refs.mainInterface.getBoundingClientRect().height
+    const desktopWidth = interfaceWidth
     const mobileWidth = desktopWidth * 0.35169492
     const innerOffset = desktopWidth * 0.08474
     const sidebarWidth = desktopWidth * 0.05932
@@ -37,8 +40,6 @@ const Timeline = (refs) => {
     // адаптивность зума на весь экран 
     const ratioX = 944 / 214
     const ratioY = 707 / 142
-    const interfaceWidth = refs.mainInterface.getBoundingClientRect().width
-    const interfaceHeight = refs.mainInterface.getBoundingClientRect().height
     const scX = ratioX * window.innerWidth / interfaceWidth
     const scY = ratioY * window.innerHeight / interfaceHeight
     const scaleFitToScreen = window.innerWidth > 576 ? Math.max(scX, scY) + 1 : Math.max(scX, scY) + 2
