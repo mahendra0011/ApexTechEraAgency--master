@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import MorphSlider from './MorphSlider/MorphSlider'
+import SimpleVideoSlider from './SimpleVideoSlider'
 
 const VIDEOS_PATH = '/sites/qclay-design-fc4b5892/root-8a5edab2/video/services'
 
@@ -21,6 +21,7 @@ const ServiceSlider = () => {
   const wheelRef = useRef({ carry: 0, direction: 0, lockedUntil: 0 })
   const sequenceActiveRef = useRef(false)
   const sequenceExitingRef = useRef(false)
+  const reentryLockedUntilRef = useRef(0)
   const sequenceStartRef = useRef(0)
   const indexRef = useRef(0)
   const [index, setIndex] = useState(0)
@@ -44,6 +45,13 @@ const ServiceSlider = () => {
       // becomes a real viewport overlay and stays there for all six videos.
       const readyForFullscreen = rect.height >= window.innerHeight * 0.85
       if (!sequenceActiveRef.current && !readyForFullscreen) { return }
+      // After exiting the fullscreen sequence, the underlying slot can still
+      // measure as "ready" for a moment (the real page scroll hasn't moved
+      // yet). Without this lock, the very next wheel tick re-enters
+      // fullscreen immediately and the dashboard never becomes visible.
+      if (!sequenceActiveRef.current && Date.now() < reentryLockedUntilRef.current) {
+        return
+      }
       if (!sequenceActiveRef.current) {
         sequenceActiveRef.current = true
         sequenceStartRef.current = indexRef.current
@@ -93,6 +101,7 @@ const ServiceSlider = () => {
           setMorphReady(false)
           setMorphVisible(false)
           setSequenceLeaving(false)
+          reentryLockedUntilRef.current = Date.now() + 1500
         }, 720)
         e.preventDefault()
         e.stopImmediatePropagation()
@@ -109,6 +118,7 @@ const ServiceSlider = () => {
           setSequenceFrame(null)
           setMorphReady(false)
           setMorphVisible(false)
+          reentryLockedUntilRef.current = Date.now() + 1500
         }, 720)
         e.preventDefault()
         e.stopImmediatePropagation()
@@ -167,23 +177,11 @@ const ServiceSlider = () => {
         >
           {renderVideo(`apex-service-video apex-service-video--fullscreen ${morphVisible ? 'is-hidden' : ''}`)}
           {morphReady && <div className={`apex-service-morph ${morphVisible ? 'is-visible' : ''}`}>
-            <MorphSlider
+            <SimpleVideoSlider
               ref={sliderRef}
               items={SLIDER_ORDER}
               startIndex={sequenceStartRef.current}
-              transition="melt"
-              intensity={0.55}
-              aberration={0.35}
-              drift={0.4}
-              scale={2.4}
-              duration={1.1}
-              ease="power2.inOut"
-              autoplay={false}
-              loop={false}
-              showCaptions={false}
-              showControls={false}
-              showIndicators={false}
-              overlayColor="#000000"
+              duration={0.8}
               onIndexChange={(nextIndex) => {
                 indexRef.current = nextIndex
                 setIndex(nextIndex)

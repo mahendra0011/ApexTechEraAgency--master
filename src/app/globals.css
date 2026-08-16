@@ -204,6 +204,49 @@ a { color: inherit; text-decoration: inherit; }
   opacity: 1;
 }
 
+/* Custom crossfade slider (replaces reactbits MorphSlider/WebGL canvas). */
+.apex-simple-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: #000;
+}
+
+.apex-simple-slider__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
+}
+
+.apex-simple-slider__video--in {
+  z-index: 2;
+  opacity: 0;
+  transform: scale(1.04);
+  animation: apex-slider-in var(--apex-slider-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.apex-simple-slider__video--out {
+  z-index: 1;
+  opacity: 1;
+  animation: apex-slider-out var(--apex-slider-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes apex-slider-in {
+  from { opacity: 0; transform: scale(1.04); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes apex-slider-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.97); }
+}
+
 /* Keep the source footage crisp in the animated dashboard slot. */
 .interface__slot .morph-slider,
 .interface__slot .morph-slider-stage,
