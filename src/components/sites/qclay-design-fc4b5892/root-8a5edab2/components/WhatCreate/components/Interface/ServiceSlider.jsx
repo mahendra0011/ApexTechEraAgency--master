@@ -17,6 +17,8 @@ const SLIDER_ORDER = [
 
 const ServiceSlider = () => {
   const hostRef = useRef(null)
+  const hostVideoRef = useRef(null)
+  const portalVideoRef = useRef(null)
   const sliderRef = useRef(null)
   const wheelRef = useRef({ carry: 0, direction: 0, lockedUntil: 0 })
   const sequenceActiveRef = useRef(false)
@@ -30,6 +32,16 @@ const ServiceSlider = () => {
   const [morphReady, setMorphReady] = useState(false)
   const [morphVisible, setMorphVisible] = useState(false)
   const [sequenceLeaving, setSequenceLeaving] = useState(false)
+  const [portalReady, setPortalReady] = useState(false)
+
+  // Keep the fullscreen clone's playback position in sync with the small
+  // host video it grew out of, so entry doesn't visibly restart from 0.
+  const syncPortalTime = () => {
+    const host = hostVideoRef.current
+    const portal = portalVideoRef.current
+    if (!host || !portal) { return }
+    try { portal.currentTime = host.currentTime } catch (err) { /* not seekable yet */ }
+  }
 
   useEffect(() => {
     const onWheel = (e) => {
@@ -59,6 +71,7 @@ const ServiceSlider = () => {
         setMorphReady(false)
         setMorphVisible(false)
         setSequenceLeaving(false)
+        setPortalReady(false)
         setSequenceFrame({ x: rect.left, y: rect.top, width: rect.width, height: rect.height, expanded: false })
         setSequenceActive(true)
         // Give the browser one real paint at the source rectangle first; then
@@ -144,8 +157,9 @@ const ServiceSlider = () => {
     }
   }, [])
 
-  const renderVideo = (className) => (
+  const renderVideo = (className, videoRef, extraProps = {}) => (
     <video
+        ref={videoRef}
         key={SLIDER_ORDER[index].video}
         className={className}
         autoPlay
@@ -153,6 +167,7 @@ const ServiceSlider = () => {
         loop
         playsInline
         preload="auto"
+        {...extraProps}
       >
         <source src={SLIDER_ORDER[index].video} type="video/mp4" />
     </video>
@@ -161,7 +176,7 @@ const ServiceSlider = () => {
   return (
     <>
       <div ref={hostRef} className="apex-slot-slider">
-        {renderVideo('apex-service-video')}
+        {renderVideo('apex-service-video', hostVideoRef)}
       </div>
       {sequenceActive && createPortal(
         <div
@@ -175,7 +190,14 @@ const ServiceSlider = () => {
           }}
           aria-label="Service video sequence"
         >
-          {renderVideo(`apex-service-video apex-service-video--fullscreen ${morphVisible ? 'is-hidden' : ''}`)}
+          {renderVideo(
+            `apex-service-video apex-service-video--fullscreen ${morphVisible ? 'is-hidden' : ''} ${portalReady ? 'is-ready' : ''}`,
+            portalVideoRef,
+            {
+              onLoadedMetadata: () => { syncPortalTime(); setPortalReady(true) },
+              onLoadedData: () => { syncPortalTime(); setPortalReady(true) }
+            }
+          )}
           {morphReady && <div className={`apex-service-morph ${morphVisible ? 'is-visible' : ''}`}>
             <SimpleVideoSlider
               ref={sliderRef}

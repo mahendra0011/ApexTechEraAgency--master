@@ -5,7 +5,6 @@ import { itl } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Ani
 import { Timeline } from "./timeline"
 import { isElementVisible } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Animator/js/coords/index"
 import { context } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/utils/context"
-import { scroll } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/utils/scroll"
 
 const Animate = ({ parent, target, initRefs, children }) => {
     useTransform({ onChange, onResize }, { id: screens.WHATCREATE, parent, target })
@@ -23,10 +22,13 @@ const Animate = ({ parent, target, initRefs, children }) => {
             // scroll tick recalculates from that stale, earlier position and
             // stomps the dashboard styles we just forced above — causing the
             // "SERVICES WE CREATE" mid-timeline frame to flash back in.
-            // Force the controller's wheel state to the same end point the
+            // Force the controller's wheel target to the same end point the
             // dashboard was just rendered at, so it resumes from here.
-            context.wheel = wheelTarget
-            scroll.calcWheelTo()
+            // NOTE: set `wheelTo` directly — do NOT go through
+            // scroll.calcWheelTo(), which treats `context.wheel` as a raw
+            // per-tick delta and multiplies it by 1/intensity (10x),
+            // wildly overshooting past the end of the timeline.
+            context.wheelTo = wheelTarget
             // The service-video overlay pauses the normal controller at its
             // fullscreen point. Reset every property that normally arrives via
             // the controller so the existing Stage 1 dashboard is genuinely
@@ -65,8 +67,16 @@ const Animate = ({ parent, target, initRefs, children }) => {
         refs.content.style.opacity = t.interface.opacity
         
         refs.stage1.style.opacity = t.stage1.opacity
+        refs.stage1.style.visibility = t.stage1.opacity > 0.02 ? 'visible' : 'hidden'
+        refs.stage1.style.pointerEvents = t.stage1.opacity > 0.02 ? 'auto' : 'none'
+
         refs.stage2.style.opacity = t.stage2.opacity
+        refs.stage2.style.visibility = t.stage2.opacity > 0.02 ? 'visible' : 'hidden'
+        refs.stage2.style.pointerEvents = t.stage2.opacity > 0.02 ? 'auto' : 'none'
+
         refs.stage3.style.opacity = t.stage3.opacity
+        refs.stage3.style.visibility = t.stage3.opacity > 0.02 ? 'visible' : 'hidden'
+        refs.stage3.style.pointerEvents = t.stage3.opacity > 0.02 ? 'auto' : 'none'
 
         refs.grid.style.opacity = t.grid.opacity
 

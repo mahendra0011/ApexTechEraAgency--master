@@ -16,11 +16,13 @@ const resizer = () => {
 }
 
 const BreakpointsContextProvider = ({ children }) => {
-    const [ isMaxWidth, setIsMaxWidth ] = useState(resizer())
+    // The first client render must match the server render. Reading
+    // `window.innerWidth` here made small screens render mobile markup before
+    // hydration while SSR had rendered desktop markup.
+    const [ isMaxWidth, setIsMaxWidth ] = useState({ mobile: false })
 
     useEffect(() => {
-        // onResize()
-        setTimeout(onResize, 300);
+        onResize()
         // window.addEventListener("load", onResize);
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize)
