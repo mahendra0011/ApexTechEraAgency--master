@@ -4,6 +4,8 @@ import { screens } from "../../../../constants"
 import { itl } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Animator/js/utils/itl"
 import { Timeline } from "./timeline"
 import { isElementVisible } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Animator/js/coords/index"
+import { context } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/utils/context"
+import { scroll } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/utils/scroll"
 
 const Animate = ({ parent, target, initRefs, children }) => {
     useTransform({ onChange, onResize }, { id: screens.WHATCREATE, parent, target })
@@ -12,7 +14,19 @@ const Animate = ({ parent, target, initRefs, children }) => {
             const refs = initRefs()
             if (!refs.mounted) { return }
             refs.mainInterface.classList.add('apex-skeleton-handoff')
-            animate({ ...refs, wheel: window.innerWidth * 2 })
+            const wheelTarget = window.innerWidth * 2
+            animate({ ...refs, wheel: wheelTarget })
+            // The real Controller's wheel state was frozen the moment the
+            // fullscreen video sequence started (ServiceSlider blocks every
+            // wheel event while it's active/exiting, so the site's scroll
+            // detector never sees them). Without this, the very next real
+            // scroll tick recalculates from that stale, earlier position and
+            // stomps the dashboard styles we just forced above — causing the
+            // "SERVICES WE CREATE" mid-timeline frame to flash back in.
+            // Force the controller's wheel state to the same end point the
+            // dashboard was just rendered at, so it resumes from here.
+            context.wheel = wheelTarget
+            scroll.calcWheelTo()
             // The service-video overlay pauses the normal controller at its
             // fullscreen point. Reset every property that normally arrives via
             // the controller so the existing Stage 1 dashboard is genuinely
