@@ -1,6 +1,7 @@
 import Header from "../shared/Header/Header"
 import Main from "./components/Main/Main"
 import About from "./components/About/About"
+import SkillJourney from "./components/SkillJourney/SkillJourney"
 import WhatCreate from "./components/WhatCreate/WhatCreate"
 import Designers from "./components/Designers/Designers"
 import Portfolio from "./components/Portfolio/Portfolio"
@@ -47,6 +48,7 @@ const Home = () => {
         <Sections>
           <Main id={screens.MAIN} />
           <About id={screens.ABOUT} />
+          <SkillJourney id={screens.SKILLJOURNEY} />
           <WhatCreate id={screens.WHATCREATE} />
           <Designers id={screens.DESIGNERS} />
           <Portfolio id={screens.PORTFOLIO} />

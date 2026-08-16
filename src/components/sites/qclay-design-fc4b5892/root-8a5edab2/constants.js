@@ -1,6 +1,7 @@
 export const screens = {
     MAIN: 'main',
     ABOUT: 'about',
+    SKILLJOURNEY: 'skilljourney',
     CREATE: 'create',
     WHATCREATE: 'whatcreate',
     DESIGNERS: 'designers',

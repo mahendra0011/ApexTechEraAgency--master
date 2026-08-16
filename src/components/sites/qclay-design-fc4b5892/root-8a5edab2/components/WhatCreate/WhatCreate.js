@@ -21,12 +21,12 @@ const WhatCreate = memo(function WhatCreate() {
 
   const { parent, target } = useTransform('horizontalScroll', { id: screens.WHATCREATE })
   const scaleRef = useTransform({ onChange: handler, onResize: handler }, { id: screens.WHATCREATE, parent })
-  function handler({ target }) {
+function handler({ target }) {
     const distance = window.innerWidth
     const to = getScrollCoordsFromElement(target).windowRight.fromRight
-    const x = Math.max(Math.min((distance - to) / distance + .2, 1), .4)
+    const x = Math.max(Math.min((distance - to) / distance + .2, 1), 0)
     target.style.transform = `scale(${x})`
-  }
+}
 
   return (
     <section ref={parent} className="what-create" id="we-create">

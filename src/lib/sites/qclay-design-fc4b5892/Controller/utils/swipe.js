@@ -61,9 +61,10 @@ export const swipe = {
         const innerRef = scroll.getInnerRef(sections)
         const posFromWindowBottom = getScrollCoordsFromElement(innerRef).windowBottom.fromBottom
         const posFromWindowTop = getScrollCoordsFromElement(innerRef).windowTop.fromTop
-        if ( posFromWindowBottom >= 0 && posFromWindowTop <= 0 ) { return this.pos.TOPBOTTOM }
-        if ( posFromWindowTop <= 0 ) { return this.pos.TOP }
-        if ( posFromWindowBottom >= 0 ) { return this.pos.BOTTOM }
+        const EPS = 0.5
+        if ( posFromWindowBottom >= -EPS && posFromWindowTop <= EPS ) { return this.pos.TOPBOTTOM }
+        if ( posFromWindowTop <= EPS ) { return this.pos.TOP }
+        if ( posFromWindowBottom >= -EPS ) { return this.pos.BOTTOM }
         return this.pos.MIDDLE
     },
     tween(array, afterComplete) {

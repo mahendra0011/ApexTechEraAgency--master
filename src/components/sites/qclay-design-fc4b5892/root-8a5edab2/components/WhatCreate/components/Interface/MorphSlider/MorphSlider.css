@@ -54,17 +54,14 @@
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   transform: translateY(12px);
-  filter: blur(6px);
   transition:
     opacity var(--ms-swap) cubic-bezier(0.16, 1, 0.3, 1),
-    transform var(--ms-swap) cubic-bezier(0.16, 1, 0.3, 1),
-    filter var(--ms-swap) cubic-bezier(0.16, 1, 0.3, 1);
+    transform var(--ms-swap) cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .morph-slider-caption-text.is-active {
   opacity: 1;
   transform: translateY(0);
-  filter: blur(0);
 }
 
 .morph-slider-controls {

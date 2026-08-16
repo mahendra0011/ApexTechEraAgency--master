@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useTransform } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/hooks/useTransform/index"
 import { screens } from "../../../../constants"
 import { itl } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Animator/js/utils/itl"
@@ -5,38 +6,40 @@ import { Timeline } from "./timeline"
 import { isElementVisible } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Animator/js/coords/index"
 
 const Animate = ({ parent, target, initRefs, children }) => {
-    let lastVideoIndex = -1
-    let overviewOpened = false
     useTransform({ onChange, onResize }, { id: screens.WHATCREATE, parent, target })
+    useEffect(() => {
+        const showSkeleton = () => {
+            const refs = initRefs()
+            if (!refs.mounted) { return }
+            refs.mainInterface.classList.add('apex-skeleton-handoff')
+            animate({ ...refs, wheel: window.innerWidth * 2 })
+            // The service-video overlay pauses the normal controller at its
+            // fullscreen point. Reset every property that normally arrives via
+            // the controller so the existing Stage 1 dashboard is genuinely
+            // visible when the sixth video leaves.
+            const dashboardWidth = refs.mainInterface.getBoundingClientRect().width
+                || refs.content.getBoundingClientRect().width
+            refs.container.style.transform = 'translate3d(0, 0, 0) scale(1)'
+            refs.view.style.transform = 'translate3d(0, 0, 0)'
+            refs.content.style.opacity = '1'
+            refs.mode.style.width = `${dashboardWidth}px`
+            refs.modeTrX.style.transform = 'translate3d(0, 0, 0)'
+            refs.stage1.style.cssText = 'opacity: 1; visibility: visible; pointer-events: auto;'
+            refs.stage2.style.cssText = 'opacity: 0; visibility: hidden; pointer-events: none;'
+            refs.stage3.style.cssText = 'opacity: 0; visibility: hidden; pointer-events: none;'
+            window.setTimeout(() => refs.mainInterface.classList.remove('apex-skeleton-handoff'), 780)
+        }
+        document.addEventListener('apex:show-service-skeleton', showSkeleton)
+        return () => document.removeEventListener('apex:show-service-skeleton', showSkeleton)
+    }, [])
     function onChange({ wheel }) {
         if ( !target.current ) { return } 
         if ( !isElementVisible(target.current).partable.y ) { return }
         const refs = initRefs()
         if ( !refs.mounted ) { return }
         animate({ wheel, ...refs })
-        syncServiceVideos(wheel, refs)
     }
     function onResize() {}
-
-    function syncServiceVideos(wheel, refs) {
-        const dist = refs.slider.getBoundingClientRect().width - window.innerWidth
-        const start = window.innerWidth * 2
-        const end = Math.max(dist, start + 1)
-        const progress = Math.max(0, Math.min(1, (wheel - start) / (end - start)))
-        const index = Math.max(0, Math.min(5, Math.floor(progress * 6)))
-        if ( index !== lastVideoIndex ) {
-            lastVideoIndex = index
-            window.dispatchEvent(new CustomEvent('apex:service-index', { detail: { index } }))
-        }
-        if ( progress >= 0.94 && !overviewOpened ) {
-            overviewOpened = true
-            window.dispatchEvent(new CustomEvent('apex:service-overview', { detail: { open: true } }))
-        }
-        if ( progress < 0.82 && overviewOpened ) {
-            overviewOpened = false
-            window.dispatchEvent(new CustomEvent('apex:service-overview', { detail: { open: false } }))
-        }
-    }
 
     function animate(refs) {
         const timeline = Timeline(refs)
@@ -89,10 +92,6 @@ const Animate = ({ parent, target, initRefs, children }) => {
         refs.cursor4.style.transform = `translate3d(${t.cursor.x4}px, ${t.cursor.y4}px, 0)`
         refs.cursor5.style.transform = `translate3d(${t.cursor.x5}px, ${t.cursor.y5}px, 0)`
         refs.cursor6.style.transform = `translate3d(${t.cursor.x6}px, ${t.cursor.y6}px, 0)`
-    }
-
-    function rem(number) {
-        return (number / 16) + 'rem'
     }
 
     return ( <div>{ children }</div> )

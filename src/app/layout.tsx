@@ -1,5 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const clashGrotesk = localFont({
+  src: "../fonts/clash-grotesk-variable.woff2",
+  variable: "--font-clash",
+  weight: "200 700",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://qclay.design"),
@@ -22,7 +30,7 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}> ) {
   return (
     <html lang="en">
       <body>{children}</body>

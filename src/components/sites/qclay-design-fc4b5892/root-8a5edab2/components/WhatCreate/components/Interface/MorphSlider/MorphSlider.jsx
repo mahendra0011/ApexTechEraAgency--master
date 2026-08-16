@@ -162,9 +162,6 @@ void main() {
 
   vec3 col = mix(colC, colN, m);
 
-  float vig = smoothstep(1.25, 0.25, length(uv - 0.5));
-  col = mix(col, uOverlay, (1.0 - vig) * 0.28);
-
   gl_FragColor = vec4(col, 1.0);
 }
 `
