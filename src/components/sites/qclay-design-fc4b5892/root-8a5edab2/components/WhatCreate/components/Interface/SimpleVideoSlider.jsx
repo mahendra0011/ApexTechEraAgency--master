@@ -69,12 +69,14 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
       })}
       <div className="apex-simple-slider__caption-wrap">
         {items.map((item, i) => (
-          <span
-            key={item.video}
-            className={`apex-simple-slider__caption-pill ${i === index ? 'is-active' : ''}`}
-          >
-            {item.caption}
-          </span>
+          item.caption ? (
+            <span
+              key={item.video}
+              className={`apex-simple-slider__caption-pill ${i === index ? 'is-active' : ''}`}
+            >
+              {item.caption}
+            </span>
+          ) : null
         ))}
       </div>
     </div>
