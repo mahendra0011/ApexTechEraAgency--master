@@ -11,5 +11,6 @@ export const context = {
     setExternalChanging: null,
     wheel: 0,
     wheelTo: 0,
+    snapWheelTo: false,
     activeForm: false,
 };

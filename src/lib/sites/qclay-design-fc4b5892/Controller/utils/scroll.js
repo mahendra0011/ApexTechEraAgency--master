@@ -17,7 +17,19 @@ export const scroll = {
         const ref = this.getInnerRef(sections)
         if (!ref || context.wheelTo === 0) { return { ref: null, lerped: 0 } }
         const scrolled = getScrollCoordsFromElement(ref).windowTop.fromTop
-        const lerped = Math.max(Math.min(this.lerp(scrolled, context.wheelTo), ref.getBoundingClientRect().height - window.innerHeight), 0)
+        const maxLerp = ref.getBoundingClientRect().height - window.innerHeight
+        let lerped
+        if (context.snapWheelTo) {
+            // One-shot hard snap: used when the fullscreen video sequence hands
+            // back to the dashboard. Without it the per-frame 4% lerp replays
+            // the ENTIRE timeline backward from the fullscreen point to the
+            // skeleton frame, making every dashboard element/video fly across
+            // the screen at high speed during the handoff.
+            context.snapWheelTo = false
+            lerped = Math.max(Math.min(context.wheelTo, maxLerp), 0)
+        } else {
+            lerped = Math.max(Math.min(this.lerp(scrolled, context.wheelTo), maxLerp), 0)
+        }
         if ( needDispatch ) { document.dispatchEvent(new CustomEvent('customwheel', { detail: { wheel: lerped } })) } // для передачи в хуки
         return { ref, lerped }
     },

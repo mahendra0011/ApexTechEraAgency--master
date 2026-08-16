@@ -33,6 +33,7 @@ const Animate = ({ parent, target, initRefs, children }) => {
             // scroll.calcWheelTo(), which treats `context.wheel` as a raw
             // per-tick delta and multiplies it by 1/intensity (10x),
             // wildly overshooting past the end of the timeline.
+            context.snapWheelTo = true
             context.wheelTo = wheelTarget
             // The service-video overlay pauses the normal controller at its
             // fullscreen point. Reset every property that normally arrives via
