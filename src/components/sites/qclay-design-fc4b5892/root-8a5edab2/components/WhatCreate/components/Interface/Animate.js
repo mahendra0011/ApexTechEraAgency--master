@@ -80,20 +80,6 @@ const Animate = ({ parent, target, initRefs, children }) => {
 
         refs.grid.style.opacity = t.grid.opacity
 
-        t.tagContainer.opacity >= .85 ? (
-            refs.tagContainer.style.cssText = `
-                opacity: 1;
-                transform: translate(-50%, 0.625rem) scale(1);
-                transition: opacity .5s ease, transform .5s ease;
-            `
-        ) : (
-            refs.tagContainer.style.cssText = `
-                opacity: 0;
-                transform: translate(-50%, 0.625rem) scale(.5);
-                transition: opacity .5s ease, transform .5s ease;
-            `
-        )
-
         
         refs.mode.style.cssText = `width: ${t.mode.width}px`
         refs.modeTrX.style.transform = `translate3d(${t.mode.x}px, 0, 0)`

@@ -185,8 +185,8 @@ const ServiceSlider = () => {
           style={{
             '--apex-video-x': `${sequenceFrame?.x ?? 0}px`,
             '--apex-video-y': `${sequenceFrame?.y ?? 0}px`,
-            '--apex-video-width': `${sequenceFrame?.width ?? window.innerWidth}px`,
-            '--apex-video-height': `${sequenceFrame?.height ?? window.innerHeight}px`
+            '--apex-video-scale-x': `${((sequenceFrame?.width ?? window.innerWidth) / window.innerWidth)}`,
+            '--apex-video-scale-y': `${((sequenceFrame?.height ?? window.innerHeight) / window.innerHeight)}`
           }}
           aria-label="Service video sequence"
         >

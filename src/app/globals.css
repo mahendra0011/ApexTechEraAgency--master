@@ -130,36 +130,32 @@ a { color: inherit; text-decoration: inherit; }
 
 .apex-service-fullscreen {
   position: fixed;
-  top: var(--apex-video-y);
-  left: var(--apex-video-x);
+  top: 0;
+  left: 0;
   z-index: 10001;
-  width: var(--apex-video-width);
-  height: var(--apex-video-height);
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   border-radius: 1rem;
   background: transparent;
+  transform-origin: 0 0;
+  transform: translate3d(var(--apex-video-x), var(--apex-video-y), 0) scale(var(--apex-video-scale-x), var(--apex-video-scale-y));
   transition:
-    top 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    left 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    width 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    height 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
     border-radius 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: top, left, width, height;
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .apex-service-fullscreen.is-expanded {
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
   border-radius: 0;
+  transform: translate3d(0, 0, 0) scale(1, 1);
 }
 
 .apex-service-fullscreen[data-leaving='true'] {
   opacity: 0;
-  transform: scale(0.64);
+  transform: translate3d(0, 0, 0) scale(0.64, 0.64);
 }
 
 /* The actual QClay-style handoff: video contracts while the skeleton dashboard
@@ -257,6 +253,54 @@ a { color: inherit; text-decoration: inherit; }
 @keyframes apex-slider-out {
   from { opacity: 1; transform: scale(1); }
   to { opacity: 0; transform: scale(0.97); }
+}
+
+/* Caption pill, centered over the video, text crossfades as the video changes. */
+.apex-simple-slider__caption-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  padding: 0 6%;
+}
+
+.apex-simple-slider__caption-pill {
+  grid-area: 1 / 1;
+  justify-self: center;
+  align-self: center;
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.9rem 2.2rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #14141a;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  transition:
+    opacity var(--apex-slider-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--apex-slider-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apex-simple-slider__caption-pill.is-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@media (max-width: 640px) {
+  .apex-simple-slider__caption-pill {
+    padding: 0.65rem 1.4rem;
+    white-space: normal;
+  }
 }
 
 /* Keep the source footage crisp in the animated dashboard slot. */

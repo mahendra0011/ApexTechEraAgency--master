@@ -79,7 +79,6 @@ const Interface = ({ parent, parentRefs }) => {
 
 
         const mounted = slider && container && content && view && stage1 && stage2 && stage3 && grid
-                        && tag1 && tag2 && tag3 && tag4 && tagContainer 
                         && mode && modeTrX
                         && dHeader && sidebar && otherOps
                         && row && title && tasks && mOps && mHeader && logo
@@ -465,14 +464,6 @@ const Interface = ({ parent, parentRefs }) => {
                     <div ref={interfaceSlot} className='interface__slot'>
                         <ServiceSlider />
                     </div>
-                </div>
-
-                {/* Animated Service Tags at Bottom */}
-                <div ref={interfaceTagContainer} className='interface__tag'>
-                    <div ref={interfaceTag1}>FULL STACK WEB DEV &amp; UI/UX DESIGN</div>
-                    <div ref={interfaceTag2}>CUSTOM SOFTWARE &amp; APP DEVELOPMENT</div>
-                    <div ref={interfaceTag3}>AI / ML MODEL DEVELOPMENT</div>
-                    <div ref={interfaceTag4}>APEXTECHERA AGENCY</div>
                 </div>
             </div>
         </Animate>
