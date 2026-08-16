@@ -168,6 +168,16 @@ a { color: inherit; text-decoration: inherit; }
   transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* The skeleton -> real dashboard resolve is a timed choreography (see
+   Animate.showSkeleton): the timeline snaps from the skeleton frame to the
+   resolved-dashboard frame while these transitions turn it into a slow,
+   qclay-style crossfade instead of an instant swap. */
+.interface.apex-skeleton-handoff .interface__stage-1,
+.interface.apex-skeleton-handoff .interface__stage-2,
+.interface.apex-skeleton-handoff .interface__stage-3 {
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .apex-service-fullscreen .morph-slider,
 .apex-service-fullscreen .morph-slider-stage,
 .apex-service-fullscreen .morph-slider-canvas {

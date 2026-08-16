@@ -14,6 +14,7 @@ const Animate = ({ parent, target, initRefs, children }) => {
     const dimsCache = useRef(null)
     useTransform({ onChange, onResize }, { id: screens.WHATCREATE, parent, target })
     useEffect(() => {
+        const timeouts = []
         const showSkeleton = () => {
             const refs = initRefs()
             if (!refs.mounted) { return }
@@ -50,10 +51,26 @@ const Animate = ({ parent, target, initRefs, children }) => {
             refs.stage1.style.cssText = 'opacity: 1; visibility: visible; pointer-events: auto;'
             refs.stage2.style.cssText = 'opacity: 0; visibility: hidden; pointer-events: none;'
             refs.stage3.style.cssText = 'opacity: 0; visibility: hidden; pointer-events: none;'
-            window.setTimeout(() => refs.mainInterface.classList.remove('apex-skeleton-handoff'), 780)
+            // Second snap (once the video overlay has contracted/faded):
+            // jump the timeline to the resolved-dashboard frame (E). The
+            // apex-skeleton-handoff CSS transitions turn that jump into a
+            // slow skeleton -> real dashboard crossfade instead of an instant
+            // swap. The wheel stays locked (ServiceSlider) until this whole
+            // choreography is over, so nothing scroll-race throughs it.
+            timeouts.push(window.setTimeout(() => {
+                const dist = refs.slider.getBoundingClientRect().width - window.innerWidth
+                const delta = (dist - window.innerWidth * 2) / 7
+                const resolveWheel = window.innerWidth * 2 + delta * 2
+                context.snapWheelTo = true
+                context.wheelTo = resolveWheel
+            }, 900))
+            timeouts.push(window.setTimeout(() => refs.mainInterface.classList.remove('apex-skeleton-handoff'), 1750))
         }
         document.addEventListener('apex:show-service-skeleton', showSkeleton)
-        return () => document.removeEventListener('apex:show-service-skeleton', showSkeleton)
+        return () => {
+            document.removeEventListener('apex:show-service-skeleton', showSkeleton)
+            timeouts.forEach(t => window.clearTimeout(t))
+        }
     }, [])
     function onChange({ wheel }) {
         if ( !target.current ) { return } 

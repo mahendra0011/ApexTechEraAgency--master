@@ -113,19 +113,26 @@ const ServiceSlider = () => {
       if (canAdvance && direction > 0 && indexRef.current === SLIDER_ORDER.length - 1) {
         // Put the original pre-dashboard skeleton in place first, then reveal
         // it through the final video instead of abruptly dropping fullscreen.
+        // Animate's `apex:show-service-skeleton` handler runs a timed handoff
+        // (skeleton resolves into the real dashboard via CSS transitions), so
+        // the wheel stays locked until that whole choreography has finished —
+        // otherwise the user's very first scroll tick would race through the
+        // reveal at full timeline speed.
         sequenceExitingRef.current = true
         setSequenceLeaving(true)
         document.dispatchEvent(new CustomEvent('apex:show-service-skeleton'))
         window.setTimeout(() => {
           sequenceActiveRef.current = false
-          sequenceExitingRef.current = false
           setSequenceActive(false)
           setSequenceFrame(null)
           setMorphReady(false)
           setMorphVisible(false)
           setSequenceLeaving(false)
-          reentryLockedUntilRef.current = Date.now() + 1500
         }, 720)
+        window.setTimeout(() => {
+          sequenceExitingRef.current = false
+          reentryLockedUntilRef.current = Date.now() + 1800
+        }, 1800)
         e.preventDefault()
         e.stopImmediatePropagation()
         return
