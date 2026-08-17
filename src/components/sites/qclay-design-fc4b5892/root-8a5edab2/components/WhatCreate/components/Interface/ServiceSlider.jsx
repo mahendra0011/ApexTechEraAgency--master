@@ -203,23 +203,6 @@ const ServiceSlider = () => {
 
       const winW = window.innerWidth
 
-      // The site's own timeline performs the whole entry (the interface
-      // container swells 1 -> ~9x across the first viewport width of scroll).
-      // We only intercept when the swelled video slot actually covers the
-      // viewport — the moment the video IS fullscreen — and then lock the
-      // wheel there and hand over to the 7-video sequence.
-      // After a dashboard visit the host is still on the last video (custom
-      // software). A fresh forward entry starts the sequence from video 0, so
-      // the host must be back on the brand intro BEFORE the swell — otherwise
-      // the video visibly switches at the fullscreen lock. Skipped during the
-      // post-handoff zoom-out (handoffPassedRef) where the custom-software
-      // footage must stay put. The backward path keeps index 6, matching the
-      // backward entry's first video.
-      if (direction > 0 && !handoffPassedRef.current && indexRef.current !== 0) {
-        indexRef.current = 0
-        setIndex(0)
-      }
-
       const isCovered = rect.height >= window.innerHeight * COVER_RATIO
         && rect.width >= window.innerWidth * COVER_RATIO
 
