@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { context } from '../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/utils/context'
 
 import SimpleVideoSlider from './SimpleVideoSlider'
 
 const VIDEOS_PATH = '/sites/qclay-design-fc4b5892/root-8a5edab2/video/services'
 
-// The persistent fullscreen surface cycles through these videos in order.
-// The first entry is the brand/agency intro animation — it has no caption
-// pill on purpose (empty caption), so the pill row visually starts with
-// "Full Stack Web Development" once that video comes up.
+// The persistent fullscreen surface cycles through these 7 videos in order.
 const SLIDER_ORDER = [
   { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, caption: '' },
   { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, caption: 'Full Stack Web Development' },
@@ -19,27 +17,47 @@ const SLIDER_ORDER = [
   { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, caption: 'Custom Software Development' }
 ]
 
+// Accumulated scroll delta needed at sequence boundaries (0 or 6) to exit fullscreen
+const NAV_WHEEL_DISTANCE = 350
+// Silence duration between wheel bursts before allowing the next slide switch
+const NAV_GESTURE_IDLE_MS = 180
+// How much of the viewport the swelled video slot must cover before the
+// sequence locks. The site's OWN timeline performs the entire entry: the
+// interface container scales 1 -> ~9x across the first viewport width of
+// scroll (START -> A in timeline.js), so the video arrives from the right
+// and swells to fullscreen with the scroll — qclay-style. The overlay only
+// intercepts at the very peak (slot covering >= 95% of the viewport) so
+// there is never a detached second card.
+const COVER_RATIO = 0.95
+
 const ServiceSlider = () => {
   const hostRef = useRef(null)
   const hostVideoRef = useRef(null)
   const portalVideoRef = useRef(null)
   const sliderRef = useRef(null)
-  const wheelRef = useRef({ carry: 0, direction: 0, lockedUntil: 0 })
   const sequenceActiveRef = useRef(false)
-  const sequenceExitingRef = useRef(false)
   const reentryLockedUntilRef = useRef(0)
   const sequenceStartRef = useRef(0)
   const indexRef = useRef(0)
+  // Once the 7th video hands off, the forward entry stays disabled until the
+  // zoom-out has carried the slot back below the cover threshold (or the user
+  // scrolls backward to reverse) — otherwise the very next wheel would re-lock
+  // the sequence on top of the handoff.
+  const handoffPassedRef = useRef(false)
+
+  const navDirRef = useRef(1)
+  const boundaryProgressRef = useRef(0)
+  const navLastEventRef = useRef(0)
+  const navConsumedRef = useRef(false)
+
   const [index, setIndex] = useState(0)
   const [sequenceActive, setSequenceActive] = useState(false)
-  const [sequenceFrame, setSequenceFrame] = useState(null)
   const [morphReady, setMorphReady] = useState(false)
   const [morphVisible, setMorphVisible] = useState(false)
-  const [sequenceLeaving, setSequenceLeaving] = useState(false)
   const [portalReady, setPortalReady] = useState(false)
+  const [handoffDone, setHandoffDone] = useState(false)
+  const handoffDoneRef = useRef(false)
 
-  // Keep the fullscreen clone's playback position in sync with the small
-  // host video it grew out of, so entry doesn't visibly restart from 0.
   const syncPortalTime = () => {
     const host = hostVideoRef.current
     const portal = portalVideoRef.current
@@ -47,127 +65,212 @@ const ServiceSlider = () => {
     try { portal.currentTime = host.currentTime } catch (err) { /* not seekable yet */ }
   }
 
+  const resetExpansion = () => {
+    setMorphReady(false)
+    setMorphVisible(false)
+    setPortalReady(false)
+    boundaryProgressRef.current = 0
+    navDirRef.current = 1
+    navLastEventRef.current = 0
+    navConsumedRef.current = false
+  }
+
+  const handleNavCommit = (nextIndex) => {
+    indexRef.current = nextIndex
+    setIndex(nextIndex)
+  }
+
+  // The dashboard frame sits at wheel >= 2 * winW on the site's own timeline
+  // (C in timeline.js — the container has zoomed back to scale 1 and the
+  // skeleton is fully visible). Beyond that point the slot must hide: its
+  // host video (custom software) would otherwise sit on top of the
+  // dashboard's own Custom Software card and duplicate it. The skeleton /
+  // real-dashboard card 5 plays the SAME footage, so hiding the slot hands
+  // the video over seamlessly (both card videos are synced to the host's
+  // playback position the moment the slot hides).
+  useEffect(() => {
+    const onCustomWheel = (e) => {
+      const wheel = e.detail?.wheel ?? 0
+      const shouldHide = wheel >= window.innerWidth * 2
+      if (shouldHide === handoffDoneRef.current) { return }
+      handoffDoneRef.current = shouldHide
+      setHandoffDone(shouldHide)
+      if (shouldHide) {
+        const hostVideo = hostVideoRef.current
+        if (hostVideo && hostVideo.currentTime > 0) {
+          const targets = [
+            document.querySelector('.apex-skel-card:nth-child(5) video'),
+            document.querySelector('.apex-grid-card:nth-child(5) video')
+          ]
+          targets.forEach((v) => {
+            if (!v) { return }
+            try { v.currentTime = hostVideo.currentTime } catch (err) { /* not seekable yet */ }
+          })
+        }
+      }
+    }
+    document.addEventListener('customwheel', onCustomWheel)
+    return () => document.removeEventListener('customwheel', onCustomWheel)
+  }, [])
+
+  useEffect(() => {
+    const slotEl = hostRef.current?.parentElement
+    if (!slotEl) { return }
+    if (handoffDone) {
+      slotEl.classList.add('apex-slot-dashboard-hidden')
+    } else {
+      slotEl.classList.remove('apex-slot-dashboard-hidden')
+    }
+  }, [handoffDone])
+
   useEffect(() => {
     const onWheel = (e) => {
       const host = hostRef.current
       if (!host) { return }
-      if (sequenceExitingRef.current) {
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        return
-      }
-
-      // Only the "not yet in fullscreen" branch needs a live rect (to check
-      // readiness and to seed the expand-from-here frame). Once the sequence
-      // is active, rect is never read below — so measuring it every single
-      // wheel tick while scrolling through all six videos was a pure-waste
-      // forced layout reflow on the hottest part of this flow.
-      if (!sequenceActiveRef.current) {
-        const rect = host.getBoundingClientRect()
-        // The original right-side video first grows naturally. At this point it
-        // becomes a real viewport overlay and stays there for all six videos.
-        const readyForFullscreen = rect.height >= window.innerHeight * 0.85
-        if (!readyForFullscreen) { return }
-        // After exiting the fullscreen sequence, the underlying slot can still
-        // measure as "ready" for a moment (the real page scroll hasn't moved
-        // yet). Without this lock, the very next wheel tick re-enters
-        // fullscreen immediately and the dashboard never becomes visible.
-        if (Date.now() < reentryLockedUntilRef.current) {
-          return
-        }
-        sequenceActiveRef.current = true
-        sequenceStartRef.current = indexRef.current
-        wheelRef.current = { carry: 0, direction: 0, lockedUntil: Date.now() + 900 }
-        setMorphReady(false)
-        setMorphVisible(false)
-        setSequenceLeaving(false)
-        setPortalReady(false)
-        setSequenceFrame({ x: rect.left, y: rect.top, width: rect.width, height: rect.height, expanded: false })
-        setSequenceActive(true)
-        // Give the browser one real paint at the source rectangle first; then
-        // expand from that exact rectangle instead of jumping to fullscreen.
-        window.setTimeout(() => {
-          setSequenceFrame((frame) => frame ? { ...frame, expanded: true } : frame)
-        }, 80)
-        // Mount the WebGL morph only after the entry video has expanded. This
-        // prevents its empty black fallback texture appearing on first entry.
-        window.setTimeout(() => setMorphReady(true), 760)
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        return
-      }
 
       const delta = e.deltaY
       if (!delta || Math.abs(delta) < 1) { return }
       const direction = delta > 0 ? 1 : -1
-      if (direction !== wheelRef.current.direction) {
-        wheelRef.current.direction = direction
-        wheelRef.current.carry = 0
-      }
-      wheelRef.current.carry += Math.abs(delta)
 
-      // At the last video, forward scrolling resumes the dashboard. At the
-      // first video, backward scrolling removes fullscreen and reverses the
-      // original timeline.
-      const canAdvance = wheelRef.current.carry >= 700 && Date.now() >= wheelRef.current.lockedUntil
-      if (canAdvance && direction > 0 && indexRef.current === SLIDER_ORDER.length - 1) {
-        // Put the original pre-dashboard skeleton in place first, then reveal
-        // it through the final video instead of abruptly dropping fullscreen.
-        // Animate's `apex:show-service-skeleton` handler runs a timed handoff
-        // (skeleton resolves into the real dashboard via CSS transitions), so
-        // the wheel stays locked until that whole choreography has finished —
-        // otherwise the user's very first scroll tick would race through the
-        // reveal at full timeline speed.
-        sequenceExitingRef.current = true
-        setSequenceLeaving(true)
-        document.dispatchEvent(new CustomEvent('apex:show-service-skeleton'))
-        window.setTimeout(() => {
-          sequenceActiveRef.current = false
-          setSequenceActive(false)
-          setSequenceFrame(null)
-          setMorphReady(false)
-          setMorphVisible(false)
-          setSequenceLeaving(false)
-        }, 720)
-        window.setTimeout(() => {
-          sequenceExitingRef.current = false
-          reentryLockedUntilRef.current = Date.now() + 1800
-        }, 1800)
+      // ---- Fullscreen sequence ACTIVE: 1 gesture = 1 GSAP video switch ----
+      if (sequenceActiveRef.current) {
+        const now = Date.now()
+        if (direction !== navDirRef.current) {
+          navDirRef.current = direction
+          boundaryProgressRef.current = 0
+          navLastEventRef.current = 0
+          navConsumedRef.current = false
+        }
+
+        if (now - navLastEventRef.current > NAV_GESTURE_IDLE_MS || !sliderRef.current?.isAnimating()) {
+          navConsumedRef.current = false
+        }
+        navLastEventRef.current = now
+
+        const atLastForward = direction > 0 && indexRef.current === SLIDER_ORDER.length - 1
+        const atFirstBackward = direction < 0 && indexRef.current === 0
+
+        if (atLastForward) {
+          // Forward scroll at Video 6 -> handoff back to the dashboard.
+          // qclay-style: release the wheel INSTANTLY and let the site's own
+          // timeline perform the zoom-out — the container scales back from
+          // the fullscreen peak while the skeleton fades in around the video
+          // and the real dashboard crossfades in later — all scroll-scrubbed,
+          // exactly like the backward path.
+          boundaryProgressRef.current = Math.min(1, boundaryProgressRef.current + Math.abs(delta) / NAV_WHEEL_DISTANCE)
+          if (boundaryProgressRef.current >= 1) {
+            boundaryProgressRef.current = 0
+            handoffPassedRef.current = true
+            sequenceActiveRef.current = false
+            setSequenceActive(false)
+            resetExpansion()
+            reentryLockedUntilRef.current = Date.now() + 1500
+          }
+        } else if (atFirstBackward) {
+          // Backward scroll at Video 0 -> collapse back out to previous section / top
+          boundaryProgressRef.current = Math.min(1, boundaryProgressRef.current + Math.abs(delta) / NAV_WHEEL_DISTANCE)
+          if (boundaryProgressRef.current >= 1) {
+            boundaryProgressRef.current = 0
+            sequenceActiveRef.current = false
+            setSequenceActive(false)
+            resetExpansion()
+            context.snapWheelTo = true
+            context.wheelTo = Math.max(0, window.innerWidth - 100)
+            reentryLockedUntilRef.current = Date.now() + 1200
+          }
+        } else if (navConsumedRef.current) {
+          // Gesture consumed, swallow extra ticks in this burst
+        } else {
+          navConsumedRef.current = true
+          if (direction > 0) {
+            sliderRef.current?.next()
+          } else {
+            sliderRef.current?.prev()
+          }
+        }
+
         e.preventDefault()
         e.stopImmediatePropagation()
         return
       }
-      if (canAdvance && direction < 0 && indexRef.current === 0) {
-        // Reverse the same fullscreen expansion before handing scrolling back.
-        sequenceExitingRef.current = true
-        setSequenceFrame((frame) => frame ? { ...frame, expanded: false } : frame)
-        window.setTimeout(() => {
-          sequenceActiveRef.current = false
-          sequenceExitingRef.current = false
-          setSequenceActive(false)
-          setSequenceFrame(null)
-          setMorphReady(false)
-          setMorphVisible(false)
-          reentryLockedUntilRef.current = Date.now() + 1500
-        }, 720)
+
+      // ---- Fullscreen sequence is NOT active: check for Forward or Backward Entry ----
+      if (Date.now() < reentryLockedUntilRef.current) { return }
+
+      const rect = host.getBoundingClientRect()
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+      if (!isVisible) { return }
+
+      const winW = window.innerWidth
+
+      // The site's own timeline performs the whole entry (the interface
+      // container swells 1 -> ~9x across the first viewport width of scroll).
+      // We only intercept when the swelled video slot actually covers the
+      // viewport — the moment the video IS fullscreen — and then lock the
+      // wheel there and hand over to the 7-video sequence.
+      // After a dashboard visit the host is still on the last video (custom
+      // software). A fresh forward entry starts the sequence from video 0, so
+      // the host must be back on the brand intro BEFORE the swell — otherwise
+      // the video visibly switches at the fullscreen lock. Skipped during the
+      // post-handoff zoom-out (handoffPassedRef) where the custom-software
+      // footage must stay put. The backward path keeps index 6, matching the
+      // backward entry's first video.
+      if (direction > 0 && !handoffPassedRef.current && indexRef.current !== 0) {
+        indexRef.current = 0
+        setIndex(0)
+      }
+
+      const isCovered = rect.height >= window.innerHeight * COVER_RATIO
+        && rect.width >= window.innerWidth * COVER_RATIO
+
+      // After a handoff the cover zone is still being traversed by the
+      // zoom-out. Re-enable the entries only once the slot has dropped below
+      // the cover threshold (forward) or the user scrolls back (backward).
+      if (handoffPassedRef.current) {
+        if (direction < 0 || !isCovered) {
+          handoffPassedRef.current = false
+        } else {
+          return
+        }
+      }
+
+      const isForwardEntry = direction > 0 && isCovered
+      const isBackwardEntry = direction < 0 && isCovered
+
+      if (isForwardEntry) {
         e.preventDefault()
         e.stopImmediatePropagation()
+        sequenceStartRef.current = 0
+        indexRef.current = 0
+        setIndex(0)
+        setPortalReady(true)
+        setMorphVisible(true)
+        setMorphReady(true)
+        sequenceActiveRef.current = true
+        setSequenceActive(true)
+        context.snapWheelTo = true
+        context.wheelTo = winW
         return
       }
 
-      e.preventDefault()
-      e.stopImmediatePropagation()
-      if (!canAdvance) { return }
-
-      wheelRef.current.carry = 0
-      wheelRef.current.lockedUntil = Date.now() + 1400
-      setMorphVisible(true)
-      window.setTimeout(() => {
-        direction > 0 ? sliderRef.current?.next() : sliderRef.current?.prev()
-      }, 40)
+      if (isBackwardEntry) {
+        e.preventDefault()
+        e.stopImmediatePropagation()
+        const lastIdx = SLIDER_ORDER.length - 1
+        sequenceStartRef.current = lastIdx
+        indexRef.current = lastIdx
+        setIndex(lastIdx)
+        setPortalReady(true)
+        setMorphVisible(true)
+        setMorphReady(true)
+        sequenceActiveRef.current = true
+        setSequenceActive(true)
+        context.snapWheelTo = true
+        context.wheelTo = winW * 2
+        return
+      }
     }
-    // Capture phase runs before the site's global scroll controller, allowing
-    // this section to hold the timeline in its fullscreen position.
+
     document.addEventListener('wheel', onWheel, { capture: true, passive: false })
     return () => {
       document.removeEventListener('wheel', onWheel, { capture: true })
@@ -177,7 +280,7 @@ const ServiceSlider = () => {
   const renderVideo = (className, videoRef, extraProps = {}) => (
     <video
         ref={videoRef}
-        key={SLIDER_ORDER[index].video}
+        key={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video}
         className={className}
         autoPlay
         muted
@@ -186,29 +289,22 @@ const ServiceSlider = () => {
         preload="auto"
         {...extraProps}
       >
-        <source src={SLIDER_ORDER[index].video} type="video/mp4" />
+        <source src={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video} type="video/mp4" />
     </video>
   )
 
   return (
     <>
       <div ref={hostRef} className="apex-slot-slider">
-        {renderVideo('apex-service-video', hostVideoRef)}
+        {renderVideo(`apex-service-video ${portalReady ? 'is-covered' : ''}`, hostVideoRef)}
       </div>
       {sequenceActive && createPortal(
         <div
-          className={`apex-service-fullscreen ${sequenceFrame?.expanded ? 'is-expanded' : ''}`}
-          data-leaving={sequenceLeaving ? 'true' : 'false'}
-          style={{
-            '--apex-video-x': `${sequenceFrame?.x ?? 0}px`,
-            '--apex-video-y': `${sequenceFrame?.y ?? 0}px`,
-            '--apex-video-scale-x': `${((sequenceFrame?.width ?? window.innerWidth) / window.innerWidth)}`,
-            '--apex-video-scale-y': `${((sequenceFrame?.height ?? window.innerHeight) / window.innerHeight)}`
-          }}
+          className="apex-service-fullscreen"
           aria-label="Service video sequence"
         >
           {renderVideo(
-            `apex-service-video apex-service-video--fullscreen ${morphVisible ? 'is-hidden' : ''} ${portalReady ? 'is-ready' : ''}`,
+            `apex-service-video apex-service-video--fullscreen ${morphReady ? 'is-hidden' : ''} ${portalReady ? 'is-ready' : ''}`,
             portalVideoRef,
             {
               onLoadedMetadata: () => { syncPortalTime(); setPortalReady(true) },
@@ -220,11 +316,8 @@ const ServiceSlider = () => {
               ref={sliderRef}
               items={SLIDER_ORDER}
               startIndex={sequenceStartRef.current}
-              duration={0.8}
-              onIndexChange={(nextIndex) => {
-                indexRef.current = nextIndex
-                setIndex(nextIndex)
-              }}
+              onIndexChange={handleNavCommit}
+              initialTime={hostVideoRef.current?.currentTime ?? 0}
             />
           </div>}
         </div>,

@@ -111,6 +111,15 @@ a { color: inherit; text-decoration: inherit; }
   box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
 }
 
+/* After the 7th-video -> dashboard handoff the slot's host video would sit
+   over the dashboard's own Custom Software card (same footage, doubled). The
+   whole slot hides while the dashboard is on screen; the wheel handler
+   removes the class when the section is scrolled back into view. */
+.interface__slot.apex-slot-dashboard-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* The slider remains inside QClay's original animated slot, so the same
    timeline controls its right-panel entry, expansion, and dashboard handoff. */
 .apex-slot-slider { width: 100%; height: 100%; }
@@ -137,25 +146,16 @@ a { color: inherit; text-decoration: inherit; }
   height: 100vh;
   overflow: hidden;
   border-radius: 1rem;
-  background: transparent;
+  /* Opaque while the overlay grows/contracts: during the scroll-linked
+     expansion the portal video is still loading, and a transparent surface
+     would show the page (dashboard card) behind the growing video. The dark
+     backing also keeps the rounded-corner expansion clean. */
+  background: #000;
   transform-origin: 0 0;
-  transform: translate3d(var(--apex-video-x), var(--apex-video-y), 0) scale(var(--apex-video-scale-x), var(--apex-video-scale-y));
-  transition:
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    border-radius 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Transform/opacity are driven inline: scroll-linked during expansion and
+     collapse, and transitioned only during the timed dashboard handoff. */
   will-change: transform;
   backface-visibility: hidden;
-}
-
-.apex-service-fullscreen.is-expanded {
-  border-radius: 0;
-  transform: translate3d(0, 0, 0) scale(1, 1);
-}
-
-.apex-service-fullscreen[data-leaving='true'] {
-  opacity: 0;
-  transform: translate3d(0, 0, 0) scale(0.64, 0.64);
 }
 
 /* The actual QClay-style handoff: video contracts while the skeleton dashboard
@@ -165,7 +165,7 @@ a { color: inherit; text-decoration: inherit; }
 .interface.apex-skeleton-handoff .interface__stage-1,
 .interface.apex-skeleton-handoff .interface__stage-2,
 .interface.apex-skeleton-handoff .interface__stage-3 {
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* The skeleton -> real dashboard resolve is a timed choreography (see
@@ -175,7 +175,7 @@ a { color: inherit; text-decoration: inherit; }
 .interface.apex-skeleton-handoff .interface__stage-1,
 .interface.apex-skeleton-handoff .interface__stage-2,
 .interface.apex-skeleton-handoff .interface__stage-3 {
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .apex-service-fullscreen .morph-slider,
@@ -184,6 +184,14 @@ a { color: inherit; text-decoration: inherit; }
   width: 100%;
   height: 100%;
   border-radius: 0;
+}
+
+/* Temporarily disables the handoff transitions so Animate.showSkeleton can
+   measure the slot's final dashboard-frame rect (the leaving video contracts
+   into it). Removed synchronously right after the measurement. */
+.apex-measure-no-transition,
+.apex-measure-no-transition * {
+  transition: none !important;
 }
 
 .apex-service-video--fullscreen,
@@ -206,6 +214,15 @@ a { color: inherit; text-decoration: inherit; }
   opacity: 0;
 }
 
+/* While the fullscreen portal is playing, hide the original slot video so
+   only ONE card is visible during the scroll-linked expansion/collapse.
+   Hidden only once the portal clone has actually loaded (portalReady), so
+   entry never shows an empty gap before the overlay video is ready. */
+.apex-service-video.is-covered {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .apex-service-morph {
   z-index: 2;
   opacity: 0;
@@ -216,7 +233,9 @@ a { color: inherit; text-decoration: inherit; }
   opacity: 1;
 }
 
-/* Custom crossfade slider (replaces reactbits MorphSlider/WebGL canvas). */
+/* Custom crossfade slider (replaces reactbits MorphSlider/WebGL canvas).
+   All videos stay mounted and only opacity/transform change per frame,
+   driven inline from the wheel progress — no timed CSS animations here. */
 .apex-simple-slider {
   position: relative;
   width: 100%;
@@ -234,38 +253,11 @@ a { color: inherit; text-decoration: inherit; }
   object-fit: cover;
   object-position: center;
   border-radius: inherit;
+  will-change: opacity, transform;
 }
 
-.apex-simple-slider__video--in {
-  z-index: 2;
-  opacity: 0;
-  transform: scale(1.04);
-  animation: apex-slider-in var(--apex-slider-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.apex-simple-slider__video--out {
-  z-index: 1;
-  opacity: 1;
-  animation: apex-slider-out var(--apex-slider-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.apex-simple-slider__video--idle {
-  z-index: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-@keyframes apex-slider-in {
-  from { opacity: 0; transform: scale(1.04); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes apex-slider-out {
-  from { opacity: 1; transform: scale(1); }
-  to { opacity: 0; transform: scale(0.97); }
-}
-
-/* Caption pill, centered over the video, text crossfades as the video changes. */
+/* Caption pill, centered over the video, text crossfades with the wheel
+   progress exactly like the videos themselves (inline styles). */
 .apex-simple-slider__caption-wrap {
   position: absolute;
   inset: 0;
@@ -294,16 +286,7 @@ a { color: inherit; text-decoration: inherit; }
   overflow: hidden;
   text-overflow: ellipsis;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  opacity: 0;
-  transform: translateY(10px) scale(0.96);
-  transition:
-    opacity var(--apex-slider-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1),
-    transform var(--apex-slider-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.apex-simple-slider__caption-pill.is-active {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+  will-change: opacity, transform;
 }
 
 @media (max-width: 640px) {

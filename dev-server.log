@@ -1,18 +1,15 @@
 npm notice run ai-website-clone-template@0.4.0 dev
 npm notice run next dev
-⚠ Port 3000 is in use by process 40016, using available port 3001 instead.
 ▲ Next.js 16.3.0 (Turbopack)
-- Local:         http://localhost:3001
-- Network:       http://10.222.156.212:3001
-✓ Ready in 1295ms
-✓ Running next.config.ts took 73ms
-⨯ Another next dev server is already running.
+- Local:         http://localhost:3000
+- Network:       http://10.170.56.212:3000
+✓ Ready in 1317ms
+✓ Running next.config.ts took 102ms
 
-- Local:        http://localhost:3000
-- PID:          40016
-- Dir:          C:\Users\mahen\Downloads\ApexTechEraAgency--master\ApexTechEraAgency--master
-- Log:          .next\dev\logs\next-development.log
-
-You can access the existing server at http://localhost:3000,
-or run taskkill /PID 40016 /F to stop it and start a new one.
+rerender
+rerender
+ GET / 200 in 4.1s (next.js: 2.2s, application-code: 1957ms)
+ GET / 200 in 769ms (next.js: 14ms, application-code: 755ms)
+rerender
+ GET / 200 in 324ms (next.js: 11ms, application-code: 313ms)
 [?25h

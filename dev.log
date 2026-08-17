@@ -1,0 +1,1793 @@
+npm notice run ai-website-clone-template@0.4.0 dev
+npm notice run next dev
+▲ Next.js 16.3.0 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.170.56.212:3000
+✓ Ready in 1136ms
+✓ Running next.config.ts took 123ms
+
+rerender
+ GET / 200 in 3.1s (next.js: 1931ms, application-code: 1168ms)
+rerender
+ GET / 200 in 349ms (next.js: 10ms, application-code: 338ms)
+✓ Compiled in 1434ms
+ GET / 200 in 187ms (next.js: 45ms, application-code: 143ms)
+✓ Compiled in 668ms
+ GET / 200 in 233ms (next.js: 28ms, application-code: 206ms)
+✓ Compiled in 731ms
+ GET / 200 in 150ms (next.js: 31ms, application-code: 118ms)
+✓ Compiled in 585ms
+ GET / 200 in 115ms (next.js: 24ms, application-code: 91ms)
+✓ Compiled in 410ms
+ GET / 200 in 166ms (next.js: 27ms, application-code: 139ms)
+✓ Compiled in 401ms
+ GET / 200 in 83ms (next.js: 18ms, application-code: 65ms)
+✓ Compiled in 388ms
+ GET / 200 in 89ms (next.js: 21ms, application-code: 67ms)
+✓ Compiled in 425ms
+ GET / 200 in 163ms (next.js: 52ms, application-code: 111ms)
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:193:7)
+  191 |       // overlay a little, exactly like qclay's "We Create" video.
+  192 |       const next = Math.max(0, Math.min(1, progressRef.current + delta / EXPAND_WHEEL_DISTANCE))
+> 193 |       progressRef.current = next
+      |       ^
+  194 |       setProgress(next)
+  195 |
+  196 |       if (next >= 1) {
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+[browser] Uncaught ReferenceError: wheelRef is not defined
+    at ServiceSlider.useEffect.onWheel (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/WhatCreate/components/Interface/ServiceSlider.jsx:98:27)
+   96 |     const onWheel = (e) => {
+   97 |       const host = hostRef.current
+>  98 |       if (!host) { return }
+      |                           ^
+   99 |       if (sequenceExitingRef.current) {
+  100 |         e.preventDefault()
+  101 |         e.stopImmediatePropagation()
+rerender
+ GET / 200 in 3.7s (next.js: 101ms, application-code: 3.6s)
+rerender
+ GET / 200 in 2.8s (next.js: 71ms, application-code: 2.7s)
+✓ Compiled in 496ms
+ GET / 200 in 71ms (next.js: 17ms, application-code: 54ms)
+✓ Compiled in 451ms
+ GET / 200 in 110ms (next.js: 25ms, application-code: 84ms)
+rerender
+ GET / 200 in 372ms (next.js: 5ms, application-code: 367ms)
+rerender
+ GET / 200 in 1288ms (next.js: 66ms, application-code: 1221ms)
+✓ Compiled in 5.1s
+ GET / 200 in 870ms (next.js: 180ms, application-code: 690ms)
+✓ Compiled in 5.2s
+ GET / 200 in 589ms (next.js: 317ms, application-code: 272ms)
+rerender
+ GET / 200 in 4.4s (next.js: 36ms, application-code: 4.4s)
+rerender
+ GET / 200 in 696ms (next.js: 35ms, application-code: 660ms)
+✓ Compiled in 4.8s
+ GET / 200 in 1741ms (next.js: 393ms, application-code: 1348ms)
+✓ Compiled in 4.8s
+ GET / 200 in 1705ms (next.js: 506ms, application-code: 1200ms)
+✓ Compiled in 4.8s
+ GET / 200 in 4.9s (next.js: 966ms, application-code: 4.0s)
+✓ Compiled in 3.5s
+ GET / 200 in 2.2s (next.js: 391ms, application-code: 1847ms)
+✓ Compiled in 7.7s
+ GET / 200 in 1848ms (next.js: 566ms, application-code: 1283ms)
+✓ Compiled in 75.3s
+✓ Compiled in 66.2s
+rerender
+ GET / 200 in 50s (next.js: 687ms, application-code: 49s)
+✓ Compiled in 23.6s
+rerender
+ GET / 200 in 2.2s (next.js: 626ms, application-code: 1543ms)
+ GET / 200 in 11.2s (next.js: 798ms, application-code: 10.4s)
+rerender
+ GET / 200 in 337ms (next.js: 5ms, application-code: 332ms)
+rerender
+ GET / 200 in 471ms (next.js: 16ms, application-code: 454ms)
+✓ Compiled in 681ms
+✓ Compiled in 441ms
+✓ Compiled in 1674ms
+ GET / 200 in 820ms (next.js: 103ms, application-code: 717ms)
+ GET / 200 in 376ms (next.js: 61ms, application-code: 315ms)
+✓ Compiled in 4.9s
+ GET / 200 in 4.2s (next.js: 853ms, application-code: 3.4s)
+ GET / 200 in 455ms (next.js: 43ms, application-code: 412ms)
+✓ Compiled in 5.2s
+ GET / 200 in 2.4s (next.js: 955ms, application-code: 1409ms)
+✓ Compiled in 5.5s
+ GET / 200 in 1206ms (next.js: 386ms, application-code: 819ms)
+✓ Compiled in 15.9s
+rerender
+ GET / 200 in 8.3s (next.js: 122ms, application-code: 8.2s)
+ GET / 200 in 263ms (next.js: 57ms, application-code: 206ms)
+ GET / 200 in 210ms (next.js: 31ms, application-code: 179ms)
+✓ Compiled in 1861ms
+ GET / 200 in 495ms (next.js: 133ms, application-code: 362ms)
+ GET / 200 in 175ms (next.js: 18ms, application-code: 157ms)
+rerender
+ GET / 200 in 1087ms (next.js: 14ms, application-code: 1074ms)
+rerender
+ GET / 200 in 1153ms (next.js: 25ms, application-code: 1129ms)
+[browser] Can’t access Projects response. TypeError: Failed to fetch
+TypeError: Failed to fetch (src/lib/sites/qclay-design-fc4b5892/api/getProjects.js:15:17)
+[browser] Can’t access Projects response. TypeError: Failed to fetch
+    at getProjects (src/lib/sites/qclay-design-fc4b5892/api/getProjects.js:5:32)
+    at Portfolio.useEffect (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/Portfolio/Portfolio.js:95:16)
+  3 | export const getProjects = async () => {
+  4 |     try {
+> 5 |         const response = await fetch(URL,
+    |                                ^
+  6 |             {
+  7 |                 headers: {
+  8 |                     'Content-Type': 'application/json', (src/lib/sites/qclay-design-fc4b5892/api/getProjects.js:15:17)
+[browser] Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at Portfolio (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/components/Portfolio/Portfolio.js:110:22)
+    at Home (src/components/sites/qclay-design-fc4b5892/root-8a5edab2/Home.js:54:11)
+    at AppClone (src/components/sites/qclay-design-fc4b5892/AppClone.jsx:28:11)
+    at Page (src/app/page.tsx:6:10)
+  108 |         <div ref={sticky.target} className="portfolio__sticky">
+  109 |           {
+> 110 |             Projects.length > 0 && (
+      |                      ^
+  111 |               <Slider className='portfolio__slider' slides={Projects} onChange={(props) => setSliderProps(props)}>
+  112 |                 <p className='pagination-number'>{ sliderProps.index+1 < 10 ? '0'+(sliderProps.index+1) : sliderProps.index+1 } / { sliderProps.length < 10 ? '0'+sliderProps.length : sliderProps.length }</p>
+  113 |               </Slider>
+[?25h

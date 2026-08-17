@@ -210,7 +210,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     </div>
                                                 </div>
 
-                                                {/* Skeleton Card 5: Cloud & DevOps */}
+                                                {/* Skeleton Card 5: Custom Software */}
                                                 <div className='apex-skel-card'>
                                                     <div className='apex-skel-card-head'>
                                                         <span className='apex-skel-dot dot-purple' />
@@ -223,12 +223,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     </div>
                                                     <div className='apex-skel-video-box'>
                                                         <video autoPlay muted loop playsInline preload="metadata">
-                                                            <source src='/sites/qclay-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
+                                                            <source src='/sites/qclay-design-fc4b5892/root-8a5edab2/video/services/service-4-customsoftware.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
                                                 </div>
 
-                                                {/* Skeleton Card 6 */}
+                                                {/* Skeleton Card 6: Cloud & DevOps */}
                                                 <div className='apex-skel-card'>
                                                     <div className='apex-skel-card-head'>
                                                         <span className='apex-skel-dot dot-rose' />
@@ -241,7 +241,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     </div>
                                                     <div className='apex-skel-video-box'>
                                                         <video autoPlay muted loop playsInline preload="metadata">
-                                                            <source src='/sites/qclay-design-fc4b5892/root-8a5edab2/video/services/service-4-customsoftware.mp4' type='video/mp4' />
+                                                            <source src='/sites/qclay-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
                                                 </div>
@@ -330,30 +330,11 @@ const Interface = ({ parent, parentRefs }) => {
                                                 </div>
                                             </div>
 
-                                            {/* Card 5: Cloud & DevOps */}
-                                            <div className='apex-grid-card'>
-                                                <div className='apex-card-top-head'>
-                                                    <span><span className='dot dot-rose' />Cloud &amp; DevOps</span>
-                                                    <span>05</span>
-                                                </div>
-                                                <span className='apex-card-main-title'>Cloud &amp; DevOps Architecture</span>
-                                                <div className='apex-card-tags'>
-                                                    <span className='apex-service-tag tag-rose'>Cloud</span>
-                                                    <span className='apex-service-tag tag-blue'>Docker</span>
-                                                    <span className='apex-service-tag tag-green'>CI/CD</span>
-                                                </div>
-                                                <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="metadata">
-                                                        <source src='/sites/qclay-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
-                                                    </video>
-                                                </div>
-                                            </div>
-
-                                            {/* Card 6: Custom Software */}
+                                            {/* Card 5: Custom Software */}
                                             <div className='apex-grid-card'>
                                                 <div className='apex-card-top-head'>
                                                     <span><span className='dot dot-purple' />Software</span>
-                                                    <span>06</span>
+                                                    <span>05</span>
                                                 </div>
                                                 <span className='apex-card-main-title'>Custom Software Development</span>
                                                 <div className='apex-card-tags'>
@@ -364,6 +345,25 @@ const Interface = ({ parent, parentRefs }) => {
                                                 <div className='apex-card-video-box'>
                                                     <video autoPlay muted loop playsInline preload="metadata">
                                                         <source src='/sites/qclay-design-fc4b5892/root-8a5edab2/video/services/service-4-customsoftware.mp4' type='video/mp4' />
+                                                    </video>
+                                                </div>
+                                            </div>
+
+                                            {/* Card 6: Cloud & DevOps */}
+                                            <div className='apex-grid-card'>
+                                                <div className='apex-card-top-head'>
+                                                    <span><span className='dot dot-rose' />Cloud &amp; DevOps</span>
+                                                    <span>06</span>
+                                                </div>
+                                                <span className='apex-card-main-title'>Cloud &amp; DevOps Architecture</span>
+                                                <div className='apex-card-tags'>
+                                                    <span className='apex-service-tag tag-rose'>Cloud</span>
+                                                    <span className='apex-service-tag tag-blue'>Docker</span>
+                                                    <span className='apex-service-tag tag-green'>CI/CD</span>
+                                                </div>
+                                                <div className='apex-card-video-box'>
+                                                    <video autoPlay muted loop playsInline preload="metadata">
+                                                        <source src='/sites/qclay-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
                                                     </video>
                                                 </div>
                                             </div>

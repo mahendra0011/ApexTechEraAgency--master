@@ -1,10 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useTransform } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/hooks/useTransform/index"
 import { screens } from "../../../../constants"
 import { itl } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Animator/js/utils/itl"
 import { Timeline } from "./timeline"
 import { isElementVisible } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Animator/js/coords/index"
-import { context } from "../../../../../../../../lib/sites/qclay-design-fc4b5892/Controller/utils/context"
 
 const Animate = ({ parent, target, initRefs, children }) => {
     // Caches slider/mainInterface measurements so the per-scroll-tick
@@ -13,65 +12,6 @@ const Animate = ({ parent, target, initRefs, children }) => {
     // the classic forced-reflow jank source). Invalidated on resize.
     const dimsCache = useRef(null)
     useTransform({ onChange, onResize }, { id: screens.WHATCREATE, parent, target })
-    useEffect(() => {
-        const timeouts = []
-        const showSkeleton = () => {
-            const refs = initRefs()
-            if (!refs.mounted) { return }
-            refs.mainInterface.classList.add('apex-skeleton-handoff')
-            const wheelTarget = window.innerWidth * 2
-            animate({ ...refs, wheel: wheelTarget })
-            // The real Controller's wheel state was frozen the moment the
-            // fullscreen video sequence started (ServiceSlider blocks every
-            // wheel event while it's active/exiting, so the site's scroll
-            // detector never sees them). Without this, the very next real
-            // scroll tick recalculates from that stale, earlier position and
-            // stomps the dashboard styles we just forced above — causing the
-            // "SERVICES WE CREATE" mid-timeline frame to flash back in.
-            // Force the controller's wheel target to the same end point the
-            // dashboard was just rendered at, so it resumes from here.
-            // NOTE: set `wheelTo` directly — do NOT go through
-            // scroll.calcWheelTo(), which treats `context.wheel` as a raw
-            // per-tick delta and multiplies it by 1/intensity (10x),
-            // wildly overshooting past the end of the timeline.
-            context.snapWheelTo = true
-            context.wheelTo = wheelTarget
-            // The service-video overlay pauses the normal controller at its
-            // fullscreen point. Reset every property that normally arrives via
-            // the controller so the existing Stage 1 dashboard is genuinely
-            // visible when the sixth video leaves.
-            dimsCache.current = null
-            const dashboardWidth = refs.mainInterface.getBoundingClientRect().width
-                || refs.content.getBoundingClientRect().width
-            refs.container.style.transform = 'translate3d(0, 0, 0) scale(1)'
-            refs.view.style.transform = 'translate3d(0, 0, 0)'
-            refs.content.style.opacity = '1'
-            refs.mode.style.width = `${dashboardWidth}px`
-            refs.modeTrX.style.transform = 'translate3d(0, 0, 0)'
-            refs.stage1.style.cssText = 'opacity: 1; visibility: visible; pointer-events: auto;'
-            refs.stage2.style.cssText = 'opacity: 0; visibility: hidden; pointer-events: none;'
-            refs.stage3.style.cssText = 'opacity: 0; visibility: hidden; pointer-events: none;'
-            // Second snap (once the video overlay has contracted/faded):
-            // jump the timeline to the resolved-dashboard frame (E). The
-            // apex-skeleton-handoff CSS transitions turn that jump into a
-            // slow skeleton -> real dashboard crossfade instead of an instant
-            // swap. The wheel stays locked (ServiceSlider) until this whole
-            // choreography is over, so nothing scroll-race throughs it.
-            timeouts.push(window.setTimeout(() => {
-                const dist = refs.slider.getBoundingClientRect().width - window.innerWidth
-                const delta = (dist - window.innerWidth * 2) / 7
-                const resolveWheel = window.innerWidth * 2 + delta * 2
-                context.snapWheelTo = true
-                context.wheelTo = resolveWheel
-            }, 900))
-            timeouts.push(window.setTimeout(() => refs.mainInterface.classList.remove('apex-skeleton-handoff'), 1750))
-        }
-        document.addEventListener('apex:show-service-skeleton', showSkeleton)
-        return () => {
-            document.removeEventListener('apex:show-service-skeleton', showSkeleton)
-            timeouts.forEach(t => window.clearTimeout(t))
-        }
-    }, [])
     function onChange({ wheel }) {
         if ( !target.current ) { return } 
         if ( !isElementVisible(target.current).partable.y ) { return }
