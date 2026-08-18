@@ -3,13 +3,13 @@ npm notice run next dev
 ▲ Next.js 16.3.0 (Turbopack)
 - Local:         http://localhost:3000
 - Network:       http://10.170.56.212:3000
-✓ Ready in 1317ms
-✓ Running next.config.ts took 102ms
+✓ Ready in 713ms
+✓ Running next.config.ts took 62ms
 
 rerender
+ GET / 200 in 1763ms (next.js: 621ms, application-code: 1143ms)
 rerender
- GET / 200 in 4.1s (next.js: 2.2s, application-code: 1957ms)
- GET / 200 in 769ms (next.js: 14ms, application-code: 755ms)
+ GET / 200 in 454ms (next.js: 13ms, application-code: 441ms)
 rerender
- GET / 200 in 324ms (next.js: 11ms, application-code: 313ms)
+ GET / 200 in 366ms (next.js: 11ms, application-code: 355ms)
 [?25h

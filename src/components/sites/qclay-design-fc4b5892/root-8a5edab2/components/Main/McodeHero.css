@@ -9,8 +9,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 7.5rem 1.5rem 5rem 1.5rem;
+  padding: 7.5rem 1.5rem 0 1.5rem;
   box-sizing: border-box;
+}
+
+/* Height covers both hero background images fully (1st 1717x916 + 2nd 1535x817) */
+.mcode-hero-root {
+  min-height: calc(100vw * 916 / 1717 + 100vw * 817 / 1535);
 }
 
 /* Background */
@@ -19,12 +24,26 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  background-size: cover;
+  background-size: contain;
   background-position: center top;
   background-repeat: no-repeat;
   pointer-events: none;
   z-index: 0;
   opacity: 1;
+}
+
+/* Second hero background - sits right below the hero image (1535x817 ratio) */
+.mcode-hero-bg-2 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: calc(100vw * 916 / 1717);
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Container */
@@ -207,17 +226,17 @@
 .mcode-terminal-wrapper {
   position: relative;
   width: 100%;
-  max-width: 860px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .mcode-terminal-window {
-  background-color: rgba(9, 9, 11, 0.95);
+  background-color: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.25), 0 0 40px rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.15), 0 0 40px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   text-align: left;
   display: flex;
@@ -228,8 +247,8 @@
   display: flex;
   align-items: center;
   padding: 0.85rem 1.25rem;
-  background-color: rgba(24, 24, 27, 0.95);
-  border-bottom: 1px solid rgba(34, 197, 94, 0.15);
+  background-color: #f4f4f5;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .mcode-traffic-lights {
@@ -260,7 +279,7 @@
   margin: 0 auto;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.78rem;
-  color: #a1a1aa;
+  color: #18181b;
   padding-right: 2rem;
   letter-spacing: 0.02em;
 }
@@ -269,8 +288,8 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: 520px;
-  background-color: #000000;
+  max-height: 680px;
+  background-color: #ffffff;
   overflow: hidden;
   display: flex;
   align-items: center;

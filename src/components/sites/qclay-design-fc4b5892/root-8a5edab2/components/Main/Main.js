@@ -11,8 +11,19 @@ const Main = memo(function Main() {
       <div 
         className="mcode-hero-bg" 
         style={{ 
-          backgroundImage: `url(/sites/qclay-design-fc4b5892/root-8a5edab2/images/main/hero-bg.png)`,
-          backgroundSize: 'cover',
+          backgroundImage: `url(/images/hero-bg.png)`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center top',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Hero second background - right below the hero image (video area) */}
+      <div 
+        className="mcode-hero-bg-2" 
+        style={{ 
+          backgroundImage: `url(/images/hero-bg-2.png)`,
+          backgroundSize: 'contain',
           backgroundPosition: 'center top',
         }}
         aria-hidden="true"

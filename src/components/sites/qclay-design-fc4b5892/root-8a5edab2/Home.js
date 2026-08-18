@@ -4,6 +4,7 @@ import About from "./components/About/About"
 import SkillJourney from "./components/SkillJourney/SkillJourney"
 import WhatCreate from "./components/WhatCreate/WhatCreate"
 import Designers from "./components/Designers/Designers"
+import MeetFounder from "./components/MeetFounder/MeetFounder"
 import Portfolio from "./components/Portfolio/Portfolio"
 import RequestForm from "./components/RequestForm/RequestForm"
 import Startups from "./components/Startups/Startups"
@@ -50,6 +51,7 @@ const Home = () => {
           <About id={screens.ABOUT} />
           <SkillJourney id={screens.SKILLJOURNEY} />
           <WhatCreate id={screens.WHATCREATE} />
+          <MeetFounder id={screens.FOUNDER} />
           <Designers id={screens.DESIGNERS} />
           <Portfolio id={screens.PORTFOLIO} />
           <Startups id={screens.STARTUPS} />

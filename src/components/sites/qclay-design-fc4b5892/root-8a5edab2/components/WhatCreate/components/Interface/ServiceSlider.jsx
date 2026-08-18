@@ -91,7 +91,14 @@ const ServiceSlider = () => {
   useEffect(() => {
     const onCustomWheel = (e) => {
       const wheel = e.detail?.wheel ?? 0
-      const shouldHide = wheel >= window.innerWidth * 2
+      // Hide at ~1.96×winW (just shy of the dashboard frame C = 2×winW): the
+      // renderer's per-frame 4% lerp never QUITE reaches 2×winW (it asymptotes),
+      // so an exact `>= 2×winW` test never fires and the host video stays
+      // stacked over Card 5. 1.96× triggers while the lerp is still converging
+      // (and the skeleton is at full opacity by then, so the handoff to Card 5
+      // is seamless). Wheel-based (not rect-based) so the forward-entry swell —
+      // which also has a small slot rect — is never hidden.
+      const shouldHide = wheel >= window.innerWidth * 1.96
       if (shouldHide === handoffDoneRef.current) { return }
       handoffDoneRef.current = shouldHide
       setHandoffDone(shouldHide)

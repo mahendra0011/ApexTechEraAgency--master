@@ -21,7 +21,7 @@ const Controller = ({ children, duration, externalDelay, externalDuration }) => 
     const [sections, setSections] = useState(null);
     const [active, setActive] = useState(context.active);
     const [activeId, setActiveId] = useState(
-        context.active === 6 && typeof window !== "undefined" && window.innerWidth <= 576 ? screens.REQUESTFORM : undefined
+        context.active === 7 && typeof window !== "undefined" && window.innerWidth <= 576 ? screens.REQUESTFORM : undefined
     );
     const [externalChanging, setExternalChanging] = useState(false);
     const { activeForm, setActiveForm } = useContext(ModalContext);
