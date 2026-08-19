@@ -341,7 +341,7 @@ a { color: inherit; text-decoration: inherit; }
 /* about-bg-end */
 
 /* ================= Our Process / Courses section (Sheryians-style, v1) ================= */
-.courses{position:relative;display:flex;flex-direction:column;align-items:center;background:#FFF3EF;border-radius:24px;color:#000;padding:110px 72px 0;box-sizing:border-box}
+.courses{position:relative;display:flex;flex-direction:column;align-items:center;background:#FFF3EF;border-radius:24px;color:#000;padding:110px 72px 0;box-sizing:border-box;overflow:hidden}
 @media screen and (max-width:1024px){.courses{padding:80px 32px 0}}
 @media screen and (max-width:576px){.courses{padding:56px 16px 0}}
 .courses__pill{position:relative;display:inline-block;font-family:ARP,serif;font-size:1.05rem;letter-spacing:.1em;text-transform:uppercase;font-weight:300;background:rgba(232,96,46,.13);border:.5px solid #E8602E;border-radius:999px;padding:10px 20px}

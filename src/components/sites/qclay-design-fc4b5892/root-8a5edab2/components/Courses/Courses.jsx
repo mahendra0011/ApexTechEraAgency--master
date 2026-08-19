@@ -1,4 +1,4 @@
-import { memo, useRef } from "react";
+import { memo, useRef, useEffect } from "react";
 import { useTransform } from "../../../../../../lib/sites/qclay-design-fc4b5892/Controller/hooks/useTransform/index";
 import { screens } from "../../constants";
 import {
@@ -146,8 +146,19 @@ const Courses = memo(function Courses() {
       onChange: ({ wheel }) => apply(wheel),
       onResize: () => measure(),
     },
-    { id: screens.COURSES }
+    { id: screens.COURSES, parent: sectionRef, target: sectionRef }
   );
+
+  // Safety net: measure() was previously only ever triggered through the
+  // hook's onResize callback, which silently no-ops until parent/target
+  // refs are attached to real DOM nodes. Run it directly once mounted too,
+  // so card layout (offsets, stick points, section height) is correct
+  // before the very first scroll tick instead of only after it.
+  useEffect(() => {
+    measure();
+    const id = setTimeout(measure, 300);
+    return () => clearTimeout(id);
+  }, []);
 
   return (
     <section className="courses" ref={sectionRef}>
