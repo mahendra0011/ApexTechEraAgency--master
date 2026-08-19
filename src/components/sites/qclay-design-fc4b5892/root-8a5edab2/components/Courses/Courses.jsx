@@ -8,8 +8,6 @@ import {
   Code, Bug, ArrowRight,
 } from "lucide-react";
 
-const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
 const CARDS = [
   {
     step: "01",
@@ -101,43 +99,48 @@ const Courses = memo(function Courses() {
     const cards = cardsRef.current.filter(Boolean);
     if (!el || cards.length < 2) { return }
     const vh = window.innerHeight;
-    const S = Math.round(0.55 * vh);
+    if (window.innerWidth <= 680) {
+      cards.forEach((c) => { c.style.marginBottom = ""; c.style.transform = ""; });
+      el.style.height = "auto";
+      return;
+    }
+    const S = Math.round(0.35 * vh);
     cards.forEach((c) => { c.style.marginBottom = `${S}px` });
     const tops = cards.map((c) => c.offsetTop);
     const heights = cards.map((c) => c.offsetHeight);
-    const gap = tops[1] - (tops[0] + heights[0]);
-    const g = gap > 0 ? gap : 24;
-    layoutRef.current = { tops, heights, gap: g, push: Math.round(0.3 * vh), vh };
-    const last = cards[cards.length - 1];
-    el.style.height = `${last.offsetTop - 100 + S + vh}px`;
+
+    const headerEls = [el.querySelector('.courses__pill'), el.querySelector('.courses__title'), el.querySelector('.courses__subtitle')].filter(Boolean);
+    const stackTop = tops[0];
+    const stackStarts = tops.map((N) => Math.max(0, N - stackTop));
+    const releasePoint = stackStarts[stackStarts.length - 1] + vh * 0.3;
+
+    layoutRef.current = { tops, heights, S, vh, stackTop, stackStarts, releasePoint, headerEls };
+    el.style.height = `${releasePoint + vh}px`;
   }
 
   function apply(wheel) {
     if (typeof wheel !== "number") { return }
+    if (window.innerWidth <= 680) { return }
     if (!layoutRef.current) { measure() }
     const L = layoutRef.current;
     if (!L) { return }
-    const n = L.tops.length;
-    const vh = L.vh;
+
+    L.headerEls.forEach((el) => {
+      el.style.transform = `translate3d(0, ${Math.round(wheel)}px, 0)`;
+    });
+
     cardsRef.current.forEach((card, i) => {
       if (!card) { return }
-      const h = L.heights[i];
-      const N = L.tops[i];
-      const stickStart = N - 100;
+      const stackStart = L.stackStarts[i];
+
       let y = 0;
-      if (wheel >= stickStart) {
-        if (i < n - 1) {
-          const pushStart = L.tops[i + 1] - 100;
-          const ramp = clamp((wheel - pushStart) / L.push, 0, 1);
-          y = (wheel - N + 100) - (h + L.gap) * ramp;
-        } else {
-          y = wheel - N + 100;
-        }
+
+      if (wheel >= stackStart) {
+        y = wheel - stackStart;
       }
-      const fadeStart = N - vh;
-      const p = clamp((wheel - fadeStart) / (h * 0.7), 0, 1);
-      card.style.opacity = String(p);
-      card.style.transform = `translate3d(0, ${Math.round(y + (1 - p) * 40)}px, 0) scale(${(0.94 + 0.06 * p).toFixed(3)})`;
+
+      card.style.opacity = "1";
+      card.style.transform = `translate3d(0, ${Math.round(y)}px, 0)`;
     });
   }
 
@@ -157,7 +160,14 @@ const Courses = memo(function Courses() {
   useEffect(() => {
     measure();
     const id = setTimeout(measure, 300);
-    return () => clearTimeout(id);
+    let ready;
+    if (document.fonts && document.fonts.ready) {
+      ready = document.fonts.ready.then(() => setTimeout(measure, 100));
+    }
+    return () => {
+      clearTimeout(id);
+      if (ready) { ready.then(clearTimeout).catch(() => {}) }
+    };
   }, []);
 
   return (
@@ -169,21 +179,12 @@ const Courses = memo(function Courses() {
         <span className="courses__dot courses__dot--bl" />
         <span className="courses__dot courses__dot--br" />
       </h1>
-      <h2 className="courses__subtitle">
-        Not sure where to start? Don&apos;t worry, we&apos;re here to help.
+      <h2 className="courses__title">
+        Not sure where to start?
       </h2>
-      <div className="courses__cta-wrap">
-        <button className="courses__cta" type="button">
-          <span className="courses__cta-layer">
-            <span>Start Your Project</span>
-            <ArrowRight size={18} strokeWidth={2.5} />
-          </span>
-          <span className="courses__cta-layer" aria-hidden="true">
-            <span>Start Your Project</span>
-            <ArrowRight size={18} strokeWidth={2.5} />
-          </span>
-        </button>
-      </div>
+      <p className="courses__subtitle">
+        Don&apos;t worry, we&apos;re here to help.
+      </p>
 
       {CARDS.map((card, i) => {
         const Visual = card.visual;
@@ -192,17 +193,18 @@ const Courses = memo(function Courses() {
             key={card.step}
             ref={(el) => { cardsRef.current[i] = el }}
             className={`courses__card${card.dark ? " courses__card--dark" : ""}`}
+            style={{ zIndex: i + 1 }}
           >
             <div className="courses__card-inner">
               <div className="courses__card-media">
-                <Visual size={104} strokeWidth={1.4} />
+                <Visual size={84} strokeWidth={1.4} />
               </div>
               <div className="courses__card-text">
                 <div className="courses__step">
                   <span>Step</span>
                   <strong>{card.step}</strong>
                 </div>
-                <h3 className="courses__title">{card.title}</h3>
+                <h3 className="courses__card-title">{card.title}</h3>
                 <p className="courses__desc">{card.desc}</p>
                 <div className="courses__stats">
                   {card.stats.map((s, j) => {
@@ -210,7 +212,7 @@ const Courses = memo(function Courses() {
                     return (
                       <div className="courses__stat" key={j}>
                         <div className="courses__stat-icon">
-                          <StatIcon size={20} strokeWidth={2} />
+                          <StatIcon size={20} strokeWidth={1.8} />
                         </div>
                         <div className="courses__stat-text">
                           <strong>{s.value}</strong>
