@@ -19,8 +19,13 @@ const SLIDER_ORDER = [
 
 // Accumulated scroll delta needed at sequence boundaries (0 or 6) to exit fullscreen
 const NAV_WHEEL_DISTANCE = 350
-// Silence duration between wheel bursts before allowing the next slide switch
-const NAV_GESTURE_IDLE_MS = 180
+// Silence duration between wheel bursts before allowing the next slide switch.
+// Small enough to stay responsive for trackpads (a trackpad swipe streams
+// events ~16ms apart, and rapid consecutive swipes land ~150-300ms apart), yet
+// large enough that the ~50ms event burst of a single mouse-wheel notch counts
+// as ONE gesture. Result: 1 mouse scroll = 1 video, and 1 trackpad swipe = 1
+// video, while still allowing deliberate fast swipes to advance several videos.
+const NAV_GESTURE_IDLE_MS = 150
 // How much of the viewport the swelled video slot must cover before the
 // sequence locks. The site's OWN timeline performs the entire entry: the
 // interface container scales 1 -> ~9x across the first viewport width of
@@ -149,7 +154,12 @@ const ServiceSlider = () => {
           navConsumedRef.current = false
         }
 
-        if (now - navLastEventRef.current > NAV_GESTURE_IDLE_MS || !sliderRef.current?.isAnimating()) {
+        // Reset the "consumed" flag ONLY after a real idle gap since the last
+        // wheel event. Deliberately NOT reset on !isAnimating(): the GSAP sweep
+        // (0.8s) can finish while the same physical wheel burst is still
+        // emitting events, and resetting then would let one scroll fire the
+        // next switch too (a 1-scroll -> multiple-videos jump).
+        if (now - navLastEventRef.current > NAV_GESTURE_IDLE_MS) {
           navConsumedRef.current = false
         }
         navLastEventRef.current = now

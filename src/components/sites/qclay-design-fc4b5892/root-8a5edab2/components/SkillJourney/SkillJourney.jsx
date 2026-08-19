@@ -10,24 +10,30 @@ const lerp = (a, b, t) => a + (b - a) * t;
 
 const skillPillars = [
   {
-    title: "Foundations",
-    desc: "Think and reason like an engineer, not just write syntax.",
-    imgUrl: `${IMG}/Group_2085662401.png`,
+    title: "Web Development",
+    desc: "Scalable websites and powerful web apps.",
+    imgUrl: `${IMG}/webdev.png`,
   },
   {
-    title: "Full Stack Dev",
-    desc: "Ship real, deployed products end to end.",
-    imgUrl: `${IMG}/Group_2085662403.png`,
+    title: "Software Development",
+    desc: "Custom software engineered for your unique needs.",
+    imgUrl: `${IMG}/software.png`,
+    imgClass: "scale-[0.85]",
   },
   {
-    title: "AI Engineering",
-    desc: "Build with LLMs, not just talk about them.",
-    imgUrl: `${IMG}/Group_2085662404.png`,
+    title: "Mobile App Development",
+    desc: "Native-quality Android & iOS experiences.",
+    imgUrl: `${IMG}/android.png`,
   },
   {
-    title: "Placement Prep",
-    desc: "Mock interviews, resume, and referrals until you land it.",
-    imgUrl: `${IMG}/Group_2085662393.png`,
+    title: "UI/UX Design",
+    desc: "Beautiful interfaces. Seamless experiences.",
+    imgUrl: `${IMG}/uiux.png`,
+  },
+  {
+    title: "AI & ML Development",
+    desc: "Intelligent solutions powered by AI and machine learning.",
+    imgUrl: `${IMG}/ai.png`,
   },
 ];
 
@@ -105,13 +111,13 @@ const SkillJourney = memo(function SkillJourney() {
         glowRef.current.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
       }
 
-      // Progress line: [0, 0.63, 0.9, 1] -> [0%, 0%, 75%, 75%]
+      // Progress line: [0, 0.63, 0.9, 1] -> [0%, 0%, 80%, 80%]
       let progressWidth = 0;
       if (p > 0.63) {
         if (p <= 0.9) {
-          progressWidth = ((p - 0.63) / 0.27) * 75;
+          progressWidth = ((p - 0.63) / 0.27) * 80;
         } else {
-          progressWidth = 75;
+          progressWidth = 80;
         }
       }
 
@@ -131,19 +137,20 @@ const SkillJourney = memo(function SkillJourney() {
     <section
       ref={parent}
       id="skill-journey"
-      className="skill-journey-section relative w-full h-[300vh] bg-black select-none z-10"
+      className="skill-journey-section relative w-full h-[300vh] bg-gradient-to-b from-[#0c0c16] via-[#180b2e] to-[#07070f] select-none z-10"
     >
       <div
         ref={target}
-        className="skill-journey-sticky relative w-full h-screen bg-black overflow-hidden flex flex-col justify-between py-12 md:py-16 will-change-transform select-none"
+        className="skill-journey-sticky relative w-full h-screen bg-gradient-to-b from-[#0c0c16] via-[#180b2e] to-[#07070f] overflow-hidden flex flex-col justify-between pt-12 md:pt-16 pb-6 md:pb-10 will-change-transform select-none"
+        style={{ paddingTop: "4rem", paddingBottom: "1.5rem" }}
       >
-        <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] max-w-[600px] max-h-[600px] rounded-full bg-purple-900/15 blur-[100px] pointer-events-none -z-10" />
+        <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] max-w-[600px] max-h-[600px] rounded-full bg-purple-700/25 blur-[100px] pointer-events-none -z-10" />
 
         <h2 className="font-clash text-2xl md:text-5xl font-semibold z-10 text-white text-center flex flex-col gap-0 md:gap-2">
-          <span>One Journey. Every Skill That Matters.</span>
+          <span>One Partner. Every Digital Solution.</span>
         </h2>
 
-        <div className="relative w-full flex-grow h-[45vh] md:h-[50vh] mt-12 md:mt-24 flex items-center justify-center pointer-events-none">
+        <div className="relative w-full flex-grow h-[45vh] md:h-[50vh] mt-20 md:mt-32 flex items-center justify-center pointer-events-none" style={{ marginTop: "7rem" }}>
           <div
             ref={handLeftRef}
             className="absolute right-1/2 top-1/2 w-[60vw] md:w-[60vw] z-11 aspect-[16/9] will-change-transform pointer-events-none"
@@ -190,26 +197,25 @@ const SkillJourney = memo(function SkillJourney() {
 
         <div className="w-full hidden min-[380px]:block max-w-[1100px] mx-auto px-4 md:px-12 z-20">
           <div className="relative flex justify-between items-start w-full">
-            <div className="absolute left-[12.5%] right-[12.5%] top-8 md:top-10 h-[2px] bg-neutral-800 -z-10" />
+            <div className="absolute left-[10%] right-[10%] top-8 md:top-10 h-[2px] bg-neutral-800 -z-10" />
             <div
               ref={progressRef}
-              className="absolute left-[12.5%] top-8 md:top-10 h-[2px] bg-[#7200FF] shadow-[0_0_10px_#7200FF] -z-10"
+              className="absolute left-[10%] top-8 md:top-10 h-[2px] bg-[#7200FF] shadow-[0_0_10px_#7200FF] -z-10"
               style={{ width: "0%" }}
             />
             {skillPillars.map((pillar) => (
               <div
                 key={pillar.title}
-                className="flex flex-col items-center text-center w-1/4 px-1 md:px-3"
+                className="flex flex-col items-center text-center w-1/5 px-1 md:px-2"
               >
-                <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden flex items-center justify-center transition-all duration-500 cursor-pointer">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0" />
+                <div className="relative w-24 h-24 md:w-28 md:h-28 flex items-center justify-center transition-all duration-500 cursor-pointer">
                   <img
                     src={pillar.imgUrl}
-                    className="w-full h-full object-contain scale-[1.3] transition-all duration-500"
+                    className={`w-full h-full object-cover transition-all duration-500 ${pillar.imgClass || ""}`}
                     alt={pillar.title}
                   />
                 </div>
-                <h3 className="mt-4 font-clash text-xs md:text-2xl font-semibold text-white">
+                <h3 className="mt-4 font-clash text-xs md:text-xl font-semibold text-white">
                   {pillar.title}
                 </h3>
                 <p className="hidden md:block mt-2 font-helvetica text-[0.85rem] text-neutral-400 leading-relaxed max-w-[180px]">

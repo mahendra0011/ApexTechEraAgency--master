@@ -26,9 +26,11 @@ import gsap from 'gsap'
  * and z-index change, so videos never reload or flash on switch.
  */
 
-// One gesture = one switch. The sweep itself is a fixed 1.2s power4.inOut —
+// One gesture = one switch. The sweep itself is a fixed 0.5s power4.inOut —
 // no wheel-progress tracking, so a switch can never be left half-finished.
-const SLIDE_DURATION = 1.2
+// A swipe arriving mid-sweep is QUEUED (never dropped), so fast trackpad
+// swipes still advance one video each, sequentially.
+const SLIDE_DURATION = 0.5
 
 const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
   { items, startIndex = 0, onIndexChange, initialTime = 0 },
@@ -39,6 +41,10 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
   // handler never read a stale closure.
   const currentIndexRef = useRef(startIndex)
   const isAnimatingRef = useRef(false)
+  // One pending switch (latest wins): a gesture arriving while the sweep is
+  // still running is queued here instead of being dropped, so rapid trackpad
+  // swipes still advance exactly one video each — just sequentially.
+  const pendingRef = useRef(null)
   const [index, setIndex] = useState(startIndex)
 
   const onIndexChangeRef = useRef(onIndexChange)
@@ -47,6 +53,7 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
   // Initial position setup + cleanup. Runs whenever startIndex changes or slider mounts
   useEffect(() => {
     currentIndexRef.current = startIndex
+    pendingRef.current = null
     setIndex(startIndex)
     const els = slidesRef.current.filter(Boolean)
     gsap.set(els, { xPercent: 100, zIndex: 0 })
@@ -65,13 +72,36 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startIndex])
 
+  // Eagerly start EVERY video on mount so the first switch never shows a
+  // black (unloaded / paused) frame. Muted autoplay is allowed, and calling
+  // play() also kicks off data loading for the offscreen slides.
+  useEffect(() => {
+    slidesRef.current.filter(Boolean).forEach((el) => {
+      const p = el.play()
+      if (p && p.catch) { p.catch(() => {}) }
+    })
+  }, [])
+
   const gotoSlide = (nextIndex, direction) => {
-    if (isAnimatingRef.current) { return }
     if (nextIndex < 0 || nextIndex >= items.length) { return }
+
+    // Sweep already running: queue this switch (latest wins) so the gesture
+    // is never lost — it plays immediately after the current sweep commits.
+    if (isAnimatingRef.current) {
+      pendingRef.current = { index: nextIndex, direction }
+      return
+    }
 
     const currentSlide = slidesRef.current[currentIndexRef.current]
     const nextSlide = slidesRef.current[nextIndex]
     if (!currentSlide || !nextSlide) { return }
+
+    // Resume both videos so the incoming slide is never a black/paused frame
+    // as it sweeps in (autoplay can be suspended by the browser for videos
+    // sitting offscreen or in a display:none ancestor).
+    const resume = (el) => { if (el && el.paused) { const p = el.play(); if (p && p.catch) { p.catch(() => {}) } } }
+    resume(currentSlide)
+    resume(nextSlide)
 
     isAnimatingRef.current = true
 
@@ -84,21 +114,29 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
         setIndex(nextIndex)
         onIndexChangeRef.current?.(nextIndex)
         isAnimatingRef.current = false
+        const pending = pendingRef.current
+        if (pending) {
+          pendingRef.current = null
+          gotoSlide(pending.index, pending.direction)
+        }
       }
     })
 
     if (direction === 1) {
-      // Forward: current slide pushed to background (-50%), incoming sweeps from right (100% -> 0)
+      // Forward: current slide pushed fully out to the left (-100%), incoming
+      // sweeps from right (100% -> 0). Outgoing goes all the way off so the
+      // previous video never lingers half-visible as a "stuck" frame.
       gsap.set(currentSlide, { zIndex: 1 })
       gsap.set(nextSlide, { zIndex: 2 })
-      const incomingDuration = currentIndexRef.current === 0 ? 0.7 : SLIDE_DURATION
-      tl.to(currentSlide, { xPercent: -50, duration: SLIDE_DURATION, ease: 'power4.inOut' }, 0)
+      const incomingDuration = currentIndexRef.current === 0 ? 0.6 : SLIDE_DURATION
+      tl.to(currentSlide, { xPercent: -100, duration: SLIDE_DURATION, ease: 'power4.inOut' }, 0)
         .fromTo(nextSlide, { xPercent: 100 }, { xPercent: 0, duration: incomingDuration, ease: 'power4.inOut' }, 0)
     } else {
-      // Backward: current slide pushed to background (+50%), incoming sweeps from left (-100% -> 0)
+      // Backward: current slide pushed fully out to the right (+100%), incoming
+      // sweeps from left (-100% -> 0).
       gsap.set(currentSlide, { zIndex: 1 })
       gsap.set(nextSlide, { zIndex: 2 })
-      tl.to(currentSlide, { xPercent: 50, duration: SLIDE_DURATION, ease: 'power4.inOut' }, 0)
+      tl.to(currentSlide, { xPercent: 100, duration: SLIDE_DURATION, ease: 'power4.inOut' }, 0)
         .fromTo(nextSlide, { xPercent: -100 }, { xPercent: 0, duration: SLIDE_DURATION, ease: 'power4.inOut' }, 0)
     }
   }

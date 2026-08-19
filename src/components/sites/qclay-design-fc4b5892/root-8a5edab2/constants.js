@@ -6,6 +6,7 @@ export const screens = {
     WHATCREATE: 'whatcreate',
     DESIGNERS: 'designers',
     FOUNDER: 'founder',
+    COURSES: 'courses',
     PORTFOLIO: 'portfolio',
     FOLLOWED: 'followed',
     STARTUPS: 'startups',

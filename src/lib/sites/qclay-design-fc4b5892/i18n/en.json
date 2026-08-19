@@ -117,25 +117,25 @@
       "cards": [
         {
           "id": "1-about",
-          "color": "#F7F4F4",
+          "color": "#E8D5D3",
           "title": "We build digital products",
           "text": "Websites, mobile apps, AI/ML solutions, and custom software designed to solve real problems and create real business value."
         },
         {
           "id": "2-about",
-          "color": "#EFFBF9",
+          "color": "#C8EAE3",
           "title": "We build with your team",
           "text": "We collaborate with freelancers, agencies, startups, and companies to bring projects to life — as your technology partner or an extension of your team."
         },
         {
           "id": "3-about",
-          "color": "#F2EDF4",
+          "color": "#D9CEE1",
           "title": "We turn ideas into products",
           "text": "From first concept to launch, we combine strategy, design, and engineering to transform ideas into scalable digital experiences."
         },
         {
           "id": "4-about",
-          "color": "#F4F7ED",
+          "color": "#E3E8C4",
           "title": "We think beyond launch",
           "text": "We build with scalability, performance, and long-term growth in mind — so your product is ready for what's next."
         }

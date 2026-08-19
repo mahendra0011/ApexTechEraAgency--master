@@ -37,7 +37,10 @@ export const scroll = {
     calcWheelTo() {
         const ref = this.getInnerRef(context.sections)
         if (!ref) { return }
-        context.wheelTo = getScrollCoordsFromElement(ref).windowTop.fromTop + context.wheel / this.intensity
+        // courses (process) section: slower wheel-to-scroll ratio so the
+        // sticky card deck reads clearly instead of racing past on one flick
+        const intensity = context.ids && context.ids[context.active] === 'courses' ? 0.4 : this.intensity
+        context.wheelTo = getScrollCoordsFromElement(ref).windowTop.fromTop + context.wheel / intensity
     },
 
     resetWheelTo() {

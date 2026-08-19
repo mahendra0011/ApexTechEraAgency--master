@@ -35,7 +35,7 @@ const Header = () => {
 
   return (
     <div className="header__container">
-      <header className={`header ${isMenuShow ? "-show-menu" : ""}`}>
+      <header className={`header ${isMenuShow ? "-show-menu" : ""}`} style={{ paddingTop: "1.5rem" }}>
         <Icon 
           onClick={() => routeToScreenAndHideMenu('#home')} 
           className="header__logo" 
