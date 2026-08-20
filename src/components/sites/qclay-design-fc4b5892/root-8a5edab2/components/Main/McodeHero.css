@@ -13,9 +13,9 @@
   box-sizing: border-box;
 }
 
-/* Height covers both hero background images fully (1st 1717x916 + 2nd 1535x817) */
+/* Height covers the hero background image fully (1717x916) */
 .mcode-hero-root {
-  min-height: calc(100vw * 916 / 1717 + 100vw * 817 / 1535);
+  min-height: calc(100vw * 916 / 1717);
 }
 
 /* Background */
@@ -30,20 +30,6 @@
   pointer-events: none;
   z-index: 0;
   opacity: 1;
-}
-
-/* Second hero background - sits right below the hero image (1535x817 ratio) */
-.mcode-hero-bg-2 {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: calc(100vw * 916 / 1717);
-  background-size: contain;
-  background-position: center top;
-  background-repeat: no-repeat;
-  pointer-events: none;
-  z-index: 0;
 }
 
 /* Container */

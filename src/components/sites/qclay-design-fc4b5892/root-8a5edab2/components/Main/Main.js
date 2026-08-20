@@ -18,17 +18,6 @@ const Main = memo(function Main() {
         aria-hidden="true"
       />
 
-      {/* Hero second background - right below the hero image (video area) */}
-      <div 
-        className="mcode-hero-bg-2" 
-        style={{ 
-          backgroundImage: `url(/images/hero-bg-2.png)`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center top',
-        }}
-        aria-hidden="true"
-      />
-
       <div className="mcode-hero-container">
         {/* Top Badge */}
         <div className="mcode-badge">
@@ -65,33 +54,6 @@ const Main = memo(function Main() {
           <a href="#portfolio" className="mcode-btn-secondary">
             <span>View Our Work</span>
           </a>
-        </div>
-
-        {/* Video Window Preview */}
-        <div className="mcode-terminal-wrapper">
-          <div className="mcode-terminal-window">
-            {/* Window Header */}
-            <div className="mcode-terminal-header">
-              <div className="mcode-traffic-lights">
-                <span className="traffic-dot dot-red" />
-                <span className="traffic-dot dot-yellow" />
-                <span className="traffic-dot dot-green" />
-              </div>
-              <div className="mcode-terminal-title">Tech-agency — showcase</div>
-            </div>
-
-            {/* Video Player Body */}
-            <div className="mcode-terminal-video-wrap">
-              <video
-                src="/sites/qclay-design-fc4b5892/root-8a5edab2/video/tech-agency-logo.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="mcode-terminal-video"
-              />
-            </div>
-          </div>
         </div>
       </div>
     </div>

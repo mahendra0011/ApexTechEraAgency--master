@@ -403,3 +403,42 @@ a { color: inherit; text-decoration: inherit; }
 .courses__card--dark .courses__btn .courses__btn-layer{color:#000}
 .courses__card--dark .courses__btn:hover{background:#EDEDED}
 /* courses-end */
+/* ================= Cosmos hero section (cosmos.studio clone) ================= */
+@font-face {
+  font-family: "Dimensions";
+  src: url("/sites/www.cosmos.studio-e7b86841/root-8a5edab2/images/Dimensions-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Gridular";
+  src: url("/sites/www.cosmos.studio-e7b86841/root-8a5edab2/images/Gridular-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RMNeue";
+  src: url("/sites/www.cosmos.studio-e7b86841/root-8a5edab2/images/RMNeue-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Telegraf";
+  src: url("/sites/www.cosmos.studio-e7b86841/root-8a5edab2/images/PPTelegraf-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+.section-cosmos {
+  background: url("/sites/www.cosmos.studio-e7b86841/root-8a5edab2/images/section-bg.png") center / cover no-repeat #f8fafc;
+  --foreground: #09090b;
+  --muted: #6b7280;
+  font-family: "PP Telegraf", "Plus Jakarta Sans", sans-serif;
+}
+.section-cosmos .section-inner {
+  background: transparent;
+}
+/* cosmos-end */

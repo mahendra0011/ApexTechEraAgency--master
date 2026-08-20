@@ -1,5 +1,6 @@
 import Header from "../shared/Header/Header"
 import Main from "./components/Main/Main"
+import { HeroSection } from "../../www.cosmos.studio-e7b86841/root-8a5edab2/HeroSection"
 import About from "./components/About/About"
 import SkillJourney from "./components/SkillJourney/SkillJourney"
 import WhatCreate from "./components/WhatCreate/WhatCreate"
@@ -49,6 +50,7 @@ const Home = () => {
         <Header/>
         <Sections>
           <Main id={screens.MAIN} />
+          <HeroSection id={screens.COSMOS} />
           <About id={screens.ABOUT} />
           <SkillJourney id={screens.SKILLJOURNEY} />
           <WhatCreate id={screens.WHATCREATE} />

@@ -39,7 +39,8 @@ const Sections = ({ children }) => {
                     className={cn(
                         "section", 
                         state.className(active, index),
-                        (child.props?.id === "designers" || child.props?.id === "founder") && "section-black"
+                        (child.props?.id === "designers" || child.props?.id === "founder") && "section-black",
+                        child.props?.id === "cosmos" && "section-cosmos"
                     )}
                 >
                     <div className={scroll.class}>
