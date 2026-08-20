@@ -40,6 +40,7 @@ const skillPillars = [
 const SkillJourney = memo(function SkillJourney() {
   const handLeftRef = useRef(null);
   const handRightRef = useRef(null);
+  const handsJoinedRef = useRef(null);
   const glowRef = useRef(null);
   const progressRef = useRef(null);
 
@@ -73,49 +74,66 @@ const SkillJourney = memo(function SkillJourney() {
 
       const p = currentProgressRef.current;
 
-      // Sheryians exact formulas:
-      // Left hand: [0, 0.9, 1] -> [-55vw, 5vw, 5vw]
+      // Transition ranges:
+      // Movement phase: p: 0 -> 0.20 (hands glide in from sides to center)
+      // Meeting & Crossfade phase: p: 0.20 -> 0.30 (individual hands fade out, joined image reveals)
+      // Crossfade logic
       let leftX;
-      if (p <= 0.9) {
-        leftX = -55 + (p / 0.9) * 60;
+      let rightX;
+      if (p <= 0.20) {
+        // Move from -40vw to 0vw
+        leftX = -40 + (p / 0.20) * 40;
+        // Move from +40vw to 0vw
+        rightX = 40 - (p / 0.20) * 40;
       } else {
-        leftX = 5;
+        leftX = 0;
+        rightX = 0;
       }
 
-      // Right hand: [0, 0.9, 1] -> [55vw, -5vw, -5vw]
-      let rightX;
-      if (p <= 0.9) {
-        rightX = 55 - (p / 0.9) * 60;
+      let individualOpacity = 1;
+      let joinedOpacity = 0;
+
+      // Hard switch exactly when they meet (at p = 0.20)
+      if (p <= 0.20) {
+        individualOpacity = 1;
+        joinedOpacity = 0;
       } else {
-        rightX = -5;
+        individualOpacity = 0;
+        joinedOpacity = 1;
       }
 
       if (handLeftRef.current) {
-        handLeftRef.current.style.transform = `translateX(${leftX}vw) translateY(-50%)`;
+        handLeftRef.current.style.transform = `translate(calc(-50% + ${leftX}vw), -60%)`;
+        handLeftRef.current.style.opacity = String(individualOpacity);
       }
       if (handRightRef.current) {
-        handRightRef.current.style.transform = `translateX(${rightX}vw) translateY(-50%)`;
+        handRightRef.current.style.transform = `translate(calc(-50% + ${rightX}vw), -60%)`;
+        handRightRef.current.style.opacity = String(individualOpacity);
+      }
+      if (handsJoinedRef.current) {
+        handsJoinedRef.current.style.transform = `translate(-50%, -60%)`;
+        handsJoinedRef.current.style.opacity = String(joinedOpacity);
       }
 
-      // Glow scale & opacity: [0, 0.82, 1] -> [0.1, 0.1, 1.2] & [0, 0, 0.95]
+      // Glow scale & opacity: expands at touch point
       let glowScale = 0.1;
       let glowOpacity = 0;
-      if (p > 0.82) {
-        const glowFactor = clamp((p - 0.82) / 0.18, 0, 1);
-        glowScale = 0.1 + glowFactor * 1.1;
-        glowOpacity = glowFactor * 0.95;
+      if (p > 0.15) {
+        const glowFactor = clamp((p - 0.15) / 0.26, 0, 1);
+        glowScale = 0.2 + glowFactor * 1.5;
+        glowOpacity = glowFactor * 1;
       }
 
       if (glowRef.current) {
         glowRef.current.style.opacity = String(glowOpacity);
-        glowRef.current.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
+        glowRef.current.style.transform = `translate(-50%, -60%) scale(${glowScale})`;
       }
 
-      // Progress line: [0, 0.63, 0.9, 1] -> [0%, 0%, 80%, 80%]
+      // Progress line: [0, 0.20, 0.8, 1] -> [0%, 0%, 80%, 80%]
       let progressWidth = 0;
-      if (p > 0.63) {
-        if (p <= 0.9) {
-          progressWidth = ((p - 0.63) / 0.27) * 80;
+      if (p > 0.20) {
+        if (p <= 0.8) {
+          progressWidth = ((p - 0.20) / 0.60) * 80;
         } else {
           progressWidth = 80;
         }
@@ -146,51 +164,68 @@ const SkillJourney = memo(function SkillJourney() {
       >
         <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] max-w-[600px] max-h-[600px] rounded-full bg-purple-700/25 blur-[100px] pointer-events-none -z-10" />
 
-        <h2 className="font-clash text-2xl md:text-5xl font-semibold z-10 text-white text-center flex flex-col gap-0 md:gap-2">
+        <h2 className="font-clash text-2xl md:text-5xl font-semibold z-10 text-white text-center flex flex-col gap-0 md:gap-2 relative z-20">
           <span>One Partner. Every Digital Solution.</span>
         </h2>
 
-        <div className="relative w-full flex-grow h-[45vh] md:h-[50vh] mt-20 md:mt-32 flex items-center justify-center pointer-events-none" style={{ marginTop: "7rem" }}>
+        <div className="relative w-full flex-grow h-[45vh] md:h-[50vh] mt-4 md:mt-8 flex items-center justify-center pointer-events-none">
+          {/* Left Hand */}
           <div
             ref={handLeftRef}
-            className="absolute right-1/2 top-1/2 w-[60vw] md:w-[60vw] z-11 aspect-[16/9] will-change-transform pointer-events-none"
-            style={{ transform: "translateX(-55vw) translateY(-50%)" }}
+            className="absolute left-1/2 top-1/2 w-[110vw] md:w-[105vw] max-w-[2000px] aspect-[1672/941] flex items-center justify-center z-[15] will-change-transform pointer-events-none"
+            style={{ transform: "translate(-50%, -60%)", opacity: 1 }}
           >
             <img
-              src={`${IMG}/hand_left_clean.png`}
-              alt="Human Hand"
-              className="w-full h-full object-contain"
-              style={{ mixBlendMode: "screen" }}
+              src={`${IMG}/left_hand_new.png`}
+              alt="Left Hand"
+              className="w-full h-auto object-contain"
+              style={{ transform: "scale(1.12) translate(-1%, -8%)" }}
             />
           </div>
+
+          {/* Right Hand */}
           <div
             ref={handRightRef}
-            className="absolute left-1/2 top-1/2 w-[60vw] md:w-[60vw] z-11 aspect-[16/9] will-change-transform pointer-events-none"
-            style={{ transform: "translateX(55vw) translateY(-50%)" }}
+            className="absolute left-1/2 top-1/2 w-[110vw] md:w-[105vw] max-w-[2000px] aspect-[1672/941] flex items-center justify-center z-[10] will-change-transform pointer-events-none"
+            style={{ transform: "translate(-50%, -60%)", opacity: 1 }}
           >
             <img
-              src={`${IMG}/robo_hand_clean.png`}
-              alt="Robot Hand"
-              className="w-full h-full object-contain"
-              style={{ mixBlendMode: "screen" }}
+              src={`${IMG}/right_hand_new.png`}
+              alt="Right Hand"
+              className="w-full h-auto object-contain"
+              style={{ transform: "scale(1.12) translate(1%, -8%)" }}
             />
           </div>
+
+          {/* Joined Hands (shows when they meet) */}
+          <div
+            ref={handsJoinedRef}
+            className="absolute left-1/2 top-1/2 w-[110vw] md:w-[105vw] max-w-[2000px] aspect-[1672/941] flex items-center justify-center z-[20] will-change-transform pointer-events-none"
+            style={{ transform: "translate(-50%, -60%)", opacity: 0 }}
+          >
+            <img
+              src={`${IMG}/hands_joined_new.png`}
+              alt="One Partner Solution"
+              className="w-full h-auto object-contain drop-shadow-[0_0_35px_rgba(168,85,247,0.35)]"
+            />
+          </div>
+
+          {/* Spark Glow */}
           <div
             ref={glowRef}
-            className="absolute md:w-[200px] md:h-[200px] w-[100px] h-[100px] left-1/2 top-[20%] sm:top-[15%] md:top-[20%] lg:top-[25%] xl:top-[3%] pointer-events-none z-20 will-change-transform"
+            className="absolute md:w-[220px] md:h-[220px] w-[120px] h-[120px] left-1/2 top-1/2 pointer-events-none z-20 will-change-transform"
             style={{
               opacity: 0,
               transform: "translate(-50%, -50%) scale(0.1)",
               background: `radial-gradient(
                 circle,
-                rgba(255, 184, 140, 0.95) 0%,
-                rgba(255, 184, 140, 0.75) 12%,
-                rgba(196, 88, 255, 0.75) 35%,
-                rgba(135, 40, 255, 0.45) 58%,
-                rgba(85, 0, 160, 0.18) 78%,
+                rgba(255, 235, 200, 0.95) 0%,
+                rgba(235, 130, 255, 0.8) 25%,
+                rgba(147, 51, 234, 0.55) 50%,
+                rgba(79, 70, 229, 0.2) 75%,
                 transparent 100%
               )`,
-              filter: "blur(24px)",
+              filter: "blur(20px)",
             }}
           />
         </div>
