@@ -6,6 +6,7 @@ import SkillJourney from "./components/SkillJourney/SkillJourney"
 import WhatCreate from "./components/WhatCreate/WhatCreate"
 import TechReelGallery from "./components/TechReelGallery/TechReelGallery"
 import TechStackBreakdown from "./components/TechStackBreakdown/TechStackBreakdown"
+import AISection from "./components/AISection/AISection"
 import Designers from "./components/Designers/Designers"
 import MeetFounder from "./components/MeetFounder/MeetFounder"
 import FocusSection from "./components/FocusSection/FocusSection"
@@ -65,6 +66,7 @@ const Home = () => {
           <WhatCreate id={screens.WHATCREATE} />
           <TechReelGallery />
           <TechStackBreakdown id={screens.TECHBREAKDOWN} />
+          <AISection id="ai-section" />
           <MeetFounder id={screens.FOUNDER} />
           <FocusSection id={screens.FOCUS} />
           <DesignTypes id={screens.DESIGNTYPES} />
