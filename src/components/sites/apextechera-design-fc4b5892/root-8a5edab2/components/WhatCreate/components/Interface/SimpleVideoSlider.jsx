@@ -4,13 +4,18 @@ import gsap from 'gsap'
 const SLIDE_DURATION = 0.7
 
 const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
-  { items, startIndex = 0, onIndexChange, initialTime = 0 },
+  { items, startIndex = 0, onIndexChange, onClose, initialTime = 0 },
   ref
 ) {
   const slidesRef = useRef([])
   const currentIndexRef = useRef(startIndex)
   const isAnimatingRef = useRef(false)
   const [index, setIndex] = useState(startIndex)
+
+  // Touch gesture state for mobile swiping
+  const touchStartXRef = useRef(0)
+  const touchStartYRef = useRef(0)
+  const touchStartTimeRef = useRef(0)
 
   const onIndexChangeRef = useRef(onIndexChange)
   useEffect(() => { onIndexChangeRef.current = onIndexChange }, [onIndexChange])
@@ -116,6 +121,44 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
     })
   }
 
+  // Mobile Touch Swipe Handling
+  const handleTouchStart = (e) => {
+    if (!e.touches || e.touches.length !== 1) return
+    touchStartXRef.current = e.touches[0].clientX
+    touchStartYRef.current = e.touches[0].clientY
+    touchStartTimeRef.current = Date.now()
+  }
+
+  const handleTouchEnd = (e) => {
+    if (!e.changedTouches || e.changedTouches.length !== 1) return
+    const touchEndX = e.changedTouches[0].clientX
+    const touchEndY = e.changedTouches[0].clientY
+    const diffX = touchEndX - touchStartXRef.current
+    const diffY = touchEndY - touchStartYRef.current
+    const diffTime = Date.now() - touchStartTimeRef.current
+
+    // Quick swipe or drag distance threshold
+    const minSwipeDist = 35
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > minSwipeDist) {
+      if (diffX < 0) {
+        // Swiped Left -> Go Next Slide
+        if (currentIndexRef.current < items.length - 1) {
+          gotoSlide(currentIndexRef.current + 1, 1)
+        }
+      } else {
+        // Swiped Right -> Go Previous Slide
+        if (currentIndexRef.current > 0) {
+          gotoSlide(currentIndexRef.current - 1, -1)
+        }
+      }
+    } else if (Math.abs(diffY) > 70 && Math.abs(diffY) > Math.abs(diffX)) {
+      // Large vertical swipe down to dismiss/exit on mobile
+      if (diffY > 0 && typeof onClose === 'function') {
+        onClose()
+      }
+    }
+  }
+
   useImperativeHandle(ref, () => ({
     next: () => {
       if (currentIndexRef.current < items.length - 1) {
@@ -139,7 +182,11 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
   }))
 
   return (
-    <div className="apex-simple-slider">
+    <div 
+      className="apex-simple-slider"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {items.map((item, i) => (
         <video
           key={item.video}
@@ -154,6 +201,26 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
           <source src={item.video} type="video/mp4" />
         </video>
       ))}
+
+      {/* Top Right Close Button for Mobile & Desktop */}
+      {onClose && (
+        <button
+          type="button"
+          className="apex-simple-slider__close-btn"
+          onClick={onClose}
+          aria-label="Close fullscreen slider"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      )}
+
+      {/* Top Mobile Slide Counter Pill */}
+      <div className="apex-simple-slider__counter">
+        <span>{index + 1}</span> / <span>{items.length}</span>
+      </div>
 
       {/* Prev / Next Clickable Navigation Arrows */}
       {index > 0 && (

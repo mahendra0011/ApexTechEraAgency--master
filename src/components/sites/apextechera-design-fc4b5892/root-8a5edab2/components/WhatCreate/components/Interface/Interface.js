@@ -1,7 +1,8 @@
 import { useRef } from 'react'
 
 import Animate from "./Animate"
-import ServiceSlider from "./ServiceSlider"
+import ServiceSlider, { SLIDER_ORDER } from "./ServiceSlider"
+import SimpleVideoSlider from "./SimpleVideoSlider"
 import './ApexDashboard.css'
 
 const Interface = ({ parent, parentRefs }) => {
@@ -415,7 +416,7 @@ const Interface = ({ parent, parentRefs }) => {
                                 </div>
 
                                 {/* Mobile Stage 3 Phone Screen Overlay */}
-                                <div ref={interfaceStage3} className='interface__stage-3' style={{ pointerEvents: 'none' }}>
+                                <div ref={interfaceStage3} className='interface__stage-3'>
                                     <div className='apex-phone-notch-bar'>
                                         <div className='apex-phone-notch-pill'></div>
                                     </div>
@@ -430,8 +431,11 @@ const Interface = ({ parent, parentRefs }) => {
                                                 />
                                                 <span className='apex-mheader-text'>ApexTechEra</span>
                                             </div>
-                                            <span className='apex-mheader-badge'>Mobile</span>
+                                            <span className='apex-mheader-badge'>Services</span>
                                         </div>
+                                    </div>
+                                    <div className='apex-phone-slider-container'>
+                                        <SimpleVideoSlider items={SLIDER_ORDER} />
                                     </div>
                                 </div>
 
