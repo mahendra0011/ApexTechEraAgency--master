@@ -93,21 +93,21 @@ const STACK_ITEMS = [
   {
     id: "ai-ml",
     step: "05",
-    pill: "05 — AI & Machine Learning",
+    pill: "05 — AI Models, Agents & Automation",
     badgeColor: "#EA580C",
     badgeBg: "#FFF7ED",
-    heading: "In AI/ML We Use.",
+    heading: "In AI, Agents & Automation We Use.",
     description:
-      "We empower software with next-generation Artificial Intelligence solutions — custom RAG pipelines, autonomous agentic workflows, deep learning models, and real-time semantic search.",
+      "We empower businesses with cutting-edge AI solutions — custom AI/ML models, intelligent autonomous agents, robust workflow automations, RAG pipelines, and fine-tuned LLMs.",
     bullets: [
-      "Enterprise LLM integrations & fine-tuning with OpenAI & Claude",
-      "Autonomous multi-agent workflows using LangChain & LangGraph",
-      "High-speed vector search & semantic embeddings via Pinecone",
+      "Custom AI/ML model development, fine-tuning & LLM integrations",
+      "Autonomous multi-agent workflows using LangChain, LangGraph & CrewAI",
+      "Powerful workflow automations, RAG pipelines & Vector DB search",
     ],
-    buttonText: "Explore AI/ML Stack",
+    buttonText: "Explore AI Stack",
     buttonIcon: BrainCircuit,
     image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/aiml-628.png",
-    imageAlt: "In AI/ML We Use",
+    imageAlt: "In AI, Agents & Automation We Use",
   },
 ];
 
@@ -226,7 +226,7 @@ const TechStackBreakdown = memo(function TechStackBreakdown({ id }) {
 
       <div className="tech-container">
         <div className="tech-zig-col">
-          {STACK_ITEMS.map((item, idx) => {
+          {STACK_ITEMS.filter(item => item.id !== "ai-ml").map((item, idx) => {
             const isReversed = idx % 2 === 1;
             const BtnIcon = item.buttonIcon;
             return (
@@ -350,6 +350,144 @@ const TechStackBreakdown = memo(function TechStackBreakdown({ id }) {
           })}
         </div>
       </div>
+
+      {/* ─── AI SECTION — Visually Separate Dark Section ─── */}
+      {(() => {
+        const ai = STACK_ITEMS.find(i => i.id === "ai-ml");
+        if (!ai) return null;
+        const BtnIcon = ai.buttonIcon;
+        return (
+          <div style={{
+            background: "linear-gradient(135deg, #0c0c1a 0%, #1a0a2e 40%, #0f172a 100%)",
+            borderTop: "2px solid rgba(234,88,12,0.3)",
+            marginTop: "0",
+            padding: "64px 0",
+            position: "relative",
+            overflow: "hidden",
+          }}>
+            {/* Ambient glow */}
+            <div style={{
+              position: "absolute", top: "50%", left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "600px", height: "400px",
+              background: "radial-gradient(ellipse, rgba(234,88,12,0.15) 0%, rgba(168,85,247,0.08) 50%, transparent 75%)",
+              filter: "blur(60px)", pointerEvents: "none",
+            }} />
+
+            <div className="tech-container" style={{ position: "relative", zIndex: 1 }}>
+              {/* Header label */}
+              <div style={{ textAlign: "center", marginBottom: "48px" }}>
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: "8px",
+                  padding: "6px 20px", borderRadius: "9999px",
+                  background: "rgba(234,88,12,0.15)", border: "1px solid rgba(234,88,12,0.4)",
+                  color: "#fb923c", fontWeight: 800, fontSize: "0.88rem",
+                  letterSpacing: "0.05em", fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  marginBottom: "16px",
+                }}>
+                  <BrainCircuit size={15} /> {ai.pill}
+                </div>
+              </div>
+
+              <div className="tech-zig-row" style={{ minHeight: "unset", padding: 0 }}>
+                {/* Text column */}
+                <div className="tech-text-col">
+                  <h3 style={{
+                    fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", fontWeight: 900,
+                    color: "#FFFFFF", letterSpacing: "-0.03em", lineHeight: 1.2,
+                    marginBottom: "16px", fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  }}>
+                    {ai.heading}
+                  </h3>
+
+                  <p style={{
+                    color: "#94a3b8", fontSize: "1rem", lineHeight: 1.65,
+                    marginBottom: "28px", fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  }}>
+                    {ai.description}
+                  </p>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "36px" }}>
+                    {ai.bullets.map((feat, fIdx) => (
+                      <div key={fIdx} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{
+                          width: "22px", height: "22px", borderRadius: "50%",
+                          background: "linear-gradient(135deg, #ea580c, #f97316)",
+                          color: "#fff", display: "flex", alignItems: "center",
+                          justifyContent: "center", flexShrink: 0,
+                          boxShadow: "0 0 12px rgba(234,88,12,0.4)",
+                        }}>
+                          <Check size={12} strokeWidth={3.5} />
+                        </div>
+                        <span style={{
+                          fontWeight: 600, color: "#e2e8f0",
+                          fontSize: "0.95rem", fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        }}>
+                          {feat}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <a
+                    href="#requestform"
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: "8px",
+                      borderRadius: "24px", padding: "10px 28px",
+                      fontSize: "0.95rem", fontWeight: 700,
+                      background: "linear-gradient(135deg, #ea580c, #f97316)",
+                      color: "#FFFFFF", textDecoration: "none",
+                      boxShadow: "0 4px 20px rgba(234,88,12,0.4)",
+                      transition: "all 0.25s ease",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                      e.currentTarget.style.boxShadow = "0 8px 30px rgba(234,88,12,0.55)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow = "0 4px 20px rgba(234,88,12,0.4)";
+                    }}
+                  >
+                    <BtnIcon size={16} strokeWidth={2.2} />
+                    <span>{ai.buttonText}</span>
+                    <ArrowRight size={16} strokeWidth={2.4} />
+                  </a>
+                </div>
+
+                {/* Image column */}
+                <div
+                  style={{
+                    borderRadius: "20px", overflow: "hidden",
+                    border: "1px solid rgba(234,88,12,0.25)",
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(234,88,12,0.1)",
+                    cursor: "pointer", transition: "all 0.35s ease",
+                    background: "#0f172a",
+                  }}
+                  onClick={() => setActiveImage(ai.image)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-6px)";
+                    e.currentTarget.style.boxShadow = "0 28px 70px rgba(0,0,0,0.6), 0 0 50px rgba(234,88,12,0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(234,88,12,0.1)";
+                  }}
+                >
+                  <img
+                    src={ai.image}
+                    alt={ai.imageAlt}
+                    width={1536}
+                    height={1024}
+                    style={{ width: "100%", height: "auto", display: "block", transition: "transform 0.4s ease" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {activeImage && (
         <div

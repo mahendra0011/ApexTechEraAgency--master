@@ -310,14 +310,14 @@ const Interface = ({ parent, parentRefs }) => {
                                             {/* Column 1 (Left) - Card 4 (Bottom Left) */}
                                             <div className='apex-grid-card'>
                                                 <div className='apex-card-top-head'>
-                                                    <span><span className='dot dot-amber' />AI &amp; ML</span>
+                                                    <span><span className='dot dot-amber' />AI &amp; Automation</span>
                                                     <span>04</span>
                                                 </div>
-                                                <span className='apex-card-main-title'>Build AI / ML Models</span>
+                                                <span className='apex-card-main-title'>AI Models, Agents &amp; Automations</span>
                                                 <div className='apex-card-tags'>
-                                                    <span className='apex-service-tag tag-amber'>AI/ML</span>
-                                                    <span className='apex-service-tag tag-purple'>LLMs</span>
-                                                    <span className='apex-service-tag tag-cyan'>Python</span>
+                                                    <span className='apex-service-tag tag-amber'>AI Models</span>
+                                                    <span className='apex-service-tag tag-purple'>AI Agents</span>
+                                                    <span className='apex-service-tag tag-cyan'>Automations</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
                                                     <video autoPlay muted loop playsInline preload="none">
@@ -419,12 +419,7 @@ const Interface = ({ parent, parentRefs }) => {
                                     <div className='apex-phone-notch-bar'>
                                         <div className='apex-phone-notch-pill'></div>
                                     </div>
-                                    <div ref={interfaceMOps} className='object options'>
-                                        <div className='apex-col-card'>
-                                            <span className='apex-mobile-card-title'>✦ Mobile Experience</span>
-                                            <span className='apex-mobile-card-sub'>Responsive iOS &amp; Android Apps</span>
-                                        </div>
-                                    </div>
+                                    <div ref={interfaceMOps} className='object options' style={{ display: 'none' }} />
                                     <div ref={interfaceMHeader} className='object m-header'>
                                         <div className='apex-mheader-inner'>
                                             <div className='apex-mheader-logo'>

@@ -139,7 +139,7 @@
           "id": "1-about",
           "color": "#E8D5D3",
           "title": "We build digital products",
-          "text": "Websites, mobile apps, AI/ML solutions, and custom software designed to solve real problems and create real business value."
+          "text": "Websites, mobile apps, intuitive UI/UX, AI/ML models, intelligent AI agents, AI automation workflows, and custom software designed to solve real problems and create real business value."
         },
         {
           "id": "2-about",
@@ -317,10 +317,11 @@
             "Full-Stack Web Development",
             "Android / iOS App Development",
             "UI/UX Design",
-            "Software Development",
-            "AI / ML Solutions",
-            "Branding & Strategy",
-            "Maintenance & Support"
+            "Custom Software Development",
+            "AI / ML Models",
+            "Intelligent AI Agents",
+            "AI Automation Solutions",
+            "Branding & Strategy"
           ]
         },
         "budget": {

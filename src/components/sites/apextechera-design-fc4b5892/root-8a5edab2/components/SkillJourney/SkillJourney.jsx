@@ -31,8 +31,8 @@ const skillPillars = [
     imgUrl: `${IMG}/uiux.png`,
   },
   {
-    title: "AI & ML Development",
-    desc: "Intelligent solutions powered by AI and machine learning.",
+    title: "AI & ML",
+    desc: "AI/ML models, intelligent AI agents, and powerful automations.",
     imgUrl: `${IMG}/ai.png`,
   },
 ];

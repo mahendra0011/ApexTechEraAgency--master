@@ -21,7 +21,7 @@ const Main = memo(function Main() {
         <div className="mcode-badge">
           <span className="mcode-badge-title">ApexTechEra Agency</span>
           <span className="mcode-badge-star">✦</span>
-          <span className="mcode-badge-services">Full-Stack Web Development • Android/iOS App • UI/UX • Software Development • AI/ML</span>
+          <span className="mcode-badge-services">Full-Stack Web Development • Android/iOS App • UI/UX • Software Development • AI/ML Models • AI Agents • AI Automations</span>
         </div>
 
         {/* Big Headline - 3 Lines */}
@@ -37,7 +37,7 @@ const Main = memo(function Main() {
 
         {/* Subtitle */}
         <p className="mcode-subtitle">
-          ApexTechEra Agency is a full-service technology agency building modern websites, web &amp; mobile apps, intuitive UI/UX experiences, and intelligent AI/ML solutions crafted to launch, grow, and scale your business.
+          ApexTechEra Agency is a full-service technology agency building modern websites, web &amp; mobile applications, intuitive UI/UX experiences, custom software development, AI/ML models, intelligent AI agents, and powerful AI automation solutions—crafted to launch, grow, and scale your business.
         </p>
 
         {/* Action Buttons */}
