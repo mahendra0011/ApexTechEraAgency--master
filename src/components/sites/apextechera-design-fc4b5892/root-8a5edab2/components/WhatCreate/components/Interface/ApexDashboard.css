@@ -1,0 +1,802 @@
+/* Clean, Minimal ApexTechEra Agency Dashboard Mockup with 100% Pixel-Matched Skeleton & Real Dashboard */
+.interface-apex-bg {
+  width: 100%;
+  height: 100%;
+  background: #090a0f;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+}
+
+/* Force normal text transform, clean font, and proper spacing */
+.interface,
+.interface *,
+.apex-tasks-grid-6 *,
+.apex-skel-grid-6 * {
+  font-family: var(--font-sans, 'Plus Jakarta Sans'), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+  text-transform: none !important;
+  box-sizing: border-box;
+}
+
+.interface .dot {
+  display: inline-block !important;
+}
+
+.interface span:not(.dot):not(.apex-skel-dot):not(.apex-service-tag):not(.apex-side-icon):not(.apex-user-avatar) {
+  display: inline !important;
+}
+
+/* =========================================
+   STAGE 1: 6-CARD WIREFRAME SKELETON
+   (100% Absolute Matched to Stage 2 Coordinates)
+   ========================================= */
+.apex-skeleton-root {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #090a0f;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.apex-skel-sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3.5rem;
+  height: 100%;
+  background: #0d0e14;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-top-left-radius: 2rem;
+  border-bottom-left-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+}
+
+.apex-skel-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 3.5rem;
+}
+
+.apex-skel-circle {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.apex-skel-circle.active {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.apex-skel-bottom-switch {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.apex-skel-header {
+  position: absolute;
+  top: 0.9rem;
+  left: 4.0885858051rem;
+  width: 45rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+}
+
+.apex-skel-nav-pills {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.apex-skel-pill {
+  width: 3.5rem;
+  height: 0.8rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.apex-skel-search {
+  width: 11rem;
+  height: 1.6rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.apex-skel-title-area {
+  position: absolute;
+  top: 3.2rem;
+  left: 4.0885858051rem;
+  width: 22rem;
+  height: 3.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.apex-skel-dep-line {
+  width: 5rem;
+  height: 0.6rem;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.2);
+  margin-bottom: 0.3rem;
+}
+
+.apex-skel-title-line {
+  width: 16rem;
+  height: 1.2rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.apex-skel-options-area {
+  position: absolute;
+  top: 3.6rem;
+  left: 26rem;
+  width: 23rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.apex-skel-opt-pill {
+  width: 4.8rem;
+  height: 1.4rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.apex-skel-opt-pill.active {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.apex-skel-tasks-area {
+  position: absolute;
+  top: 7rem;
+  left: 4.0885858051rem;
+  width: 45rem;
+  height: 29.2rem;
+}
+
+.apex-skel-grid-6 {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0.65rem;
+  box-sizing: border-box;
+}
+
+.apex-skel-card {
+  background: #111218;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.9rem;
+  padding: 0.65rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100%;
+}
+
+.apex-skel-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.62rem;
+  margin-bottom: 0.1rem;
+  flex-shrink: 0;
+  height: 0.75rem;
+}
+
+.apex-skel-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.apex-skel-line-short {
+  width: 1.2rem;
+  height: 0.5rem;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.apex-skel-line-title {
+  width: 75%;
+  height: 0.9rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0.05rem 0;
+  flex-shrink: 0;
+}
+
+.apex-skel-tags {
+  display: flex;
+  gap: 0.2rem;
+  margin: 0.15rem 0 0.35rem 0;
+  flex-shrink: 0;
+  height: 0.72rem;
+}
+
+.apex-skel-tag {
+  width: 2.2rem;
+  height: 0.72rem;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.apex-skel-video-box {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 7.6rem;
+  border-radius: 0.6rem;
+  background: #08090d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.apex-skel-video-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* =========================================
+   STAGE 2: REAL 6-CARD DASHBOARD
+   ========================================= */
+
+/* Sidebar */
+.interface__stage-2 .sidebar {
+  top: 0 !important;
+  left: 0 !important;
+  width: 3.5rem !important;
+  height: 100% !important;
+}
+
+.apex-sidebar-inner {
+  width: 100%;
+  height: 100%;
+  background: #0d0e14;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-top-left-radius: 2rem;
+  border-bottom-left-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+}
+
+.apex-sidebar-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 3.5rem;
+}
+
+.apex-side-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.45rem;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.apex-side-icon.active {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.apex-side-bottom {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: #94a3b8;
+}
+
+/* Desktop Header */
+.interface__stage-2 .d-header {
+  top: 0.9rem !important;
+  left: 4.0885858051rem !important;
+  width: 45rem !important;
+  height: 2.2rem !important;
+}
+
+.apex-dheader-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.apex-dheader-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.apex-dheader-nav span.active {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.apex-dheader-search {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  padding: 0.25rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  color: #64748b;
+  width: 11rem;
+}
+
+.apex-dheader-right {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.apex-btn-add {
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+}
+
+.apex-user-avatar {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Title Area Positioning */
+.interface__stage-2 .title {
+  top: 3.2rem !important;
+  height: 3.4rem !important;
+  left: 4.0885858051rem !important;
+  width: 22rem !important;
+}
+
+.apex-title-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.apex-dep-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin-bottom: 0.15rem;
+}
+
+.apex-main-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* Options Bar Positioning */
+.interface__stage-2 .options {
+  top: 3.6rem !important;
+  height: 2.2rem !important;
+  left: 26rem !important;
+  width: 23rem !important;
+}
+
+.apex-options-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  gap: 0.5rem;
+}
+
+.apex-opt-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.apex-opt-pill.active {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #60a5fa;
+}
+
+/* Tasks 6-Card Grid Positioning */
+.interface__stage-2 .tasks {
+  top: 7rem !important;
+  height: 29.2rem !important;
+  left: 4.0885858051rem !important;
+  width: 45rem !important;
+}
+
+.apex-tasks-grid-6 {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0.65rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  box-sizing: border-box;
+}
+
+.apex-grid-card {
+  background: #111218;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.9rem;
+  padding: 0.65rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  height: 100%;
+}
+
+.apex-grid-card:hover {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: #141520;
+}
+
+.apex-card-top-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.1rem;
+  flex-shrink: 0;
+  height: 0.75rem;
+}
+
+.apex-card-top-head .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+
+.dot-blue { background: #3b82f6; }
+.dot-green { background: #10b981; }
+.dot-cyan { background: #06b6d4; }
+.dot-purple { background: #8b5cf6; }
+.dot-amber { background: #f59e0b; }
+.dot-rose { background: #f43f5e; }
+
+.apex-card-main-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+  height: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.apex-card-tags {
+  display: flex;
+  gap: 0.2rem;
+  flex-wrap: wrap;
+  margin: 0.15rem 0 0.35rem 0;
+  flex-shrink: 0;
+  height: 0.72rem;
+}
+
+.apex-service-tag {
+  font-size: 0.52rem;
+  font-weight: 600;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+.tag-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.tag-green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.tag-cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
+.tag-purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+.tag-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.tag-rose { background: rgba(244, 63, 94, 0.15); color: #fb7185; }
+
+.apex-card-video-box {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 7.6rem;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  position: relative;
+  background: #08090d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.apex-card-video-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Stage 3 Mobile Mockup Card */
+.apex-col-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  backdrop-filter: blur(10px);
+}
+
+/* =========================================
+   MOBILE / ANDROID RESPONSIVE (max-width: 576px)
+   ========================================= */
+@media screen and (max-width: 576px) {
+  .interface__stage-2 .sidebar,
+  .apex-skel-sidebar {
+    width: 1.5rem !important;
+  }
+  
+  .interface__stage-2 .d-header,
+  .apex-skel-header {
+    left: 1.8rem !important;
+    width: 19.5rem !important;
+    top: 0.4rem !important;
+    height: 1.2rem !important;
+  }
+  
+  .apex-skel-search,
+  .apex-dheader-search {
+    display: none !important;
+  }
+  
+  .apex-dheader-nav {
+    gap: 0.6rem !important;
+    font-size: 0.6rem !important;
+  }
+  
+  .apex-btn-add {
+    font-size: 0.55rem !important;
+    padding: 0.15rem 0.5rem !important;
+  }
+  
+  .apex-user-avatar {
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    font-size: 0.5rem !important;
+  }
+  
+  .interface__stage-2 .title,
+  .apex-skel-title-area {
+    left: 1.8rem !important;
+    top: 1.8rem !important;
+    width: 19.5rem !important;
+    height: 1.6rem !important;
+  }
+  
+  .apex-main-title {
+    font-size: 0.85rem !important;
+  }
+  
+  .apex-dep-label {
+    font-size: 0.5rem !important;
+  }
+  
+  .interface__stage-2 .options,
+  .apex-skel-options-area {
+    display: none !important;
+  }
+  
+  .interface__stage-2 .tasks,
+  .apex-skel-tasks-area {
+    left: 1.8rem !important;
+    top: 3.6rem !important;
+    width: 19.5rem !important;
+    height: 12.2rem !important;
+  }
+  
+  .apex-skel-grid-6,
+  .apex-tasks-grid-6 {
+    gap: 0.35rem !important;
+  }
+  
+  .apex-skel-card,
+  .apex-grid-card {
+    padding: 0.3rem 0.35rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  .apex-card-top-head,
+  .apex-skel-card-head {
+    font-size: 0.45rem !important;
+    height: 0.55rem !important;
+  }
+  
+  .apex-card-main-title {
+    font-size: 0.5rem !important;
+    height: 0.6rem !important;
+  }
+  
+  .apex-card-tags,
+  .apex-skel-tags {
+    margin: 0.1rem 0 !important;
+    height: 0.55rem !important;
+  }
+  
+  .apex-service-tag {
+    font-size: 0.4rem !important;
+    padding: 0.05rem 0.2rem !important;
+  }
+  
+  .apex-card-video-box,
+  .apex-skel-video-box {
+    min-height: 2.8rem !important;
+  }
+}
+
+/* Top Notch Bar */
+.apex-phone-notch-bar {
+  width: 100%;
+  height: 1.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0.3rem;
+  left: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.apex-phone-notch-pill {
+  width: 5rem;
+  height: 0.9rem;
+  background: #000000;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile Stage 3 Header */
+.apex-mheader-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.5rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.apex-mheader-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.apex-mheader-img {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.apex-mheader-text {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.apex-mheader-badge {
+  font-size: 0.52rem;
+  font-weight: 600;
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 100px;
+  padding: 0.1rem 0.4rem;
+}
+
+/* Mobile Stage 3 Info Card */
+.apex-mobile-card-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.apex-mobile-card-sub {
+  font-size: 0.58rem;
+  color: #94a3b8;
+}
+
+
+
+.interface .logo {
+  top: 1.0610875706rem !important;
+  left: 0.7433792373rem !important;
+  width: 2.2rem !important;
+  height: 2.2rem !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+

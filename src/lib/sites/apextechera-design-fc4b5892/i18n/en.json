@@ -1,0 +1,354 @@
+{
+  "components": {
+    "header": {
+      "nav": [
+        {
+          "name": "Home",
+          "link": "#home"
+        },
+        {
+          "name": "About",
+          "link": "#about"
+        },
+        {
+          "name": "Services",
+          "link": "#services"
+        },
+        {
+          "name": "Designs",
+          "link": "#design"
+        },
+        {
+          "name": "Types",
+          "link": "#types"
+        },
+        {
+          "name": "Process",
+          "link": "#process"
+        },
+        {
+          "name": "Works",
+          "link": "#portfolio"
+        },
+        {
+          "name": "Contact us",
+          "link": "#contacts"
+        }
+      ],
+      "buttonPc": "Let's Talk!",
+      "buttonPh": "Let's talk"
+    },
+    "menu": {
+      "social": {
+        "title": "Social",
+        "links": [
+          {
+            "name": "Instagram",
+            "link": "https://www.instagram.com/apextecheradesign"
+          },
+          {
+            "name": "LinkedIn",
+            "link": "https://www.linkedin.com/company/apextechera-design/"
+          }
+        ]
+      },
+      "nav": {
+        "title": "Menu",
+        "links": [
+          {
+            "name": "Home",
+            "link": "#home"
+          },
+          {
+            "name": "About Us",
+            "link": "#about"
+          },
+          {
+            "name": "Services",
+            "link": "#services"
+          },
+          {
+            "name": "Designs",
+            "link": "#design"
+          },
+          {
+            "name": "Website Types",
+            "link": "#types"
+          },
+          {
+            "name": "Process",
+            "link": "#process"
+          },
+          {
+            "name": "Our Works",
+            "link": "#portfolio"
+          },
+          {
+            "name": "Contact Us",
+            "link": "#contacts"
+          }
+        ]
+      },
+      "connect": {
+        "text": "Get in touch",
+        "mail": "mahendrapra0077@gmail.com",
+        "question": "Want to work with us?",
+        "privacy": "Privacy Policy & Cookies",
+        "copyright": "© ApexTechEra Agency"
+      }
+    },
+    "burger": {
+      "open": "menu",
+      "close": "Close"
+    },
+    "modal": {
+      "title": "Thank You! 🤝 ",
+      "subtitle": "Your request has been successfully sent 😉 Wait for a response from our manager. If the manager didn’t answer, he will contact you within the next 24 hours"
+    }
+  },
+  "pages": {
+    "home": {
+      "components": {
+        "main": {
+          "title": {
+            "desktop": [
+              "Global design agency that creates",
+              "holistic, well-balanced design",
+              "solutions for inspiring brands"
+            ],
+            "mobile": [
+              "Global design agency that",
+              "creates holistic, well-balanced",
+              "design solutions for inspiring",
+              "brands"
+            ]
+          },
+          "text_1": "WEB DEVELOPMENT / BRANDING / UX / UI /",
+          "text_2": "3D MODELING /ILLUSTRATION / STRATEGY",
+          "play": " Play",
+          "reel": "Reel!",
+          "paragraph": "Our work is best experienced in motion. Don`t forget to put on your headphones."
+        }
+      }
+    },
+    "about": {
+      "title_1": "About",
+      "title_2": "ApexTechEra Agency",
+      "cards": [
+        {
+          "id": "1-about",
+          "color": "#E8D5D3",
+          "title": "We build digital products",
+          "text": "Websites, mobile apps, AI/ML solutions, and custom software designed to solve real problems and create real business value."
+        },
+        {
+          "id": "2-about",
+          "color": "#C8EAE3",
+          "title": "We build with your team",
+          "text": "We collaborate with freelancers, agencies, startups, and companies to bring projects to life — as your technology partner or an extension of your team."
+        },
+        {
+          "id": "3-about",
+          "color": "#D9CEE1",
+          "title": "We turn ideas into products",
+          "text": "From first concept to launch, we combine strategy, design, and engineering to transform ideas into scalable digital experiences."
+        },
+        {
+          "id": "4-about",
+          "color": "#E3E8C4",
+          "title": "We think beyond launch",
+          "text": "We build with scalability, performance, and long-term growth in mind — so your product is ready for what's next."
+        }
+      ]
+    },
+    "startups": {
+      "title_1": "FOR AMBITIOUS STARTUPS",
+      "title_2": "& FAST-GROWING",
+      "title_3": "ENTERPRISES.",
+      "p_title_1": "ENGINEERED FOR EXCELLENCE",
+      "p_title_2": "BUILT FOR SCALE"
+    },
+    "create": {
+      "text": "We create"
+    },
+    "whatCreate": {
+      "title": "We create",
+      "points": [
+        "Full Stack",
+        "UI/UX",
+        "Android/iOS",
+        "Software"
+      ],
+      "button": {
+        "first": "ApexTechEra ",
+        "second": " Agency"
+      }
+    },
+    "designers": {
+      "title": {
+        "first": "IN EVERY PROJECT",
+        "second": "WE BUILD IS MADE TO ",
+        "third": "MOVE",
+        "fourth": "FORWARD.",
+        "thousand": "BUSINESS"
+      },
+      "titleMobile": {
+        "first": "IN EVERY",
+        "second": "PROJECT WE",
+        "third": "BUILD IS MADE TO",
+        "fourth": "MOVE",
+        "fifth": "FORWARD.",
+        "thousand": "BUSINESS"
+      }
+    },
+    "founder": {
+      "title": {
+        "first": "We",
+        "second": "Focus",
+        "third": "On"
+      },
+      "titleMobile": {
+        "first": "We",
+        "second": "Focus",
+        "third": "On"
+      }
+    },
+    "portfolio": {
+      "title": {
+        "desktop": [
+          "MOST IDEAS START$WITH A VISION,$BUT ONLY A FEW$BECOME PRODUCTS$PEOPLE ACTUALLY USE."
+        ],
+        "mobile": [
+          "MOST IDEAS START$WITH A VISION,$BUT ONLY A FEW$BECOME PRODUCTS$PEOPLE ACTUALLY USE."
+        ]
+      },
+      "message": "We design and build websites, apps, software, UI/UX and AI-powered solutions that turn ideas into real-world impact.",
+      "socials": [
+        {
+          "id": "1-social",
+          "link": "https://dribbble.com/apextechera"
+        },
+        {
+          "id": "2-social",
+          "link": "https://www.behance.net/apextechera"
+        }
+      ],
+      "slides": [
+        {
+          "id": "1-slide",
+          "title": [
+            "Samudai web3",
+            "landing page"
+          ]
+        },
+        {
+          "id": "2-slide",
+          "title": [
+            "Samudai web3",
+            "landing page"
+          ]
+        },
+        {
+          "id": "3-slide",
+          "title": [
+            "Samudai web3",
+            "landing page"
+          ]
+        }
+      ]
+    },
+    "following": {
+      "weFollowed": "WE TURN IDEAS INTO REALITY $",
+      "weFollowed2": "WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $WE TURN IDEAS INTO REALITY $"
+    },
+    "preview": {
+      "title": {
+        "start": "Hey! Tell us all the things you have in    ",
+        "end": "mind."
+      },
+      "button": "Bring your ideas to life"
+    },
+    "startups": {
+      "title": "A space where ideas become technology",
+      "title_1": "A space where ideas",
+      "title_2": " become",
+      "title_3": " technology",
+      "p_title_1": "have",
+      "p_title_2": "a Brand ?"
+    },
+    "reqForm": {
+      "aside": {
+        "question_1": "Have ",
+        "question_2": "brand?",
+        "text": "Tell us about it.",
+        "follow": "Follow us:",
+        "trust": "Clients trust us",
+        "contact": "Contact us",
+        "email": "mahendrapra0077@gmail.com",
+        "socials": [
+          {
+            "id": "4-social",
+            "link": "https://www.instagram.com/apextecheradesign"
+          },
+          {
+            "id": "5-social",
+            "link": "https://www.linkedin.com/company/apextechera-design/"
+          }
+        ]
+      },
+      "form": {
+        "inputs": {
+          "name": {
+            "label": "Name & Company",
+            "placeholder": "John from Apple"
+          },
+          "mail": {
+            "label": "Your Email",
+            "placeholder": "john@apple.com"
+          },
+          "project": {
+            "label": "Tell us more about your project",
+            "placeholder": "Something about your great idea"
+          }
+        },
+        "interested": {
+          "title": "I'm interested in...",
+          "checkbox": [
+            "Full-Stack Web Development",
+            "Android / iOS App Development",
+            "UI/UX Design",
+            "Software Development",
+            "AI / ML Solutions",
+            "Branding & Strategy",
+            "Maintenance & Support"
+          ]
+        },
+        "budget": {
+          "title": "Project budget (USD)",
+          "radio": [
+            "≤ $5K",
+            "$10K-$20K",
+            "$30K-$40K",
+            "$50K-$60K",
+            ">$100K"
+          ]
+        },
+        "button": {
+          "submit": "Submit",
+          "the": "the",
+          "request": "request",
+          "mobile": "bring your ideas to life"
+        },
+        "text": "bring your ideas to life"
+      },
+      "footer": {
+        "address": "Dubai Digital Park, Dubai Silicon Oasis, Dubai, UAE",
+        "privacy": {
+          "text": "Privacy and Policy",
+          "link": "#"
+        },
+        "right": "All rights are reserved © ApexTechEra Agency"
+      }
+    }
+  }
+}

@@ -10,20 +10,23 @@ const clashGrotesk = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://qclay.design"),
-  title: "QClay | Creative Design and Development Agency",
-  description: "QClay is a design and development agency that helps startups create products their users love.",
-  icons: { icon: "/sites/qclay-design-fc4b5892/root-8a5edab2/favicon.ico" },
+  metadataBase: new URL("https://apextechera.com"),
+  title: "ApexTechEra Agency | Creative Design and Development Agency",
+  description: "ApexTechEra Agency is a design and development agency that helps startups create products their users love.",
+  icons: { icon: "/sites/apextechera-design-fc4b5892/root-8a5edab2/favicon.ico" },
   openGraph: {
-    title: "QClay Design",
-    url: "https://qclay.design",
+    title: "ApexTechEra Agency",
+    url: "https://apextechera.com",
     type: "website",
-    images: [{ url: "/sites/qclay-design-fc4b5892/root-8a5edab2/preview.jpg" }],
+    images: [{ url: "/sites/apextechera-design-fc4b5892/root-8a5edab2/preview.jpg" }],
   },
 };
 
 export const viewport: Viewport = {
   themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({

@@ -1,0 +1,16 @@
+/* ================= TechStackBreakdown - MUI WorkflowSection ZigZag Clone ================= */
+.tech-breakdown-wrapper {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.tech-lightbox-overlay {
+  animation: techFadeIn 0.2s ease forwards;
+}
+
+@keyframes techFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

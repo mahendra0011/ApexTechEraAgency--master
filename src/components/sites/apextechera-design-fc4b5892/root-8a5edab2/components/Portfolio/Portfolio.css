@@ -1,0 +1,393 @@
+.portfolio__split {
+  height: 300vh;
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+}
+
+.portfolio__split-sticky {
+  height: 100vh;
+  left: 0;
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.portfolio__split-contact {
+  align-items: center;
+  background: #ffffff;
+  color: #111827;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  will-change: transform, opacity;
+  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.portfolio__split-contact * {
+  box-sizing: border-box;
+}
+
+.portfolio__split-contact .req-form {
+  background: #ffffff !important;
+  color: #111827 !important;
+  width: 100%;
+  max-width: 1280px;
+  min-height: auto;
+  padding: 3rem 4vw 2rem 4vw !important;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
+  will-change: opacity, transform;
+}
+
+/* Ensure all sub-elements inside the contact section are fully visible & styled */
+.portfolio__split-contact .req-form .tr-1,
+.portfolio__split-contact .req-form .tr-2,
+.portfolio__split-contact .req-form .tr-3,
+.portfolio__split-contact .req-form .tr-4,
+.portfolio__split-contact .req-form .tr-5,
+.portfolio__split-contact .req-form .tr-6,
+.portfolio__split-contact .req-form .tr-7 {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.portfolio__split-contact .req-form__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 3.5rem;
+  width: 100%;
+  margin-top: 0;
+}
+
+.portfolio__split-contact .req-form aside {
+  flex: 0 0 34%;
+  max-width: 400px;
+}
+
+.portfolio__split-contact .req-form .form {
+  flex: 1;
+  max-width: 720px;
+}
+
+.portfolio__split-contact .req-form__text {
+  margin-bottom: 2rem;
+}
+
+.portfolio__split-contact .req-form__text .title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #111827 !important;
+  line-height: 1.2;
+}
+
+.portfolio__split-contact .req-form__text .title span {
+  color: #111827 !important;
+}
+
+.portfolio__split-contact .req-form__text .title .title_video {
+  border-radius: 100%;
+  height: 3.8rem;
+  margin: 0 0.6rem;
+  overflow: hidden;
+  position: relative;
+  width: 3.8rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.portfolio__split-contact .req-form__text .title .title_video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portfolio__split-contact .req-form__text p {
+  color: #4b5563 !important;
+  font-size: 1.1rem;
+  margin-top: 0.6rem;
+  line-height: 1.5;
+}
+
+.portfolio__split-contact .req-form__socials h4,
+.portfolio__split-contact .req-form__contacts h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6b7280 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.portfolio__split-contact .req-form__contacts {
+  margin-top: 1.5rem;
+}
+
+.portfolio__split-contact .req-form__contacts a {
+  color: #1f2937 !important;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Form Inputs */
+.portfolio__split-contact .form .form__inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.portfolio__split-contact .text-input {
+  width: 100%;
+}
+
+.portfolio__split-contact .text-input label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151 !important;
+  margin-bottom: 0.4rem;
+}
+
+.portfolio__split-contact .text-input input {
+  width: 100%;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1.5px solid #d1d5db !important;
+  color: #111827 !important;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 0 0.6rem 0 !important;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.portfolio__split-contact .text-input input:focus {
+  border-bottom-color: #111827 !important;
+}
+
+.portfolio__split-contact .text-input input::placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+/* Interest Checkbox Pills */
+.portfolio__split-contact .form__interested {
+  margin-bottom: 1.5rem;
+}
+
+.portfolio__split-contact .form__interested h5 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151 !important;
+  margin-bottom: 0.75rem;
+}
+
+.portfolio__split-contact .form__interested .tr-3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.portfolio__split-contact .choice-input {
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+}
+
+.portfolio__split-contact .choice-input input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.portfolio__split-contact .choice-input .content {
+  background: #f9fafb !important;
+  border: 1.5px solid #e5e7eb !important;
+  border-radius: 9999px !important;
+  color: #374151 !important;
+  display: inline-flex !important;
+  align-items: center;
+  font-size: 0.875rem !important;
+  font-weight: 500;
+  padding: 0.55rem 1.15rem !important;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  line-height: 1.2;
+}
+
+.portfolio__split-contact .choice-input .content .text {
+  color: #374151 !important;
+}
+
+.portfolio__split-contact .choice-input .content .text .hidden {
+  display: none !important;
+}
+
+.portfolio__split-contact .choice-input .content .text .tr-y {
+  position: static !important;
+  display: block !important;
+  height: auto !important;
+}
+
+.portfolio__split-contact .choice-input .content .text .tr-y span:last-child {
+  display: none !important;
+}
+
+.portfolio__split-contact .choice-input .content .text .tr-y span:first-child {
+  color: inherit !important;
+}
+
+.portfolio__split-contact .choice-input:hover .content {
+  background: #f3f4f6 !important;
+  border-color: #9ca3af !important;
+  color: #111827 !important;
+}
+
+.portfolio__split-contact .choice-input input:checked + .content {
+  background: #111827 !important;
+  border-color: #111827 !important;
+  color: #ffffff !important;
+}
+
+.portfolio__split-contact .choice-input input:checked + .content .text,
+.portfolio__split-contact .choice-input input:checked + .content .text .tr-y span {
+  color: #ffffff !important;
+}
+
+/* Project Description Input */
+.portfolio__split-contact .form__project {
+  margin-bottom: 1.5rem;
+}
+
+/* Submit button */
+.portfolio__split-contact .sbmt-btn {
+  margin-top: 0.5rem;
+}
+
+/* Desktop Footer in Form */
+.portfolio__split-contact .form-modal-desktop-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #6b7280 !important;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.portfolio__split-contact .form-modal-desktop-footer a {
+  color: #4b5563 !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.portfolio__split-contact .form-modal-desktop-footer a:hover {
+  color: #111827 !important;
+}
+
+.portfolio__split-mobile {
+  display: none;
+}
+
+/* Split Curtains (Left & Right halves) */
+.portfolio__split-half {
+  background: #07070f;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  width: 50.5vw;
+  will-change: transform;
+  z-index: 2;
+  display: block;
+}
+
+.portfolio__split-half.-left {
+  left: 0;
+  transform-origin: left center;
+}
+
+.portfolio__split-half.-right {
+  right: 0;
+  transform-origin: right center;
+}
+
+/* Single Central Vertical Line */
+.portfolio__split-line {
+  height: 100vh;
+  left: 50%;
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  width: 2px;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  will-change: opacity;
+}
+
+.portfolio__split-line-inner {
+  background: #ffffff;
+  height: 0%;
+  width: 100%;
+  transform-origin: top center;
+  will-change: height;
+}
+
+@media screen and (max-width: 992px) {
+  .portfolio__split-contact .req-form {
+    padding: 2rem 1.5rem !important;
+  }
+  .portfolio__split-contact .req-form__content {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .portfolio__split-contact .req-form aside {
+    max-width: 100%;
+    flex: 1 1 auto;
+  }
+  .portfolio__split-contact .req-form .form {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .portfolio__split-contact .req-form,
+  .portfolio__split-contact .rq-form-plug {
+    display: none !important;
+  }
+
+  .portfolio__split-mobile {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 999px;
+    color: #111;
+    cursor: pointer;
+    display: flex;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 16px 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}

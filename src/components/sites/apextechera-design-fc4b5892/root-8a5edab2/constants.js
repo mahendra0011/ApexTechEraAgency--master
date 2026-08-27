@@ -1,0 +1,21 @@
+export const screens = {
+    MAIN: 'main',
+    APEXTECHERA: 'apextechera',
+    ABOUT: 'about',
+    SKILLJOURNEY: 'skilljourney',
+    CREATE: 'create',
+    WHATCREATE: 'whatcreate',
+    DESIGNERS: 'designers',
+    FOUNDER: 'founder',
+    FOUNDERINTRO: 'founderintro',
+    TECHBREAKDOWN: 'techbreakdown',
+    FOCUS: 'focus',
+    DESIGNTYPES: 'designtypes',
+    WEBSITETYPES: 'websitetypes',
+    COURSES: 'courses',
+    PORTFOLIO: 'portfolio',
+    FOLLOWED: 'followed',
+    STARTUPS: 'startups',
+    REQUESTFORM: 'requestform',
+    FOOTER: 'footer'
+}

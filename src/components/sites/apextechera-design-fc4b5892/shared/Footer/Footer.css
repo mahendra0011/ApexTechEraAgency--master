@@ -1,0 +1,481 @@
+/* =========================================================
+   APEXTECHERA AGENCY ANIMATED LUXURY FOOTER
+   ========================================================= */
+
+.agency-footer {
+  position: relative;
+  width: 100%;
+  background: #08080c;
+  color: #ffffff;
+  padding: 6rem 6vw 3rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  z-index: 20;
+}
+
+/* Background Ambient Glows */
+.footer-ambient-glow {
+  position: absolute;
+  top: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 850px;
+  height: 450px;
+  background: radial-gradient(ellipse, rgba(168, 85, 247, 0.18) 0%, rgba(99, 102, 241, 0.08) 45%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.footer-ambient-glow-2 {
+  position: absolute;
+  bottom: 0;
+  right: -100px;
+  width: 500px;
+  height: 350px;
+  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------
+   1. TOP BIG CTA BANNER
+   --------------------------------------------------------- */
+.footer-cta-card {
+  position: relative;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto 5.5rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2.5rem;
+  padding: 4.5rem 4.5rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: border-color 0.4s ease;
+}
+
+.footer-cta-card:hover {
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.footer-cta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4ade80;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.footer-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 12px #22c55e;
+  animation: footerPulse 2s infinite;
+}
+
+@keyframes footerPulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.footer-cta-title {
+  font-size: clamp(2.2rem, 4.2vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.footer-cta-title-italic {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  background: linear-gradient(135deg, #c084fc 0%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.footer-cta-action {
+  flex-shrink: 0;
+}
+
+.footer-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1.35rem 2.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 15px 35px -10px rgba(168, 85, 247, 0.5);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  border: none;
+  outline: none;
+}
+
+.footer-cta-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 20px 45px -8px rgba(168, 85, 247, 0.7);
+}
+
+.footer-cta-btn-arrow {
+  display: inline-block;
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.footer-cta-btn:hover .footer-cta-btn-arrow {
+  transform: translate(3px, -3px);
+}
+
+/* ---------------------------------------------------------
+   2. WORLD CLOCKS (GLOBAL PRESENCE)
+   --------------------------------------------------------- */
+.footer-clocks-bar {
+  max-width: 1320px;
+  margin: 0 auto 5rem;
+  padding: 1.5rem 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  box-sizing: border-box;
+}
+
+.footer-clock-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer-clock-city {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #71717a;
+}
+
+.footer-clock-time-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-clock-time {
+  font-family: 'Plus Jakarta Sans', monospace, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.footer-clock-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #a1a1aa;
+}
+
+/* ---------------------------------------------------------
+   3. DIRECTORY GRID
+   --------------------------------------------------------- */
+.footer-grid {
+  max-width: 1320px;
+  margin: 0 auto 5rem;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1.2fr 1.2fr 1.4fr;
+  gap: 3rem;
+  box-sizing: border-box;
+}
+
+.footer-col-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.footer-logo-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer-logo-title span {
+  color: #a855f7;
+}
+
+.footer-brand-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #a1a1aa;
+  margin: 0;
+  max-width: 280px;
+}
+
+.footer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.footer-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #e4e4e7;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.footer-contact-link:hover {
+  color: #c084fc;
+}
+
+.footer-col-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+}
+
+.footer-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.footer-link {
+  color: #a1a1aa;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.25s ease, transform 0.25s ease;
+  display: inline-block;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+/* Social Icon Pills */
+.footer-socials-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.footer-social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d4d4d8;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.footer-social-btn:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------
+   4. GIANT WATERMARK + BOTTOM BAR
+   --------------------------------------------------------- */
+.footer-watermark-wrap {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto 3rem;
+  text-align: center;
+  overflow: hidden;
+  user-select: none;
+}
+
+.footer-watermark {
+  font-size: clamp(3.5rem, 11vw, 12rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.06);
+  line-height: 0.85;
+  text-transform: uppercase;
+  margin: 0;
+  transition: -webkit-text-stroke 0.4s ease;
+}
+
+.footer-watermark:hover {
+  -webkit-text-stroke: 1.5px rgba(168, 85, 247, 0.2);
+}
+
+.footer-bottom-bar {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  font-size: 0.85rem;
+  color: #71717a;
+}
+
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer-bottom-link {
+  color: #71717a;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.footer-bottom-link:hover {
+  color: #ffffff;
+}
+
+.footer-scroll-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e4e4e7;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.footer-scroll-top-btn:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+
+  .footer-col-brand {
+    grid-column: span 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .agency-footer {
+    padding: 4rem 1.5rem 2.5rem;
+  }
+
+  .footer-cta-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2.5rem 1.75rem;
+    border-radius: 1.75rem;
+    gap: 2rem;
+  }
+
+  .footer-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footer-clocks-bar {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1.25rem 1rem;
+    gap: 1rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-col-brand {
+    grid-column: span 1;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: center;
+  }
+
+  .footer-watermark-wrap {
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-watermark {
+    font-size: clamp(2rem, 9.5vw, 6rem);
+    letter-spacing: -0.02em;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
+  }
+}

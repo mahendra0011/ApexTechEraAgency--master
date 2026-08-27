@@ -1,6 +1,6 @@
 # Apex Tech Era Agency
 
-Clone of [qclay.design](https://qclay.design) built as a Next.js app.
+Clone of [apextechera.com](https://apextechera.com) built as a Next.js app.
 
 ## Getting Started
 

@@ -1,0 +1,250 @@
+.following {
+  background: #000000;
+  height: 350vh;
+  position: relative;
+  width: 100%;
+}
+
+.following__sticky {
+  background: #000000;
+  height: 100vh;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+/* Split Curtains */
+.following__split-half {
+  background: #000000;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  width: 50.5vw;
+  will-change: transform;
+  z-index: 5;
+  display: block;
+}
+
+.following__split-half.-left {
+  left: 0;
+  transform-origin: left center;
+}
+
+.following__split-half.-right {
+  right: 0;
+  transform-origin: right center;
+}
+
+/* Central Vertical Line */
+.following__split-line {
+  height: 100vh;
+  left: 50%;
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  width: 2px;
+  z-index: 6;
+  pointer-events: none;
+  overflow: hidden;
+  will-change: opacity;
+  opacity: 1;
+}
+
+.following__split-line-inner {
+  background: #ffffff;
+  height: 0%;
+  width: 100%;
+  transform-origin: top center;
+  will-change: height;
+}
+
+/* White Following Canvas & 3D Container */
+.portfolio__following {
+  background: #ffffff !important;
+  height: 100% !important;
+  inset: 0 !important;
+  position: absolute !important;
+  width: 100% !important;
+  z-index: 1;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.portfolio__following .following-sticky {
+  align-items: center;
+  background: #ffffff !important;
+  display: flex;
+  height: 100vh;
+  isolation: isolate;
+  justify-content: center;
+  left: 0;
+  perspective: 70rem;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+/* 3D Cube: Prominent, wide, expansive proportions */
+.portfolio__following .following__cube {
+  --width: 58rem; /* 928px wide - bold and expansive */
+  --height: 37rem; /* 592px high */
+  height: var(--height);
+  width: var(--width);
+  position: relative;
+  transform: translateZ(calc(var(--width) / -2));
+  transform-style: preserve-3d;
+  z-index: 2;
+}
+
+.portfolio__following .following__cube .cude__wrapper {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  width: 100%;
+  will-change: transform;
+}
+
+/* Face 1: Wide bold lines of 'WE TURN IDEAS INTO REALITY' */
+.portfolio__following .following__cube .cube__center {
+  align-items: center;
+  backface-visibility: hidden;
+  color: #111827 !important;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  transform: translate3d(calc(var(--width) / -2), 0, 0) rotateY(-90deg);
+  width: 100%;
+}
+
+.portfolio__following .following__cube .cube__center-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem 0;
+}
+
+.portfolio__following .following__cube .cube__center-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  width: 100%;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 2.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #111827 !important;
+}
+
+.portfolio__following .following__cube .cube__center-row .random-spelling,
+.portfolio__following .following__cube .cube__center-row .random-spelling span,
+.portfolio__following .following__cube .cube__center-row .random-spelling-disabled,
+.portfolio__following .following__cube .cube__center-row .random-spelling-disabled span {
+  opacity: 1 !important;
+  color: #111827 !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.portfolio__following .following__cube .cube__center-row .random-spelling .spacer {
+  min-width: 0.65rem;
+  width: 0.65rem;
+  display: inline-block;
+}
+
+/* Face 2: SVG Services */
+.portfolio__following .following__cube .cube__right {
+  align-items: center;
+  backface-visibility: hidden;
+  color: #111827 !important;
+  display: flex;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  transform: translateZ(calc(var(--width) / 2));
+  width: 100%;
+}
+
+.portfolio__following .following__cube .cube__right svg {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+}
+
+.portfolio__following .following__cube .cube__right .cube-link {
+  pointer-events: auto !important;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.portfolio__following .following__cube .cube__right .cube-link text {
+  fill: #111827;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  transition: fill 0.25s ease;
+}
+
+.portfolio__following .following__cube .cube__right .cube-link:hover text {
+  fill: #6366f1 !important;
+}
+
+@media screen and (max-width: 1200px) {
+  .portfolio__following .following__cube {
+    --width: 48rem;
+    --height: 31rem;
+  }
+  .portfolio__following .following__cube .cube__center-row {
+    font-size: 1.75rem;
+  }
+  .portfolio__following .following__cube .cube__center-row .random-spelling .spacer {
+    min-width: 0.5rem;
+    width: 0.5rem;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .portfolio__following .following__cube {
+    --width: 38rem;
+    --height: 25rem;
+  }
+  .portfolio__following .following__cube .cube__center-row {
+    font-size: 1.35rem;
+  }
+  .portfolio__following .following__cube .cube__center-row .random-spelling .spacer {
+    min-width: 0.4rem;
+    width: 0.4rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .portfolio__following .following__cube {
+    --width: 90vw;
+    --height: 65vw;
+  }
+  .portfolio__following .following__cube .cube__center-row {
+    font-size: clamp(0.7rem, 3.2vw, 1.15rem);
+  }
+  .portfolio__following .following__cube .cube__center-row .random-spelling .spacer {
+    min-width: 0.25rem;
+    width: 0.25rem;
+  }
+}

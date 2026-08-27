@@ -1,0 +1,257 @@
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { context } from '../../../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/utils/context'
+
+import SimpleVideoSlider from './SimpleVideoSlider'
+
+const VIDEOS_PATH = '/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services'
+
+// The persistent fullscreen surface cycles through these 7 videos in order.
+const SLIDER_ORDER = [
+  { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, caption: 'ApexTechEra Agency' },
+  { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, caption: 'Full Stack Web Development' },
+  { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, caption: 'UI / UX Design' },
+  { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, caption: 'Android & iOS App Development' },
+  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, caption: 'Build AI / ML Models' },
+  { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, caption: 'Cloud & DevOps Architecture' },
+  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, caption: 'Custom Software Development' }
+]
+
+// Cooldown between slide transitions: 900ms allows the user to comfortably see and watch each video
+const NAV_COOLDOWN_MS = 900
+// Deliberate delta threshold required to switch video (prevents accidental multiple-slide skipping)
+const NAV_DELTA_THRESHOLD = 50
+// Accumulated scroll delta needed at sequence boundaries (0 or 6) to exit fullscreen
+const NAV_BOUNDARY_DISTANCE = 160
+// How much of the viewport the swelled video slot must cover before the sequence locks
+const COVER_RATIO = 0.95
+
+const ServiceSlider = () => {
+  const hostRef = useRef(null)
+  const hostVideoRef = useRef(null)
+  const portalVideoRef = useRef(null)
+  const sliderRef = useRef(null)
+  const sequenceActiveRef = useRef(false)
+  const reentryLockedUntilRef = useRef(0)
+  const sequenceStartRef = useRef(0)
+  const indexRef = useRef(0)
+  const handoffPassedRef = useRef(false)
+
+  const boundaryDeltaRef = useRef(0)
+  const accumulatedDeltaRef = useRef(0)
+  const lastSwitchTimeRef = useRef(0)
+
+  const [index, setIndex] = useState(0)
+  const [sequenceActive, setSequenceActive] = useState(false)
+  const [morphReady, setMorphReady] = useState(false)
+  const [morphVisible, setMorphVisible] = useState(false)
+  const [portalReady, setPortalReady] = useState(false)
+
+  const syncPortalTime = () => {
+    const host = hostVideoRef.current
+    const portal = portalVideoRef.current
+    if (!host || !portal) { return }
+    try { portal.currentTime = host.currentTime } catch (err) { /* not seekable yet */ }
+  }
+
+  const resetExpansion = () => {
+    setMorphReady(false)
+    setMorphVisible(false)
+    setPortalReady(false)
+    boundaryDeltaRef.current = 0
+    accumulatedDeltaRef.current = 0
+    lastSwitchTimeRef.current = 0
+  }
+
+  const handleNavCommit = (nextIndex) => {
+    indexRef.current = nextIndex
+    setIndex(nextIndex)
+  }
+
+  useEffect(() => {
+    const onWheel = (e) => {
+      const host = hostRef.current
+      if (!host) { return }
+
+      // Support both horizontal touchpad swipes and vertical scroll
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+      if (!delta || Math.abs(delta) < 0.5) { return }
+      const direction = delta > 0 ? 1 : -1
+
+      // ---- Fullscreen sequence ACTIVE: smooth gesture video navigation ----
+      if (sequenceActiveRef.current) {
+        e.preventDefault()
+        e.stopImmediatePropagation()
+
+        const now = Date.now()
+        const atLastForward = direction > 0 && indexRef.current === SLIDER_ORDER.length - 1
+        const atFirstBackward = direction < 0 && indexRef.current === 0
+
+        // Handle clean exit at boundaries
+        if (atLastForward) {
+          boundaryDeltaRef.current += Math.abs(delta)
+          if (boundaryDeltaRef.current >= NAV_BOUNDARY_DISTANCE) {
+            boundaryDeltaRef.current = 0
+            handoffPassedRef.current = true
+            sequenceActiveRef.current = false
+            setSequenceActive(false)
+            resetExpansion()
+            reentryLockedUntilRef.current = Date.now() + 1200
+          }
+          return
+        }
+
+        if (atFirstBackward) {
+          boundaryDeltaRef.current += Math.abs(delta)
+          if (boundaryDeltaRef.current >= NAV_BOUNDARY_DISTANCE) {
+            boundaryDeltaRef.current = 0
+            sequenceActiveRef.current = false
+            setSequenceActive(false)
+            resetExpansion()
+            context.snapWheelTo = true
+            context.wheelTo = Math.max(0, window.innerWidth - 100)
+            reentryLockedUntilRef.current = Date.now() + 1000
+          }
+          return
+        }
+
+        // Inside sequence: reset boundary exit accumulator
+        boundaryDeltaRef.current = 0
+
+        // In cooldown from recent switch: absorb inertia events
+        if (now - lastSwitchTimeRef.current < NAV_COOLDOWN_MS) {
+          accumulatedDeltaRef.current = 0
+          return
+        }
+
+        // Reset accumulation if swipe direction inverted
+        if ((accumulatedDeltaRef.current > 0 && direction < 0) || (accumulatedDeltaRef.current < 0 && direction > 0)) {
+          accumulatedDeltaRef.current = 0
+        }
+        accumulatedDeltaRef.current += delta
+
+        if (Math.abs(accumulatedDeltaRef.current) >= NAV_DELTA_THRESHOLD) {
+          accumulatedDeltaRef.current = 0
+          lastSwitchTimeRef.current = now
+
+          if (direction > 0) {
+            sliderRef.current?.next()
+          } else {
+            sliderRef.current?.prev()
+          }
+        }
+        return
+      }
+
+      // ---- Fullscreen sequence is NOT active: check for Forward or Backward Entry ----
+      if (Date.now() < reentryLockedUntilRef.current) { return }
+
+      const rect = host.getBoundingClientRect()
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+      if (!isVisible) { return }
+
+      const winW = window.innerWidth
+      const isCovered = rect.height >= window.innerHeight * COVER_RATIO
+        && rect.width >= window.innerWidth * COVER_RATIO
+
+      if (handoffPassedRef.current) {
+        if (direction < 0 || !isCovered) {
+          handoffPassedRef.current = false
+        } else {
+          return
+        }
+      }
+
+      const isForwardEntry = direction > 0 && isCovered
+      const isBackwardEntry = direction < 0 && isCovered
+
+      if (isForwardEntry) {
+        e.preventDefault()
+        e.stopImmediatePropagation()
+        lastSwitchTimeRef.current = Date.now()
+        accumulatedDeltaRef.current = 0
+        boundaryDeltaRef.current = 0
+        sequenceStartRef.current = 0
+        indexRef.current = 0
+        setIndex(0)
+        setPortalReady(true)
+        setMorphVisible(true)
+        setMorphReady(true)
+        sequenceActiveRef.current = true
+        setSequenceActive(true)
+        context.snapWheelTo = true
+        context.wheelTo = winW
+        return
+      }
+
+      if (isBackwardEntry) {
+        e.preventDefault()
+        e.stopImmediatePropagation()
+        lastSwitchTimeRef.current = Date.now()
+        accumulatedDeltaRef.current = 0
+        boundaryDeltaRef.current = 0
+        const lastIdx = SLIDER_ORDER.length - 1
+        sequenceStartRef.current = lastIdx
+        indexRef.current = lastIdx
+        setIndex(lastIdx)
+        setPortalReady(true)
+        setMorphVisible(true)
+        setMorphReady(true)
+        sequenceActiveRef.current = true
+        setSequenceActive(true)
+        context.snapWheelTo = true
+        context.wheelTo = winW * 2
+        return
+      }
+    }
+
+    document.addEventListener('wheel', onWheel, { capture: true, passive: false })
+    return () => {
+      document.removeEventListener('wheel', onWheel, { capture: true })
+    }
+  }, [])
+
+  const renderVideo = (className, videoRef, extraProps = {}) => (
+    <video
+      ref={videoRef}
+      key={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video}
+      className={className}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      {...extraProps}
+    >
+      <source src={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video} type="video/mp4" />
+    </video>
+  )
+
+  return (
+    <>
+      <div ref={hostRef} className="apex-slot-slider">
+        {renderVideo(`apex-service-video ${portalReady ? 'is-covered' : ''}`, hostVideoRef)}
+      </div>
+      {sequenceActive && createPortal(
+        <div
+          className="apex-service-fullscreen"
+          aria-label="Service video sequence"
+        >
+          <div className="apex-service-morph is-visible">
+            <SimpleVideoSlider
+              ref={sliderRef}
+              items={SLIDER_ORDER}
+              startIndex={sequenceStartRef.current}
+              onIndexChange={handleNavCommit}
+            />
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
+  )
+}
+
+export { ServiceSlider }
+export default ServiceSlider
+

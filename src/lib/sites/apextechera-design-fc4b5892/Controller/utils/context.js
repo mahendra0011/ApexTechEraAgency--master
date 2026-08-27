@@ -1,0 +1,16 @@
+export const context = {
+    active: typeof window !== "undefined" && window.location.hash === "#contact-us" ? 7 : 0,
+    ids: null,
+    controller: null,
+    childrenArray: null,
+    sections: null,
+    prevsections: null,
+    changing: false,
+    globalScrollHeight: 0,
+    externalChange: false,
+    setExternalChanging: null,
+    wheel: 0,
+    wheelTo: 0,
+    snapWheelTo: false,
+    activeForm: false,
+};

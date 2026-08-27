@@ -1,0 +1,217 @@
+/* =========================================================
+   TYPES OF DESIGN WE CREATE - SEAMLESS CLEAN LIGHT THEME
+   ========================================================= */
+
+.design-types-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FFFFFF;
+  color: #111827;
+  padding: 120px 24px 70px;
+  box-sizing: border-box;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Background Ambient Glow & Grid */
+.dt-bg-glow {
+  position: absolute;
+  top: 320px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(232, 96, 46, 0.05) 0%, rgba(34, 197, 94, 0.03) 50%, transparent 70%);
+  filter: blur(100px);
+  pointer-events: none;
+}
+
+.dt-grid-mesh {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+}
+
+/* Fixed-Width Centered Container */
+.dt-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Section Header - Perfectly Clears Fixed Navbar */
+.dt-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 40px;
+}
+
+.dt-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: #FFF1EB;
+  border: 1px solid rgba(232, 96, 46, 0.25);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #E8602E;
+  margin-bottom: 12px;
+}
+
+.dt-pill-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #E8602E;
+  box-shadow: 0 0 6px rgba(232, 96, 46, 0.5);
+}
+
+.dt-title {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  color: #111827;
+}
+
+.dt-title-highlight {
+  color: #E8602E;
+}
+
+.dt-subtitle {
+  font-size: clamp(0.92rem, 1.1vw, 1.05rem);
+  line-height: 1.55;
+  color: #6B7280;
+  margin: 0 auto;
+}
+
+/* 6-Card Grid Layout */
+.dt-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+/* Card Styling */
+.dt-card {
+  background: #FAFAFB;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 20px;
+  padding: 24px 26px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.dt-card:hover {
+  transform: translateY(-4px);
+  border-color: #E8602E;
+  box-shadow: 0 16px 35px -10px rgba(232, 96, 46, 0.14);
+  background: #FFFFFF;
+}
+
+.dt-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.dt-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #FFF3ED;
+  border: 1px solid rgba(232, 96, 46, 0.2);
+  color: #E8602E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.dt-card:hover .dt-icon-wrap {
+  transform: scale(1.08);
+}
+
+.dt-card-num {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #9CA3AF;
+  letter-spacing: 0.05em;
+}
+
+.dt-card-name {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.dt-card-desc {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #4B5563;
+  margin: 0;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN (MOBILE & TABLET)
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .design-types-section {
+    padding: 110px 20px 50px;
+  }
+
+  .dt-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .design-types-section {
+    padding: 95px 16px 40px;
+  }
+
+  .dt-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .dt-card {
+    padding: 20px;
+  }
+
+  .dt-card-name {
+    font-size: 1.05rem;
+  }
+
+  .dt-card-desc {
+    font-size: 0.84rem;
+  }
+}

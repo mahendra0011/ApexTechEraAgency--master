@@ -1,0 +1,146 @@
+[
+  {
+    "title": ["ApiFlowy", "API Workflow & Automation"],
+    "poster": "apiflowy.png",
+    "link": "https://apiflowy.onrender.com/",
+    "theme": "dark"
+  },
+  {
+    "title": ["FakeGuard AI", "AI Deepfake & Content Detection"],
+    "poster": "fakeguardai.png",
+    "link": "",
+    "theme": "dark"
+  },
+  {
+    "title": ["IronForge", "Fitness & Coaching App"],
+    "poster": "ironforge.png",
+    "link": "",
+    "theme": "dark"
+  },
+  {
+    "title": ["CloudNest", "Cloud Storage & File Sync"],
+    "poster": "cloudNest.png",
+    "link": "",
+    "theme": "dark"
+  },
+  {
+    "title": ["MCode", "Full-Stack Dev Platform"],
+    "poster": "mcode.png",
+    "link": "",
+    "theme": "dark"
+  },
+  {
+    "title": ["MCode CLI", "Developer CLI Tool"],
+    "poster": "mcode cli.png",
+    "link": "",
+    "theme": "dark"
+  },
+  {
+    "title": ["Lost & Found", "Community Discovery Hub"],
+    "poster": "lost-and-found.png",
+    "link": "",
+    "theme": "dark"
+  },
+  {
+    "title": ["Bun in a Million", "Food Delivery & Brand Platform"],
+    "poster": "buiinamillion.png",
+    "link": "",
+    "theme": "dark"
+  },
+  {
+    "title": ["MindSupport", "Mental Wellness & Therapy"],
+    "poster": "mindsupport.png",
+    "link": "",
+    "theme": "dark"
+  },
+  {
+    "title": ["iShipGreen", "Sustainable Logistics Platform"],
+    "poster": "project1.png",
+    "link": "https://ishipgreen.netlify.app/",
+    "theme": "light"
+  },
+  {
+    "title": ["MarketPro", "E-Commerce Marketplace"],
+    "poster": "maketpro.png",
+    "link": "https://marketpro-demo.vercel.app/",
+    "theme": "light"
+  },
+  {
+    "title": ["Natchkin", "Creative Studio & Brand"],
+    "poster": "natchkin.png",
+    "link": "https://natchkin.com/",
+    "theme": "light"
+  },
+  {
+    "title": ["Movix", "Movies & Entertainment Portal"],
+    "poster": "movix.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["StudyBuddy", "AI Study Companion"],
+    "poster": "studybuddy.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["TempTalk", "Anonymous Messaging App"],
+    "poster": "temptalk.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["RentPe", "Rental & Real Estate Portal"],
+    "poster": "rentpe.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["MediCore", "Healthcare & Telemedicine"],
+    "poster": "medicore.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["Evento", "Event Management Platform"],
+    "poster": "evento.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["FrontCrafter", "Frontend Component Studio"],
+    "poster": "FrontCrafter.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["IntegrateKit", "API Integration Suite"],
+    "poster": "IntegrateKit.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["Bridge", "Data & System Bridge"],
+    "poster": "Bridge.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["DesignDroid", "AI Design Assistant"],
+    "poster": "designdroid.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["ModernIcons", "Icon Customizer & SVG Library"],
+    "poster": "modernicons.png",
+    "link": "",
+    "theme": "light"
+  },
+  {
+    "title": ["Modern UI", "Design System & Component Library"],
+    "poster": "MUI.png",
+    "link": "",
+    "theme": "light"
+  }
+]
