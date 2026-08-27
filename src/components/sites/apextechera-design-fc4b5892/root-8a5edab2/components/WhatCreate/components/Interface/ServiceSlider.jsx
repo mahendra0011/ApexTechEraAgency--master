@@ -12,7 +12,7 @@ const SLIDER_ORDER = [
   { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, caption: 'Full Stack Web Development' },
   { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, caption: 'UI / UX Design' },
   { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, caption: 'Android & iOS App Development' },
-  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, caption: 'AI Models, Agents & Automation' },
+  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, caption: 'Build AI / ML Models' },
   { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, caption: 'Cloud & DevOps Architecture' },
   { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, caption: 'Custom Software Development' }
 ]
@@ -69,19 +69,23 @@ const ServiceSlider = () => {
   }
 
   useEffect(() => {
-    const onWheel = (e) => {
+    // Shared gesture processor used by BOTH mouse-wheel (desktop) and
+    // touch-swipe (mobile / Android) input. `delta` follows the same sign
+    // convention as a native WheelEvent.deltaY: positive = scrolling
+    // forward/down, negative = scrolling backward/up.
+    // `evt`, when provided and preventable, is used to stop the page's
+    // native scroll only in the exact branches that need to take over
+    // (entry / active-sequence) — every other scroll passes through
+    // untouched, exactly like the original wheel-only behaviour.
+    const processGesture = (delta, evt) => {
       const host = hostRef.current
       if (!host) { return }
-
-      // Support both horizontal touchpad swipes and vertical scroll
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
       if (!delta || Math.abs(delta) < 0.5) { return }
       const direction = delta > 0 ? 1 : -1
 
       // ---- Fullscreen sequence ACTIVE: smooth gesture video navigation ----
       if (sequenceActiveRef.current) {
-        e.preventDefault()
-        e.stopImmediatePropagation()
+        if (evt) { evt.preventDefault(); evt.stopImmediatePropagation && evt.stopImmediatePropagation() }
 
         const now = Date.now()
         const atLastForward = direction > 0 && indexRef.current === SLIDER_ORDER.length - 1
@@ -166,8 +170,7 @@ const ServiceSlider = () => {
       const isBackwardEntry = direction < 0 && isCovered
 
       if (isForwardEntry) {
-        e.preventDefault()
-        e.stopImmediatePropagation()
+        if (evt) { evt.preventDefault(); evt.stopImmediatePropagation && evt.stopImmediatePropagation() }
         lastSwitchTimeRef.current = Date.now()
         accumulatedDeltaRef.current = 0
         boundaryDeltaRef.current = 0
@@ -185,8 +188,7 @@ const ServiceSlider = () => {
       }
 
       if (isBackwardEntry) {
-        e.preventDefault()
-        e.stopImmediatePropagation()
+        if (evt) { evt.preventDefault(); evt.stopImmediatePropagation && evt.stopImmediatePropagation() }
         lastSwitchTimeRef.current = Date.now()
         accumulatedDeltaRef.current = 0
         boundaryDeltaRef.current = 0
@@ -205,9 +207,62 @@ const ServiceSlider = () => {
       }
     }
 
+    const onWheel = (e) => {
+      // Support both horizontal touchpad swipes and vertical scroll
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+      processGesture(delta, e)
+    }
+
     document.addEventListener('wheel', onWheel, { capture: true, passive: false })
+
+    // ---- Touch support (Android / mobile) ----------------------------------
+    // Native touch scrolling never dispatches a `wheel` DOM event, so on
+    // Android the listener above never fired and the fullscreen 7-video
+    // sequence never activated. We translate touch gestures into the same
+    // delta/direction shape used by processGesture() so mobile gets
+    // identical forward/backward-entry + in-sequence navigation behaviour.
+    // This only ADDS a parallel input path; the wheel path above (desktop)
+    // is untouched, so desktop/Windows behaviour cannot change.
+    let touchStartY = 0
+    let lastTouchY = 0
+    let touchActive = false
+
+    const onTouchStart = (e) => {
+      const t = e.touches && e.touches[0]
+      if (!t) { return }
+      touchStartY = t.screenY
+      lastTouchY = touchStartY
+      touchActive = true
+    }
+
+    const onTouchMove = (e) => {
+      if (!touchActive) { return }
+      const t = e.touches && e.touches[0]
+      if (!t) { return }
+      const currentY = t.screenY
+      // Positive delta = finger moving up the screen = user scrolling
+      // forward/down, matching native wheel deltaY's sign convention.
+      const deltaY = lastTouchY - currentY
+      lastTouchY = currentY
+      if (Math.abs(deltaY) < 2) { return }
+      processGesture(deltaY, e)
+    }
+
+    const onTouchEnd = () => {
+      touchActive = false
+    }
+
+    document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true })
+    document.addEventListener('touchmove', onTouchMove, { capture: true, passive: false })
+    document.addEventListener('touchend', onTouchEnd, { capture: true, passive: true })
+    document.addEventListener('touchcancel', onTouchEnd, { capture: true, passive: true })
+
     return () => {
       document.removeEventListener('wheel', onWheel, { capture: true })
+      document.removeEventListener('touchstart', onTouchStart, { capture: true })
+      document.removeEventListener('touchmove', onTouchMove, { capture: true })
+      document.removeEventListener('touchend', onTouchEnd, { capture: true })
+      document.removeEventListener('touchcancel', onTouchEnd, { capture: true })
     }
   }, [])
 
@@ -254,4 +309,3 @@ const ServiceSlider = () => {
 
 export { ServiceSlider }
 export default ServiceSlider
-
