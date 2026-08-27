@@ -155,8 +155,9 @@ const ServiceSlider = () => {
       if (!isVisible) { return }
  
       const winW = window.innerWidth
-      const isCovered = rect.height >= window.innerHeight * COVER_RATIO
-        && rect.width >= window.innerWidth * COVER_RATIO
+      const currentCoverRatio = winW <= 768 ? 0.5 : COVER_RATIO
+      const isCovered = rect.height >= window.innerHeight * currentCoverRatio
+        && rect.width >= window.innerWidth * currentCoverRatio
  
       if (handoffPassedRef.current) {
         if (direction < 0 || !isCovered) {
