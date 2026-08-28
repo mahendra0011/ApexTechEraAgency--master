@@ -67,12 +67,23 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
       </button>
 
       <div className="menu__content">
-        {/* Left Column: Studio Tagline, Contact Details, Social Channels & Copyright */}
+        {/* Left Column: Studio Logo, Tagline, Contact Details, Social Channels & Copyright */}
         <div className="menu__left-panel">
           <div className="menu__tagline-box">
+            <img 
+              src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.png" 
+              alt="ApexTechEra Agency"
+              style={{
+                width: '120px',
+                height: 'auto',
+                objectFit: 'contain',
+                marginBottom: '0.5rem',
+                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.06))'
+              }}
+            />
             <span className="menu__subhead">APEXTECHERA AGENCY</span>
             <p className="menu__tagline">
-              Full-cycle creative & technology agency crafting high-performance web platforms, intelligent AI systems & next-gen digital experiences.
+              Full-cycle creative &amp; technology agency crafting high-performance web platforms, intelligent AI systems &amp; next-gen digital experiences.
             </p>
           </div>
 
@@ -133,49 +144,18 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
           </div>
         </div>
 
-        {/* Center: Luxury Agency Logo Card */}
-        <div className="menu__img-logo-wrap" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '3rem 2.5rem',
-          borderRadius: '2rem',
-          background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(243, 244, 248, 0.85) 100%)',
-          boxShadow: '0 30px 60px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04)',
-          position: 'relative',
-          overflow: 'hidden',
-          width: '320px',
-          height: '420px',
-          boxSizing: 'border-box',
-        }}>
-          {/* Ambient Glowing Aura */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '260px',
-            height: '260px',
-            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 70%)',
-            filter: 'blur(30px)',
-            pointerEvents: 'none',
-            borderRadius: '50%',
-          }} />
-
-          <img 
-            src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.png" 
-            alt="ApexTechEra Agency"
-            style={{
-              width: '100%',
-              maxWidth: '240px',
-              height: 'auto',
-              objectFit: 'contain',
-              position: 'relative',
-              zIndex: 1,
-              filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.08))',
-            }}
-          />
+        {/* Center: Large 3D Dancing Model */}
+        <div className="menu__3d-model-wrap">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="menu__3d-model-video"
+          >
+            <source src="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/apextechera-dance_Rumba.webm" type="video/webm" />
+            <source src="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/apextechera-dance_Rumba.mov" type="video/quicktime" />
+          </video>
         </div>
 
         {/* Right: Navigation Links */}

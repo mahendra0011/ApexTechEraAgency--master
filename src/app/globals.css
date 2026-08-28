@@ -496,18 +496,16 @@ a { color: inherit; text-decoration: inherit; }
   font-style: normal;
   font-display: swap;
 }
-.section-apextechera,
-.section-cosmos {
+.section-apextechera {
   background: url("/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/bg3.png") center / cover no-repeat #ffffff;
   --foreground: #09090b;
   --muted: #6b7280;
   font-family: "PP Telegraf", "Plus Jakarta Sans", sans-serif;
 }
-.section-apextechera .section-inner,
-.section-cosmos .section-inner {
+.section-apextechera .section-inner {
   background: transparent;
 }
-/* cosmos-end */
+/* apextechera-end */
 
 /* ================= WhatCreate Entrance & Typography Split ================= */
 .what-create__view {
@@ -637,18 +635,16 @@ a { color: inherit; text-decoration: inherit; }
   font-style: normal;
   font-display: swap;
 }
-.section-apextechera,
-.section-cosmos {
+.section-apextechera {
   background: url("/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/bg3.png") center / cover no-repeat #ffffff;
   --foreground: #09090b;
   --muted: #6b7280;
   font-family: "PP Telegraf", "Plus Jakarta Sans", sans-serif;
 }
-.section-apextechera .section-inner,
-.section-cosmos .section-inner {
+.section-apextechera .section-inner {
   background: transparent;
 }
-/* cosmos-end */
+/* apextechera-end */
 
 /* ================= WhatCreate Entrance & Typography Split ================= */
 .what-create__view {
@@ -933,11 +929,30 @@ a { color: inherit; text-decoration: inherit; }
     margin: 0 !important;
   }
 
-  .menu .menu__img-logo-wrap {
+  .menu .menu__3d-model-wrap {
     display: flex !important;
-    width: 280px !important;
-    height: 380px !important;
-    padding: 2.5rem 2rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 360px !important;
+    height: 440px !important;
+    position: relative !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    filter: none !important;
+    pointer-events: none !important;
+  }
+
+  .menu .menu__3d-model-video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    filter: none !important;
   }
 
   .menu .menu__folder {
@@ -985,8 +1000,7 @@ a { color: inherit; text-decoration: inherit; }
 
 /* ================= Mobile Scoped Layout & Header Optimizations ================= */
 @media screen and (max-width: 768px) {
-  .section-apextechera,
-  .section-cosmos {
+  .section-apextechera {
     background: url("/images/hero-section2-mobile-bg.png") center / cover no-repeat #ffffff !important;
   }
 
