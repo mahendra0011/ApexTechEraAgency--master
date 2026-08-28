@@ -24,7 +24,7 @@ const buildMetadata = () => ({
 export const sendForm = (formData, onSuccess, onError) => {
     const payload = {
         fields: buildFields(formData),
-        pageUrl: 'https://apextechera.com',
+        pageUrl: 'https://apextechera.online',
         metadata: buildMetadata(),
         companyWebsite: formData.companyWebsite || "",
     };

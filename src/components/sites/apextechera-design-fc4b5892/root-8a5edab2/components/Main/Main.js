@@ -31,6 +31,10 @@ const Main = memo(function Main() {
           <span className="block">
             <span className="mcode-terminal-pill">
               Businesses Forward.
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mcode-growth-svg" aria-label="Growth">
+                <path d="M22 7L13.5 15.5L8.5 10.5L2 17" stroke="#16a34a" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" className="mcode-growth-path" />
+                <path d="M16 7H22V13" stroke="#16a34a" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" className="mcode-growth-arrow" />
+              </svg>
             </span>
           </span>
         </h1>

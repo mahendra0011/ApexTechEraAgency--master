@@ -297,8 +297,11 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     const tick = () => {
       if (disposed) return;
       const dt = Math.min(clock.getDelta(), 0.1);
+      // Snappy and fast response across both Mobile (Android/iOS) and Desktop
+      const lerpSpeed = 0.08;
+      const targetScroll = wheelRef.current * 1.45;
 
-      smoothScroll += (wheelRef.current - smoothScroll) * (1 - Math.exp(-dt / 0.5));
+      smoothScroll += (targetScroll - smoothScroll) * (1 - Math.exp(-dt / lerpSpeed));
 
       if (cameraInRef.current.start >= 0) {
         const p = Math.min((performance.now() - cameraInRef.current.start) / 2500, 1);
@@ -306,7 +309,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
         if (p >= 1) cameraInRef.current.start = -1;
       }
 
-      earth.rotation.y += 0.0006;
+      earth.rotation.y += 0.001;
 
       for (let i = 2; i < positions.length; i += 3) {
         positions[i] += 0.02;

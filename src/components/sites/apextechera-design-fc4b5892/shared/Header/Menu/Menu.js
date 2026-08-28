@@ -9,7 +9,7 @@ import { CursorContext, cursorStyles } from "../../Cursor/Cursor"
 import cn from "classnames";
 import UnderLink from "../../UI/UnderLink/UnderLink"
 import AnimateLink from "./AnimateLink"
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, X } from "lucide-react";
 
 const InstagramIcon = ({ size = 17 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -54,23 +54,86 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
 
   return (
     <div className={`menu ${isMenuShow ? "-show" : ""}`}>
+      {/* Top Right Close 'X' Button */}
+      <button
+        type="button"
+        className="menu__close-btn"
+        onClick={() => setIsMenuShow(false)}
+        aria-label="Close menu"
+        onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_MENU_BTN)}
+        onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+      >
+        <X size={22} />
+      </button>
+
       <div className="menu__content">
-        <div className="menu__social">
-          <span className="m">{$t("components.menu.social.title")}</span>
-          {$t("components.menu.social.links").map((_, i) => (
-            <AnimateLink 
-              className="link" 
-              href={_.link} 
-              key={i} 
-              target="_blank"
-              rel="noreferrer"
-              onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
-              onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
-            >
-              {_.name}
-            </AnimateLink>
-          ))}
+        {/* Left Column: Studio Tagline, Contact Details, Social Channels & Copyright */}
+        <div className="menu__left-panel">
+          <div className="menu__tagline-box">
+            <span className="menu__subhead">APEXTECHERA AGENCY</span>
+            <p className="menu__tagline">
+              Full-cycle creative & technology agency crafting high-performance web platforms, intelligent AI systems & next-gen digital experiences.
+            </p>
+          </div>
+
+          <div className="menu__group">
+            <span className="menu__subhead">GET IN TOUCH</span>
+            <div className="menu__contact-details">
+              <a 
+                href="mailto:mahendrapra0077@gmail.com" 
+                className="menu__contact-item"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <Mail size={16} className="menu__contact-icon" />
+                <span>mahendrapra0077@gmail.com</span>
+              </a>
+              <a 
+                href="tel:+917724822660" 
+                className="menu__contact-item"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <Phone size={16} className="menu__contact-icon" />
+                <span>+91 7724822660</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="menu__group">
+            <span className="menu__subhead">FOLLOW US</span>
+            <div className="menu__social-row">
+              <a 
+                href="https://www.instagram.com/apextecheradesign" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="menu__social-btn"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <InstagramIcon size={16} />
+                <span>Instagram</span>
+              </a>
+              <a 
+                href="https://www.linkedin.com/company/apextechera" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="menu__social-btn"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <LinkedinIcon size={16} />
+                <span>LinkedIn</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="menu__cp">
+            <p className="menu__cp_copyright">&copy; {new Date().getFullYear()} ApexTechEra Agency. All rights reserved.</p>
+          </div>
         </div>
+
+        {/* Center: Luxury Agency Logo Card */}
         <div className="menu__img-logo-wrap" style={{
           display: 'flex',
           flexDirection: 'column',
@@ -114,6 +177,8 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
             }}
           />
         </div>
+
+        {/* Right: Navigation Links */}
         <div className="menu__folder">
           <span className="m">{$t("components.menu.nav.title")}</span>
           <div className="list">
@@ -128,33 +193,6 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
               </AnimateLink>
             ))}
           </div>
-        </div>
-      </div>
-      <div className="menu__text">
-        <div className="menu__contact-details">
-          <a href="mailto:mahendrapra0077@gmail.com" className="menu__contact-item">
-            <Mail size={16} className="menu__contact-icon" />
-            <span>mahendrapra0077@gmail.com</span>
-          </a>
-          <a href="tel:+917724822660" className="menu__contact-item">
-            <Phone size={16} className="menu__contact-icon" />
-            <span>+91 7724822660</span>
-          </a>
-        </div>
-
-        <div className="menu__social-row">
-          <a href="https://www.instagram.com/apextecheradesign" target="_blank" rel="noreferrer" className="menu__social-btn">
-            <InstagramIcon size={17} />
-            <span>Instagram</span>
-          </a>
-          <a href="https://www.linkedin.com/company/apextechera" target="_blank" rel="noreferrer" className="menu__social-btn">
-            <LinkedinIcon size={17} />
-            <span>LinkedIn</span>
-          </a>
-        </div>
-
-        <div className="menu__cp">
-          <p className="menu__cp_copyright">&copy; ApexTechEra Agency {new Date().getFullYear()}</p>
         </div>
       </div>
     </div>

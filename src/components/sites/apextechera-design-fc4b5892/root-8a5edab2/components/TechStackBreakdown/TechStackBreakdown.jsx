@@ -90,25 +90,6 @@ const STACK_ITEMS = [
     image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/uiux-figma-stack.png",
     imageAlt: "In UI/UX Design We Use",
   },
-  {
-    id: "ai-ml",
-    step: "05",
-    pill: "05 — AI Models, Agents & Automation",
-    badgeColor: "#EA580C",
-    badgeBg: "#FFF7ED",
-    heading: "In AI, Agents & Automation We Use.",
-    description:
-      "We empower businesses with cutting-edge AI solutions — custom AI/ML models, intelligent autonomous agents, robust workflow automations, RAG pipelines, and fine-tuned LLMs.",
-    bullets: [
-      "Custom AI/ML model development, fine-tuning & LLM integrations",
-      "Autonomous multi-agent workflows using LangChain, LangGraph & CrewAI",
-      "Powerful workflow automations, RAG pipelines & Vector DB search",
-    ],
-    buttonText: "Explore AI Stack",
-    buttonIcon: BrainCircuit,
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/aiml-628.png",
-    imageAlt: "In AI, Agents & Automation We Use",
-  },
 ];
 
 const TechStackBreakdown = memo(function TechStackBreakdown({ id }) {

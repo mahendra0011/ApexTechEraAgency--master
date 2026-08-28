@@ -14,20 +14,20 @@ const Timeline = (refs, cache) => {
     // const H = C + dist / 4
     // const I = C + dist / 3.5
     // const END = dist
-    const rawDelta = (dist - window.innerWidth*2) / 7
-    // Guard: on small viewports dist < 2*winW => rawDelta negative -> timeline reverses and NaN
-    const delta = Math.max(rawDelta, 120)
-
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 576
     const START = 0
     const A = window.innerWidth
     const B = window.innerWidth + 1
-    const C = window.innerWidth*2
-    const D = window.innerWidth*2 + delta
-    const E = window.innerWidth*2 + delta * 2
-    const F = window.innerWidth*2 + delta * 3
-    const G = window.innerWidth*2 + delta * 4
-    const H = window.innerWidth*2 + delta * 5
-    const I = window.innerWidth*2 + delta * 6
+    const C = isMobile ? window.innerWidth + 750 : window.innerWidth*2
+    const rawDelta = (dist - C) / 7
+    // Guard: on small viewports dist < 2*winW => rawDelta negative -> timeline reverses and NaN
+    const delta = Math.max(rawDelta, 120)
+    const D = C + delta
+    const E = C + delta * 2
+    const F = C + delta * 3
+    const G = C + delta * 4
+    const H = C + delta * 5
+    const I = C + delta * 6
     const END = dist
 
 

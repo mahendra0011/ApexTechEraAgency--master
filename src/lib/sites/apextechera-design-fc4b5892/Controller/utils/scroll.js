@@ -39,9 +39,10 @@ export const scroll = {
     calcWheelTo() {
         const ref = this.getInnerRef(context.sections)
         if (!ref) { return }
-        // courses (process) section: slower wheel-to-scroll ratio so the
-        // sticky card deck reads clearly instead of racing past on one flick
-        const intensity = context.ids && (context.ids[context.active] === 'courses' || context.ids[context.active] === 'apextechera') ? 0.4 : this.intensity
+        // courses (process) & whatcreate (mobile) section: slower wheel-to-scroll ratio so the
+        // transitions and cards read clearly and zoom slowly instead of racing past on one flick
+        const isWhatCreateMobile = context.ids && context.ids[context.active] === 'whatcreate' && typeof window !== 'undefined' && window.innerWidth <= 576
+        const intensity = context.ids && (context.ids[context.active] === 'courses' || context.ids[context.active] === 'apextechera' || isWhatCreateMobile) ? 0.5 : this.intensity
         context.wheelTo = getScrollCoordsFromElement(ref).windowTop.fromTop + context.wheel / intensity
     },
 

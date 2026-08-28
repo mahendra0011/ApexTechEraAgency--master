@@ -123,6 +123,17 @@
   transform: scale(1.26);
 }
 
+/* Card 05: Fast Delivery Proportionate Scale */
+.focus-card__img--05 {
+  transform: scale(0.92) !important;
+  max-width: 96% !important;
+  max-height: 96% !important;
+}
+
+.focus-card-item:hover .focus-card__img--05 {
+  transform: scale(0.98) !important;
+}
+
 /* Right Content Column */
 .focus-card__content {
   display: flex;

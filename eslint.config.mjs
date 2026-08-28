@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     // Ported legacy CRA code from the cloned site (kept byte-identical on purpose):
     "src/components/sites/**",
     "src/lib/sites/**",
+    "public/**",
   ]),
 ]);
 

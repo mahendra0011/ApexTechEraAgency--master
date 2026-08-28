@@ -168,7 +168,7 @@ const FormBlock = ({ fixed }) => {
         </div>
         <div className="">
           <a
-            href="https://apextechera.com/ApextechEraCapabilitiesDeck.v3.pdf"
+            href="https://apextechera.online/ApextechEraCapabilitiesDeck.v3.pdf"
             target="_blank"
             rel="noreferrer"
             onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}

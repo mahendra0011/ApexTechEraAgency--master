@@ -15,6 +15,16 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
   const onIndexChangeRef = useRef(onIndexChange)
   useEffect(() => { onIndexChangeRef.current = onIndexChange }, [onIndexChange])
 
+  // Try to play a single video element, swallowing the AbortError that
+  // fires when a play() request is interrupted (e.g. by a fast slide swap).
+  const tryPlay = (el) => {
+    if (!el) { return }
+    try {
+      const p = el.play()
+      if (p && p.catch) { p.catch(() => {}) }
+    } catch (e) { /* ignore */ }
+  }
+
   // Setup initial slide positions and visibility
   useEffect(() => {
     currentIndexRef.current = startIndex
@@ -26,10 +36,7 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
       gsap.killTweensOf(el)
       if (i === startIndex) {
         gsap.set(el, { xPercent: 0, zIndex: 2, visibility: 'visible', opacity: 1 })
-        try {
-          const p = el.play()
-          if (p && p.catch) { p.catch(() => {}) }
-        } catch (e) {}
+        tryPlay(el)
       } else {
         gsap.set(el, { xPercent: i > startIndex ? 100 : -100, zIndex: 0, visibility: 'hidden', opacity: 1 })
       }
@@ -41,13 +48,22 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
     }
   }, [startIndex])
 
-  // Start all videos playing so there is zero black frame delay on slide switch
+  // Only pre-warm the CURRENT slide plus its immediate neighbours (prev/next).
+  // Playing all 7 full-size videos at once overwhelms mobile hardware video
+  // decoders (Android/iOS typically cap concurrent decode sessions), which
+  // caused every <video> to abort loading (networkState: NETWORK_NO_SOURCE)
+  // and left the fullscreen sequence showing a black screen with no video.
+  // Neighbours further away stay paused with preload="metadata" until the
+  // user actually navigates to them (gotoSlide() below already starts the
+  // incoming slide just-in-time), keeping the "no black frame on switch"
+  // feel without loading everything concurrently.
   useEffect(() => {
-    slidesRef.current.filter(Boolean).forEach((el) => {
-      try {
-        const p = el.play()
-        if (p && p.catch) { p.catch(() => {}) }
-      } catch (e) {}
+    const els = slidesRef.current.filter(Boolean)
+    const warm = new Set([startIndex - 1, startIndex, startIndex + 1].filter(
+      (i) => i >= 0 && i < els.length
+    ))
+    els.forEach((el, i) => {
+      if (warm.has(i)) { tryPlay(el) }
     })
   }, [])
 
@@ -68,9 +84,20 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
 
     // Ensure next video is playing
     nextSlide.style.visibility = 'visible'
-    if (nextSlide.paused) {
-      try { const p = nextSlide.play(); if (p && p.catch) { p.catch(() => {}) } } catch (e) {}
-    }
+    if (nextSlide.paused) { tryPlay(nextSlide) }
+
+    // Pre-warm the slide just beyond the one we're entering too, so the
+    // NEXT swipe also has zero black-frame delay, without ever having
+    // more than 3 videos actively decoding at once.
+    const lookaheadIndex = nextIndex + direction
+    const lookaheadSlide = slidesRef.current[lookaheadIndex]
+    if (lookaheadSlide && lookaheadSlide.paused) { tryPlay(lookaheadSlide) }
+
+    // The slide we just left two steps behind is no longer a neighbour —
+    // pause it to free up a decoder slot.
+    const staleIndex = prevIndex - direction
+    const staleSlide = slidesRef.current[staleIndex]
+    if (staleSlide && staleIndex !== nextIndex && !staleSlide.paused) { staleSlide.pause() }
 
     isAnimatingRef.current = true
 
@@ -140,20 +167,28 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
 
   return (
     <div className="apex-simple-slider">
-      {items.map((item, i) => (
-        <video
-          key={item.video}
-          ref={(el) => (slidesRef.current[i] = el)}
-          className="apex-simple-slider__video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        >
-          <source src={item.video} type="video/mp4" />
-        </video>
-      ))}
+      {items.map((item, i) => {
+        // Only the slide we start on (plus its immediate neighbour, handled
+        // by the warm-up effect above) needs to be eager. Everything else
+        // loads lazily so we never ask mobile decoders to handle all 7
+        // videos at once (see the warm-up effect for why that breaks
+        // playback on Android/iOS).
+        const isInitialNeighbour = Math.abs(i - startIndex) <= 1
+        return (
+          <video
+            key={item.video}
+            ref={(el) => (slidesRef.current[i] = el)}
+            className="apex-simple-slider__video"
+            autoPlay={isInitialNeighbour}
+            muted
+            loop
+            playsInline
+            preload={isInitialNeighbour ? 'auto' : 'metadata'}
+          >
+            <source src={item.video} type="video/mp4" />
+          </video>
+        )
+      })}
 
       {/* Prev / Next Clickable Navigation Arrows */}
       {index > 0 && (
@@ -221,4 +256,3 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
 })
 
 export default SimpleVideoSlider
-
