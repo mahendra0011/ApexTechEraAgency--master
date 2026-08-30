@@ -4,7 +4,7 @@ import { state } from "./state"
 
 export const scroll = {
     ease: .04,
-    easeMobile: .04,
+    easeMobile: 1,
     intensity: .1,
     class: 'section-inner',
 
@@ -24,23 +24,18 @@ export const scroll = {
             lerped = Math.max(Math.min(context.wheelTo, maxLerp), 0)
         } else {
             lerped = Math.max(Math.min(this.lerp(scrolled, context.wheelTo), maxLerp), 0)
-            // Fix dashboard half: WhatCreate's windows->android needs to reach
-            // END (maxLerp). With ease 0.04 lerped lags ~15-20px behind wheelTo,
-            // so next section triggers before full android. Snap when close.
             const isWhatCreate = context.ids && context.ids[context.active] === 'whatcreate'
             if (isWhatCreate && maxLerp > 0 && context.wheelTo >= maxLerp - 1 && maxLerp - lerped < 24) {
                 lerped = maxLerp
             }
         }
-        if ( needDispatch ) { document.dispatchEvent(new CustomEvent('customwheel', { detail: { wheel: lerped } })) } // для передачи в хуки
+        if ( needDispatch ) { document.dispatchEvent(new CustomEvent('customwheel', { detail: { wheel: lerped } })) }
         return { ref, lerped }
     },
 
     calcWheelTo() {
         const ref = this.getInnerRef(context.sections)
         if (!ref) { return }
-        // courses (process) & whatcreate (mobile) section: slower wheel-to-scroll ratio so the
-        // transitions and cards read clearly and zoom slowly instead of racing past on one flick
         const isWhatCreateMobile = context.ids && context.ids[context.active] === 'whatcreate' && typeof window !== 'undefined' && window.innerWidth <= 576
         const intensity = context.ids && (context.ids[context.active] === 'courses' || context.ids[context.active] === 'apextechera' || isWhatCreateMobile) ? 0.5 : this.intensity
         context.wheelTo = getScrollCoordsFromElement(ref).windowTop.fromTop + context.wheel / intensity
@@ -53,14 +48,8 @@ export const scroll = {
     renderTranslateInterpolation() {
         const { ref, lerped } = this.calcTranslate(context.sections, context.wheel)
         if (!ref) { return }
-        // console.log(lerped)
         ref.style.transform = `translate3d(0, ${lerped * -1}px, 0)`
     },
-
-    // translate(sections, wheel) {
-    //     const { ref, lerped } = this.calcTranslate(sections, wheel)
-    //     ref.style.transform = `translate3d(0, ${lerped * -1}px, 0)`
-    // },
 
     resetTranslate(sections) {
         if ( !context.externalChange ) { return }
@@ -96,7 +85,6 @@ export const scroll = {
                 _.ref.style.transform = `translate3d(0, 0vh, 0)`
             } )
         }
-
     },
 
     getInnerRef(sections) {
