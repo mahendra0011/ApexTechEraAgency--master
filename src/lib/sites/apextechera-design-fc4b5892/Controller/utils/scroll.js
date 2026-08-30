@@ -4,7 +4,7 @@ import { state } from "./state"
 
 export const scroll = {
     ease: .04,
-    easeMobile: 1,
+    easeMobile: .04,
     intensity: .1,
     class: 'section-inner',
 
@@ -111,7 +111,8 @@ export const scroll = {
     },
 
     lerp(start, end) {
-        // const ease = window.innerWidth < 576 ? this.easeMobile : this.ease
-        return start + (end - start) * this.ease
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 576
+        const ease = isMobile ? this.easeMobile : this.ease
+        return start + (end - start) * ease
     }
 }
