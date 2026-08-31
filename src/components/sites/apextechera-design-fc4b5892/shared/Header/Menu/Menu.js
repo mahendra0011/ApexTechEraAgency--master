@@ -1,6 +1,6 @@
 
 import {$t} from "../../../../../../lib/sites/apextechera-design-fc4b5892/i18n/i18n"
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { ControllerContext } from "../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/Controller"
 import { ModalContext } from "../../../shared/Modal/Modal"
 import { getScreen } from "../../../../../../lib/sites/apextechera-design-fc4b5892/utils"
@@ -32,6 +32,22 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
   const { setCursorStyle } = useContext(CursorContext)
   const { setNewActive } = useContext(ControllerContext)
   const { setActiveForm } = useContext(ModalContext)
+
+  // This menu is always mounted (just toggled via a CSS class), so its
+  // background dance video would otherwise autoplay and decode from the
+  // moment the page loads — forever, even if the user never opens the
+  // menu. Only actually play it while the menu is open.
+  const menuVideoRef = useRef()
+  useEffect(() => {
+    const el = menuVideoRef.current
+    if (!el) { return }
+    if (isMenuShow) {
+      const p = el.play()
+      if (p && p.catch) { p.catch(() => {}) }
+    } else {
+      el.pause()
+    }
+  }, [isMenuShow])
 
   const routeToScreen = (link) => {
     if (link === '#contacts') {
@@ -147,7 +163,8 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
         {/* Center: Large 3D Dancing Model */}
         <div className="menu__3d-model-wrap">
           <video
-            autoPlay
+            ref={menuVideoRef}
+            autoPlay={false}
             loop
             muted
             playsInline
