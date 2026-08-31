@@ -299,13 +299,35 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
+    // The site keeps every section permanently mounted and switches between
+    // them with CSS transforms (rather than mounting/unmounting), so this
+    // WebGL scene would otherwise keep rendering every single frame FOREVER
+    // — even hours later while the user is on a totally different section
+    // like "We Create". That's a full 3D scene (earth, particles, astronaut
+    // model) competing for CPU/GPU non-stop in the background, which was a
+    // major contributor to the overall site feeling heavy/hanging on
+    // Android. Use an IntersectionObserver on the scene's own container to
+    // detect when the Hero section has been scrolled/transformed off-screen
+    // and skip rendering entirely until it's back in view.
+    let isSectionVisible = true;
+    const visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isSectionVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0 }
+    );
+    visibilityObserver.observe(container);
+
     const clock = new THREE.Clock();
     let smoothScroll = 0;
     const tick = () => {
       if (disposed) return;
-      if (!isPageVisible) {
-        // Tab/app is backgrounded — skip rendering to save CPU/GPU and
-        // avoid the phone heating up / throttling while nothing is visible.
+      if (!isPageVisible || !isSectionVisible) {
+        // Tab backgrounded, or this section scrolled out of view — skip
+        // rendering to save CPU/GPU and avoid the phone heating up /
+        // throttling while nothing is visible.
         raf = requestAnimationFrame(tick);
         return
       }
@@ -350,6 +372,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      visibilityObserver.disconnect();
       video.pause();
       video.removeAttribute("src");
       video.load();
@@ -390,4 +413,4 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       aria-hidden="true"
     />
   );
-   }
+}
