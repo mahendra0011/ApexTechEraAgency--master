@@ -129,11 +129,12 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     scene.add(camera);
 
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: !isMobile,
       alpha: true,
+      powerPreference: isMobile ? "low-power" : "high-performance",
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1) : Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     container.appendChild(renderer.domElement);
@@ -154,7 +155,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     earthTexture.anisotropy = 4;
     const specularMap = textureLoader.load(`${BASE}/4k_earth_specular_map.webp`);
     const earth = new THREE.Mesh(
-      new THREE.SphereGeometry(6, 32, 32),
+      new THREE.SphereGeometry(6, isMobile ? 16 : 32, isMobile ? 16 : 32),
       new THREE.MeshPhongMaterial({
         map: earthTexture,
         specularMap,
@@ -175,7 +176,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       transparent: true,
       depthWrite: false,
     });
-    const COUNT = 7500;
+    const COUNT = isMobile ? 2200 : 7500;
     const positions = new Float32Array(3 * COUNT);
     for (let i = 0; i < COUNT; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 53;
@@ -288,14 +289,26 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1) : Math.min(window.devicePixelRatio || 1, 1.5));
     };
     window.addEventListener("resize", onResize);
+
+    let isPageVisible = !document.hidden;
+    const onVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     const clock = new THREE.Clock();
     let smoothScroll = 0;
     const tick = () => {
       if (disposed) return;
+      if (!isPageVisible) {
+        // Tab/app is backgrounded — skip rendering to save CPU/GPU and
+        // avoid the phone heating up / throttling while nothing is visible.
+        raf = requestAnimationFrame(tick);
+        return
+      }
       const dt = Math.min(clock.getDelta(), 0.1);
       // Snappy and fast response across both Mobile (Android/iOS) and Desktop
       const lerpSpeed = 0.08;
@@ -336,6 +349,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       disposed = true;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       video.pause();
       video.removeAttribute("src");
       video.load();
