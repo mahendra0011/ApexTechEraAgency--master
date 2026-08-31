@@ -179,16 +179,6 @@ const ServiceSlider = () => {
       const isCovered = rect.height >= window.innerHeight * ratio
         && rect.width >= window.innerWidth * ratio
 
-      console.log('Mobile Check:', {
-        rectWidth: rect.width,
-        rectHeight: rect.height,
-        winW: winW,
-        winH: window.innerHeight,
-        neededW: winW * ratio,
-        neededH: window.innerHeight * ratio,
-        isCovered
-      })
-
       if (handoffPassedRef.current) {
         if (direction < 0 || !isCovered) {
           handoffPassedRef.current = false
@@ -257,6 +247,9 @@ const ServiceSlider = () => {
     let touchStartY = 0
     let lastTouchY = 0
     let touchActive = false
+    let touchRafPending = false
+    let pendingTouchDelta = 0
+    let pendingTouchEvt = null
 
     const onTouchStart = (e) => {
       const t = e.touches && e.touches[0]
@@ -276,11 +269,32 @@ const ServiceSlider = () => {
       const deltaY = lastTouchY - currentY
       lastTouchY = currentY
       if (Math.abs(deltaY) < 2) { return }
-      processGesture(deltaY, e)
+
+      // Throttle the actual gesture processing (which can force a
+      // synchronous layout via getBoundingClientRect) to once per animation
+      // frame instead of once per touchmove event. Android can fire
+      // touchmove 60-120x/sec, and doing a forced-reflow check that often
+      // on every scroll everywhere on the page was the main cause of
+      // site-wide scroll jank / high CPU usage on mobile.
+      pendingTouchDelta += deltaY
+      pendingTouchEvt = e
+      if (!touchRafPending) {
+        touchRafPending = true
+        requestAnimationFrame(() => {
+          touchRafPending = false
+          const delta = pendingTouchDelta
+          const evt = pendingTouchEvt
+          pendingTouchDelta = 0
+          pendingTouchEvt = null
+          processGesture(delta, evt)
+        })
+      }
     }
 
     const onTouchEnd = () => {
       touchActive = false
+      pendingTouchDelta = 0
+      pendingTouchEvt = null
     }
 
     document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true })
