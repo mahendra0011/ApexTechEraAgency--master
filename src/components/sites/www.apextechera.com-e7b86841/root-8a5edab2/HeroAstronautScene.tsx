@@ -390,4 +390,4 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       aria-hidden="true"
     />
   );
-}
+   }
