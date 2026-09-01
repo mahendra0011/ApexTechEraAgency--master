@@ -33,6 +33,9 @@ const NAV_LINKS = [
   { name: "Home", link: "#home" },
   { name: "About Agency", link: "#about" },
   { name: "Services", link: "#services" },
+  { name: "Tech Stack", link: "#techstack" },
+  { name: "Designs", link: "#designs" },
+  { name: "Types", link: "#types" },
   { name: "Our Process", link: "#process" },
   { name: "Works & Projects", link: "#portfolio" },
   { name: "Contact & Inquiries", link: "#contacts" },
@@ -43,7 +46,9 @@ const SERVICES_LINKS = [
   { name: "Mobile Apps (iOS & Android)", link: "#services" },
   { name: "UI/UX & Product Design", link: "#services" },
   { name: "Custom Software Solutions", link: "#services" },
-  { name: "AI, ML & Automation", link: "#services" },
+  { name: "AI/ML Models", link: "#services" },
+  { name: "AI Agents", link: "#services" },
+  { name: "AI Automations", link: "#services" },
   { name: "Cloud & DevOps Architecture", link: "#services" },
 ];
 
@@ -94,29 +99,7 @@ const Footer = memo(function Footer() {
       <div className="footer-ambient-glow" />
       <div className="footer-ambient-glow-2" />
 
-      {/* 1. TOP BIG CTA BANNER */}
-      <div className="footer-cta-card">
-        <div className="footer-cta-content">
-          <div className="footer-cta-badge">
-            <span className="footer-pulse-dot" />
-            <span>Available For New Projects &bull; 2026</span>
-          </div>
-          <h2 className="footer-cta-title">
-            Have an ambitious idea? <br />
-            <span className="footer-cta-title-italic">Let&apos;s engineer it together.</span>
-          </h2>
-        </div>
 
-        <div className="footer-cta-action">
-          <button
-            className="footer-cta-btn"
-            onClick={() => setActiveForm(true)}
-          >
-            <span>Start A Project</span>
-            <span className="footer-cta-btn-arrow">&#8599;</span>
-          </button>
-        </div>
-      </div>
 
       {/* 2. DIRECTORY GRID */}
       <div className="footer-grid">

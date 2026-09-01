@@ -9,13 +9,18 @@ const getElementCoords = (domElement) => {
             width: null
         } 
     }
+    // Single native call instead of 6 — same numbers, 1/6th the work.
+    // This runs every animation frame across every scroll-linked section,
+    // so trimming redundant native calls here reduces main-thread cost
+    // sitewide, not just in one section.
+    const rect = domElement.getBoundingClientRect()
     return {
-        top: domElement.getBoundingClientRect().top + window.scrollY,
-        bottom: domElement.getBoundingClientRect().bottom + window.scrollY,
-        left: domElement.getBoundingClientRect().left + window.scrollX,
-        right: domElement.getBoundingClientRect().right + window.scrollX,
-        height: domElement.getBoundingClientRect().height,
-        width: domElement.getBoundingClientRect().width,
+        top: rect.top + window.scrollY,
+        bottom: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        right: rect.right + window.scrollX,
+        height: rect.height,
+        width: rect.width,
     }
 }
 

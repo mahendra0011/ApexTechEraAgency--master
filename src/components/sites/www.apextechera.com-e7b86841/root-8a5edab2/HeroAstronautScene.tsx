@@ -129,11 +129,12 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     scene.add(camera);
 
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: !isMobile,
       alpha: true,
+      powerPreference: isMobile ? "low-power" : "high-performance",
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1) : Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     container.appendChild(renderer.domElement);
@@ -154,7 +155,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     earthTexture.anisotropy = 4;
     const specularMap = textureLoader.load(`${BASE}/4k_earth_specular_map.webp`);
     const earth = new THREE.Mesh(
-      new THREE.SphereGeometry(6, 32, 32),
+      new THREE.SphereGeometry(6, isMobile ? 16 : 32, isMobile ? 16 : 32),
       new THREE.MeshPhongMaterial({
         map: earthTexture,
         specularMap,
@@ -175,7 +176,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       transparent: true,
       depthWrite: false,
     });
-    const COUNT = 7500;
+    const COUNT = isMobile ? 2200 : 7500;
     const positions = new Float32Array(3 * COUNT);
     for (let i = 0; i < COUNT; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 53;
@@ -288,17 +289,54 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1) : Math.min(window.devicePixelRatio || 1, 1.5));
     };
     window.addEventListener("resize", onResize);
+
+    let isPageVisible = !document.hidden;
+    const onVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    // The site keeps every section permanently mounted and switches between
+    // them with CSS transforms (rather than mounting/unmounting), so this
+    // WebGL scene would otherwise keep rendering every single frame FOREVER
+    // — even hours later while the user is on a totally different section
+    // like "We Create". That's a full 3D scene (earth, particles, astronaut
+    // model) competing for CPU/GPU non-stop in the background, which was a
+    // major contributor to the overall site feeling heavy/hanging on
+    // Android. Use an IntersectionObserver on the scene's own container to
+    // detect when the Hero section has been scrolled/transformed off-screen
+    // and skip rendering entirely until it's back in view.
+    let isSectionVisible = true;
+    const visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isSectionVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0 }
+    );
+    visibilityObserver.observe(container);
 
     const clock = new THREE.Clock();
     let smoothScroll = 0;
     const tick = () => {
       if (disposed) return;
+      if (!isPageVisible || !isSectionVisible) {
+        // Tab backgrounded, or this section scrolled out of view — skip
+        // rendering to save CPU/GPU and avoid the phone heating up /
+        // throttling while nothing is visible.
+        raf = requestAnimationFrame(tick);
+        return
+      }
       const dt = Math.min(clock.getDelta(), 0.1);
+      // Snappy and fast response across both Mobile (Android/iOS) and Desktop
+      const lerpSpeed = 0.08;
+      const targetScroll = wheelRef.current * 1.45;
 
-      smoothScroll += (wheelRef.current - smoothScroll) * (1 - Math.exp(-dt / 0.5));
+      smoothScroll += (targetScroll - smoothScroll) * (1 - Math.exp(-dt / lerpSpeed));
 
       if (cameraInRef.current.start >= 0) {
         const p = Math.min((performance.now() - cameraInRef.current.start) / 2500, 1);
@@ -306,7 +344,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
         if (p >= 1) cameraInRef.current.start = -1;
       }
 
-      earth.rotation.y += 0.0006;
+      earth.rotation.y += 0.001;
 
       for (let i = 2; i < positions.length; i += 3) {
         positions[i] += 0.02;
@@ -333,6 +371,8 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       disposed = true;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      visibilityObserver.disconnect();
       video.pause();
       video.removeAttribute("src");
       video.load();

@@ -1,11 +1,26 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 
 import Animate from "./Animate"
-import ServiceSlider, { SLIDER_ORDER } from "./ServiceSlider"
-import SimpleVideoSlider from "./SimpleVideoSlider"
+import ServiceSlider from "./ServiceSlider"
+import { useIsMobileViewport } from "./useIsMobileViewport"
+import { MOBILE_POSTERS } from "./mobilePosters"
 import './ApexDashboard.css'
 
+// On Android/mobile responsive, render a static poster image instead of the
+// <video>. Desktop/Windows responsive is untouched and keeps the video.
+const CardMedia = ({ isMobile, src, poster, alt }) => {
+    if (isMobile) {
+        return <img src={poster} alt={alt} loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+    }
+    return (
+        <video autoPlay muted loop playsInline preload="none">
+            <source src={src} type='video/mp4' />
+        </video>
+    )
+}
+
 const Interface = ({ parent, parentRefs }) => {
+    const isMobile = useIsMobileViewport()
 
     const interfaceInterface = useRef()
 
@@ -34,6 +49,52 @@ const Interface = ({ parent, parentRefs }) => {
     const interfaceMHeader = useRef()
     const interfaceLogo = useRef()
     const interfaceSlot = useRef()
+
+    // The 6-card dashboard (Stage 2) has up to 5 always-mounted <video autoPlay>
+    // elements, plus 1 more in the persistent ServiceSlider slot. Android's
+    // hardware video decoder can only handle a handful of concurrent video
+    // sessions — once that's exceeded it falls back to slow software
+    // decoding, pegging the CPU at 100%, which is what was causing the phone
+    // to freeze and thermal-shutdown when scrolling into this section.
+    // Fix: only actually play() a card's video while that specific card is
+    // scrolled into view; pause everything else. This caps the number of
+    // simultaneously-decoding videos to roughly what's on-screen at once
+    // (1-3 on a phone) instead of all 6 running non-stop in the background.
+    useEffect(() => {
+        const root = interfaceTasks.current
+        const slot = interfaceSlot.current
+        const videos = [
+            ...(root ? Array.from(root.querySelectorAll('video')) : []),
+            ...(slot ? Array.from(slot.querySelectorAll('video')) : []),
+        ]
+        if (!videos.length) { return }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                const video = entry.target
+                if (entry.isIntersecting) {
+                    const p = video.play()
+                    if (p && p.catch) { p.catch(() => {}) }
+                } else {
+                    video.pause()
+                }
+            })
+        }, { threshold: 0.35 })
+
+        videos.forEach((v) => observer.observe(v))
+
+        const onVisibility = () => {
+            if (document.hidden) {
+                videos.forEach((v) => v.pause())
+            }
+        }
+        document.addEventListener('visibilitychange', onVisibility)
+
+        return () => {
+            observer.disconnect()
+            document.removeEventListener('visibilitychange', onVisibility)
+        }
+    }, [])
 
     function initRefs() {
         const slider = parentRefs.target.current
@@ -150,11 +211,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                         <div className='apex-skel-tag' />
                                                     </div>
-                                                    <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none" poster="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/poster-1.webp">
-                                                            <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-1-fullstack.mp4' type='video/mp4' />
-                                                        </video>
-                                                    </div>
+                                                    <div className='apex-skel-video-box' />
                                                 </div>
 
                                                 {/* Middle Column - Card 2 (Top Middle) */}
@@ -168,11 +225,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                         <div className='apex-skel-tag' />
                                                     </div>
-                                                    <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none">
-                                                            <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4' type='video/mp4' />
-                                                        </video>
-                                                    </div>
+                                                    <div className='apex-skel-video-box' />
                                                 </div>
 
                                                 {/* Right Column - Card 3 (Top Right) */}
@@ -186,11 +239,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                         <div className='apex-skel-tag' />
                                                     </div>
-                                                    <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none">
-                                                            <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4' type='video/mp4' />
-                                                        </video>
-                                                    </div>
+                                                    <div className='apex-skel-video-box' />
                                                 </div>
 
                                                 {/* Left Column - Card 4 (Bottom Left) */}
@@ -204,11 +253,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                         <div className='apex-skel-tag' />
                                                     </div>
-                                                    <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none">
-                                                            <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4' type='video/mp4' />
-                                                        </video>
-                                                    </div>
+                                                    <div className='apex-skel-video-box' />
                                                 </div>
 
                                                 {/* Middle Column - Card 5 (Slot Host: Single video rendered by ServiceSlider) */}
@@ -236,11 +281,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                         <div className='apex-skel-tag' />
                                                     </div>
-                                                    <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none">
-                                                            <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
-                                                        </video>
-                                                    </div>
+                                                    <div className='apex-skel-video-box' />
                                                 </div>
                                             </div>
                                         </div>
@@ -265,9 +306,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-purple'>Node</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-1-fullstack.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-1-fullstack.mp4'
+                                                        poster={MOBILE_POSTERS['service-1-fullstack']}
+                                                        alt="Full Stack Web Development"
+                                                    />
                                                 </div>
                                             </div>
 
@@ -284,9 +328,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-amber'>Wireframes</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4'
+                                                        poster={MOBILE_POSTERS['service-2-uiux']}
+                                                        alt="UI / UX Design"
+                                                    />
                                                 </div>
                                             </div>
 
@@ -302,9 +349,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-blue'>React Native</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4'
+                                                        poster={MOBILE_POSTERS['service-3-mobileapps']}
+                                                        alt="Android & iOS App Development"
+                                                    />
                                                 </div>
                                             </div>
 
@@ -321,9 +371,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-cyan'>Automations</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4'
+                                                        poster={MOBILE_POSTERS['service-5-aiml']}
+                                                        alt="AI Models, Agents & Automations"
+                                                    />
                                                 </div>
                                             </div>
 
@@ -355,9 +408,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-green'>CI/CD</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4'
+                                                        poster={MOBILE_POSTERS['service-6-clouddevops']}
+                                                        alt="Cloud & DevOps Architecture"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>

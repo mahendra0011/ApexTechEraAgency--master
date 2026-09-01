@@ -4,7 +4,7 @@ import { state } from "./state"
 
 export const scroll = {
     ease: .04,
-    easeMobile: 1,
+    easeMobile: .35,
     intensity: .1,
     class: 'section-inner',
 
@@ -13,35 +13,53 @@ export const scroll = {
         return true
     },
 
+    // getBoundingClientRect() forces a synchronous layout reflow. This used
+    // to run on EVERY animation frame (renderTranslateInterpolation ->
+    // calcTranslate), which is a big cost on Android combined with the 3D
+    // scene competing for the same thread. The height of a section only
+    // actually changes on resize/orientation-change, so we cache it per
+    // element and only re-measure when the window size changes.
+    _maxLerpCache: new WeakMap(),
+    _lastViewport: { w: 0, h: 0 },
+    getMaxLerp(ref) {
+        const w = window.innerWidth, h = window.innerHeight
+        if (this._lastViewport.w !== w || this._lastViewport.h !== h) {
+            this._lastViewport = { w, h }
+            this._maxLerpCache = new WeakMap()
+        }
+        let cached = this._maxLerpCache.get(ref)
+        if (cached === undefined) {
+            cached = ref.getBoundingClientRect().height - window.innerHeight
+            this._maxLerpCache.set(ref, cached)
+        }
+        return cached
+    },
+
     calcTranslate(sections, wheel, needDispatch = true) {
         const ref = this.getInnerRef(sections)
         if (!ref || context.wheelTo === 0) { return { ref: null, lerped: 0 } }
         const scrolled = getScrollCoordsFromElement(ref).windowTop.fromTop
-        const maxLerp = ref.getBoundingClientRect().height - window.innerHeight
+        const maxLerp = this.getMaxLerp(ref)
         let lerped
         if (context.snapWheelTo) {
             context.snapWheelTo = false
             lerped = Math.max(Math.min(context.wheelTo, maxLerp), 0)
         } else {
             lerped = Math.max(Math.min(this.lerp(scrolled, context.wheelTo), maxLerp), 0)
-            // Fix dashboard half: WhatCreate's windows->android needs to reach
-            // END (maxLerp). With ease 0.04 lerped lags ~15-20px behind wheelTo,
-            // so next section triggers before full android. Snap when close.
             const isWhatCreate = context.ids && context.ids[context.active] === 'whatcreate'
             if (isWhatCreate && maxLerp > 0 && context.wheelTo >= maxLerp - 1 && maxLerp - lerped < 24) {
                 lerped = maxLerp
             }
         }
-        if ( needDispatch ) { document.dispatchEvent(new CustomEvent('customwheel', { detail: { wheel: lerped } })) } // для передачи в хуки
+        if ( needDispatch ) { document.dispatchEvent(new CustomEvent('customwheel', { detail: { wheel: lerped } })) }
         return { ref, lerped }
     },
 
     calcWheelTo() {
         const ref = this.getInnerRef(context.sections)
         if (!ref) { return }
-        // courses (process) section: slower wheel-to-scroll ratio so the
-        // sticky card deck reads clearly instead of racing past on one flick
-        const intensity = context.ids && (context.ids[context.active] === 'courses' || context.ids[context.active] === 'apextechera') ? 0.4 : this.intensity
+        const isWhatCreateMobile = context.ids && context.ids[context.active] === 'whatcreate' && typeof window !== 'undefined' && window.innerWidth <= 576
+        const intensity = context.ids && (context.ids[context.active] === 'courses' || context.ids[context.active] === 'apextechera' || isWhatCreateMobile) ? 0.5 : this.intensity
         context.wheelTo = getScrollCoordsFromElement(ref).windowTop.fromTop + context.wheel / intensity
     },
 
@@ -52,14 +70,8 @@ export const scroll = {
     renderTranslateInterpolation() {
         const { ref, lerped } = this.calcTranslate(context.sections, context.wheel)
         if (!ref) { return }
-        // console.log(lerped)
         ref.style.transform = `translate3d(0, ${lerped * -1}px, 0)`
     },
-
-    // translate(sections, wheel) {
-    //     const { ref, lerped } = this.calcTranslate(sections, wheel)
-    //     ref.style.transform = `translate3d(0, ${lerped * -1}px, 0)`
-    // },
 
     resetTranslate(sections) {
         if ( !context.externalChange ) { return }
@@ -95,7 +107,6 @@ export const scroll = {
                 _.ref.style.transform = `translate3d(0, 0vh, 0)`
             } )
         }
-
     },
 
     getInnerRef(sections) {
@@ -110,7 +121,8 @@ export const scroll = {
     },
 
     lerp(start, end) {
-        // const ease = window.innerWidth < 576 ? this.easeMobile : this.ease
-        return start + (end - start) * this.ease
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 576
+        const ease = isMobile ? this.easeMobile : this.ease
+        return start + (end - start) * ease
     }
 }

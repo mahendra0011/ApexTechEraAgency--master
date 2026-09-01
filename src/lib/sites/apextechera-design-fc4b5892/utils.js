@@ -6,6 +6,8 @@ export const transformLinkToId = (link) => {
         case '#home': return screens.MAIN
         case '#about': return screens.ABOUT
         case '#services': return screens.WHATCREATE
+        case '#techstack': return screens.TECHBREAKDOWN
+        case '#tech-stack': return screens.TECHBREAKDOWN
         case '#design': return screens.DESIGNTYPES
         case '#designs': return screens.DESIGNTYPES
         case '#types': return screens.WEBSITETYPES

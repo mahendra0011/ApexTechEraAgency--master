@@ -123,6 +123,17 @@
   transform: scale(1.26);
 }
 
+/* Card 05: Fast Delivery Proportionate Scale */
+.focus-card__img--05 {
+  transform: scale(0.92) !important;
+  max-width: 96% !important;
+  max-height: 96% !important;
+}
+
+.focus-card-item:hover .focus-card__img--05 {
+  transform: scale(0.98) !important;
+}
+
 /* Right Content Column */
 .focus-card__content {
   display: flex;
@@ -498,12 +509,37 @@
    RESPONSIVE
    --------------------------------------------------------- */
 @media (max-width: 768px) {
+  /* The horizontal-scroll JS pin (useTransform "horizontalScroll") is
+     disabled below 576px, but the wrapper still had `overflow:hidden`
+     with all 5 cards laid out in one wide flex row — so only the first
+     card (Quality) was ever visible and the other 4 were clipped off to
+     the right with no way to reach them. Converting to a normal vertical
+     stack on mobile guarantees every card is visible and scrollable like
+     the rest of the page, instead of relying on the (disabled) JS pin. */
+  .focus-cards-scroll-wrap {
+    overflow: visible;
+  }
+
+  .focus-cards-scroll {
+    height: auto;
+    padding-left: 0;
+    display: block;
+  }
+
+  .focus-cards-container {
+    flex-direction: column;
+    padding-right: 0;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
   .focus-card-item {
-    width: calc(100vw - 3rem);
+    width: 100% !important;
     height: auto;
     grid-template-columns: 1fr;
     padding: 2rem;
     gap: 1.5rem;
+    transform: none !important;
   }
 
   .focus-card__image-wrap {

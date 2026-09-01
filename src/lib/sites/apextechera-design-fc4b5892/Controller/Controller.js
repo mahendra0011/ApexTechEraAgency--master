@@ -60,7 +60,6 @@ const Controller = ({ children, duration, externalDelay, externalDuration }) => 
         if (context.changing) {
             return;
         }
-        console.log("wheel", wheel);
         const innerPos = swipe.getInnerPos(context.sections);
         const swipeDir = dir === 1 ? swipe.pos.BOTTOM : swipe.pos.TOP;
         if (innerPos === swipeDir || innerPos === swipe.pos.TOPBOTTOM) {

@@ -1,6 +1,6 @@
 
 import {$t} from "../../../../../../lib/sites/apextechera-design-fc4b5892/i18n/i18n"
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { ControllerContext } from "../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/Controller"
 import { ModalContext } from "../../../shared/Modal/Modal"
 import { getScreen } from "../../../../../../lib/sites/apextechera-design-fc4b5892/utils"
@@ -9,7 +9,7 @@ import { CursorContext, cursorStyles } from "../../Cursor/Cursor"
 import cn from "classnames";
 import UnderLink from "../../UI/UnderLink/UnderLink"
 import AnimateLink from "./AnimateLink"
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, X } from "lucide-react";
 
 const InstagramIcon = ({ size = 17 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -33,6 +33,22 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
   const { setNewActive } = useContext(ControllerContext)
   const { setActiveForm } = useContext(ModalContext)
 
+  // This menu is always mounted (just toggled via a CSS class), so its
+  // background dance video would otherwise autoplay and decode from the
+  // moment the page loads — forever, even if the user never opens the
+  // menu. Only actually play it while the menu is open.
+  const menuVideoRef = useRef()
+  useEffect(() => {
+    const el = menuVideoRef.current
+    if (!el) { return }
+    if (isMenuShow) {
+      const p = el.play()
+      if (p && p.catch) { p.catch(() => {}) }
+    } else {
+      el.pause()
+    }
+  }, [isMenuShow])
+
   const routeToScreen = (link) => {
     if (link === '#contacts') {
       const contactElem = document.getElementById('contacts') || document.querySelector('.req-form');
@@ -54,66 +70,112 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
 
   return (
     <div className={`menu ${isMenuShow ? "-show" : ""}`}>
-      <div className="menu__content">
-        <div className="menu__social">
-          <span className="m">{$t("components.menu.social.title")}</span>
-          {$t("components.menu.social.links").map((_, i) => (
-            <AnimateLink 
-              className="link" 
-              href={_.link} 
-              key={i} 
-              target="_blank"
-              rel="noreferrer"
-              onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
-              onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
-            >
-              {_.name}
-            </AnimateLink>
-          ))}
-        </div>
-        <div className="menu__img-logo-wrap" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '3rem 2.5rem',
-          borderRadius: '2rem',
-          background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(243, 244, 248, 0.85) 100%)',
-          boxShadow: '0 30px 60px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04)',
-          position: 'relative',
-          overflow: 'hidden',
-          width: '320px',
-          height: '420px',
-          boxSizing: 'border-box',
-        }}>
-          {/* Ambient Glowing Aura */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '260px',
-            height: '260px',
-            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 70%)',
-            filter: 'blur(30px)',
-            pointerEvents: 'none',
-            borderRadius: '50%',
-          }} />
+      {/* Top Right Close 'X' Button */}
+      <button
+        type="button"
+        className="menu__close-btn"
+        onClick={() => setIsMenuShow(false)}
+        aria-label="Close menu"
+        onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_MENU_BTN)}
+        onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+      >
+        <X size={22} />
+      </button>
 
-          <img 
-            src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.png" 
-            alt="ApexTechEra Agency"
-            style={{
-              width: '100%',
-              maxWidth: '240px',
-              height: 'auto',
-              objectFit: 'contain',
-              position: 'relative',
-              zIndex: 1,
-              filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.08))',
-            }}
-          />
+      <div className="menu__content">
+        {/* Left Column: Studio Logo, Tagline, Contact Details, Social Channels & Copyright */}
+        <div className="menu__left-panel">
+          <div className="menu__tagline-box">
+            <img 
+              src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.png" 
+              alt="ApexTechEra Agency"
+              style={{
+                width: '120px',
+                height: 'auto',
+                objectFit: 'contain',
+                marginBottom: '0.5rem',
+                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.06))'
+              }}
+            />
+            <span className="menu__subhead">APEXTECHERA AGENCY</span>
+            <p className="menu__tagline">
+              Full-cycle creative &amp; technology agency crafting high-performance web platforms, intelligent AI systems &amp; next-gen digital experiences.
+            </p>
+          </div>
+
+          <div className="menu__group">
+            <span className="menu__subhead">GET IN TOUCH</span>
+            <div className="menu__contact-details">
+              <a 
+                href="mailto:mahendrapra0077@gmail.com" 
+                className="menu__contact-item"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <Mail size={16} className="menu__contact-icon" />
+                <span>mahendrapra0077@gmail.com</span>
+              </a>
+              <a 
+                href="tel:+917724822660" 
+                className="menu__contact-item"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <Phone size={16} className="menu__contact-icon" />
+                <span>+91 7724822660</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="menu__group">
+            <span className="menu__subhead">FOLLOW US</span>
+            <div className="menu__social-row">
+              <a 
+                href="https://www.instagram.com/apextecheradesign" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="menu__social-btn"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <InstagramIcon size={16} />
+                <span>Instagram</span>
+              </a>
+              <a 
+                href="https://www.linkedin.com/company/apextechera" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="menu__social-btn"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <LinkedinIcon size={16} />
+                <span>LinkedIn</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="menu__cp">
+            <p className="menu__cp_copyright">&copy; {new Date().getFullYear()} ApexTechEra Agency. All rights reserved.</p>
+          </div>
         </div>
+
+        {/* Center: Large 3D Dancing Model */}
+        <div className="menu__3d-model-wrap">
+          <video
+            ref={menuVideoRef}
+            autoPlay={false}
+            loop
+            muted
+            playsInline
+            className="menu__3d-model-video"
+          >
+            <source src="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/apextechera-dance_Rumba.webm" type="video/webm" />
+            <source src="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/apextechera-dance_Rumba.mov" type="video/quicktime" />
+          </video>
+        </div>
+
+        {/* Right: Navigation Links */}
         <div className="menu__folder">
           <span className="m">{$t("components.menu.nav.title")}</span>
           <div className="list">
@@ -128,33 +190,6 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
               </AnimateLink>
             ))}
           </div>
-        </div>
-      </div>
-      <div className="menu__text">
-        <div className="menu__contact-details">
-          <a href="mailto:mahendrapra0077@gmail.com" className="menu__contact-item">
-            <Mail size={16} className="menu__contact-icon" />
-            <span>mahendrapra0077@gmail.com</span>
-          </a>
-          <a href="tel:+917724822660" className="menu__contact-item">
-            <Phone size={16} className="menu__contact-icon" />
-            <span>+91 7724822660</span>
-          </a>
-        </div>
-
-        <div className="menu__social-row">
-          <a href="https://www.instagram.com/apextecheradesign" target="_blank" rel="noreferrer" className="menu__social-btn">
-            <InstagramIcon size={17} />
-            <span>Instagram</span>
-          </a>
-          <a href="https://www.linkedin.com/company/apextechera" target="_blank" rel="noreferrer" className="menu__social-btn">
-            <LinkedinIcon size={17} />
-            <span>LinkedIn</span>
-          </a>
-        </div>
-
-        <div className="menu__cp">
-          <p className="menu__cp_copyright">&copy; ApexTechEra Agency {new Date().getFullYear()}</p>
         </div>
       </div>
     </div>

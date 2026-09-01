@@ -37,6 +37,14 @@ const FOCUS_CARDS_DATA = [
     word2: "Security",
     desc: "Enterprise-grade encryption, secure authentication, OWASP compliance, and proactive vulnerability testing.",
   },
+  {
+    id: "05",
+    color: "#E0F2FE",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/fast-delivery.png",
+    word1: "Fast",
+    word2: "Delivery",
+    desc: "Rapid sprint turnaround, agile iterations, and punctual on-time launches designed to accelerate your go-to-market speed.",
+  },
 ];
 
 const INDUSTRIES_DATA = [
@@ -93,7 +101,7 @@ const FocusCardItem = memo(function FocusCardItem({ item, index }) {
         distance +
         getScrollCoordsFromElement(cardRef.current).windowRight.fromRight -
         60 -
-        (window.innerWidth / window.innerHeight) * 100 * (3 - index);
+        (window.innerWidth / window.innerHeight) * 100 * (4 - index);
       const x = Math.max(Math.min(scrollX, distance), 0);
       t.style.transform = `translate3d(${x}px, 0, 0)`;
     } else {
@@ -110,7 +118,7 @@ const FocusCardItem = memo(function FocusCardItem({ item, index }) {
   return (
     <div
       ref={cardRef}
-      className="focus-card-item"
+      className={`focus-card-item focus-card-item--${item.id}`}
       style={{ backgroundColor: item.color }}
     >
       <div className="focus-card__rings">
@@ -124,7 +132,7 @@ const FocusCardItem = memo(function FocusCardItem({ item, index }) {
           <img
             src={item.image}
             alt={`${item.word1} ${item.word2}`}
-            className="focus-card__img"
+            className={`focus-card__img focus-card__img--${item.id}`}
           />
         </div>
       </div>

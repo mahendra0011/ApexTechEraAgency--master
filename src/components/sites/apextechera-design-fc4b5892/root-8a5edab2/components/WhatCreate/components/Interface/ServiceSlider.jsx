@@ -3,18 +3,22 @@ import { createPortal } from 'react-dom'
 import { context } from '../../../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/utils/context'
 
 import SimpleVideoSlider from './SimpleVideoSlider'
+import { useIsMobileViewport } from './useIsMobileViewport'
+import { MOBILE_POSTERS } from './mobilePosters'
 
 const VIDEOS_PATH = '/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services'
 
 // The persistent fullscreen surface cycles through these 7 videos in order.
+// `poster` is the static frame used instead of the video on Android/mobile
+// responsive (see useIsMobileViewport) — desktop/Windows keeps the videos.
 const SLIDER_ORDER = [
-  { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, caption: 'ApexTechEra Agency' },
-  { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, caption: 'Full Stack Web Development' },
-  { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, caption: 'UI / UX Design' },
-  { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, caption: 'Android & iOS App Development' },
-  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, caption: 'AI Models, Agents & Automation' },
-  { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, caption: 'Cloud & DevOps Architecture' },
-  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, caption: 'Custom Software Development' }
+  { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, poster: MOBILE_POSTERS['service-0-brand-intro'], caption: 'ApexTechEra Agency' },
+  { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, poster: MOBILE_POSTERS['service-1-fullstack'], caption: 'Full Stack Web Development' },
+  { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, poster: MOBILE_POSTERS['service-2-uiux'], caption: 'UI / UX Design' },
+  { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, poster: MOBILE_POSTERS['service-3-mobileapps'], caption: 'Android & iOS App Development' },
+  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, poster: MOBILE_POSTERS['service-5-aiml'], caption: 'AI / ML Models, AI Agents, AI Automations' },
+  { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, poster: MOBILE_POSTERS['service-6-clouddevops'], caption: 'Cloud & DevOps Architecture' },
+  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, poster: MOBILE_POSTERS['service-4-customsoftware'], caption: 'Custom Software Development' }
 ]
 
 // Cooldown between slide transitions: 900ms allows the user to comfortably see and watch each video
@@ -27,6 +31,7 @@ const NAV_BOUNDARY_DISTANCE = 160
 const COVER_RATIO = 0.95
 
 const ServiceSlider = () => {
+  const isMobile = useIsMobileViewport()
   const hostRef = useRef(null)
   const hostVideoRef = useRef(null)
   const portalVideoRef = useRef(null)
@@ -61,7 +66,25 @@ const ServiceSlider = () => {
     boundaryDeltaRef.current = 0
     accumulatedDeltaRef.current = 0
     lastSwitchTimeRef.current = 0
+    // Resume the host slot's own video now that the fullscreen portal (with
+    // its own copy of the current video) has closed.
+    if (hostVideoRef.current && hostVideoRef.current.paused) {
+      const p = hostVideoRef.current.play()
+      if (p && p.catch) { p.catch(() => {}) }
+    }
   }
+
+  // While the fullscreen portal sequence is open, it plays its own copies of
+  // these videos. Keeping the host slot's video ALSO playing (just hidden
+  // via opacity) wastes a mobile hardware video-decoder slot and was part of
+  // why every video in the fullscreen sequence failed to load on Android —
+  // decoders are capped at a small number of concurrent sessions. Pause the
+  // host copy as soon as the portal takes over, and only it.
+  useEffect(() => {
+    if (portalReady && hostVideoRef.current && !hostVideoRef.current.paused) {
+      hostVideoRef.current.pause()
+    }
+  }, [portalReady])
 
   const handleNavCommit = (nextIndex) => {
     indexRef.current = nextIndex
@@ -88,19 +111,23 @@ const ServiceSlider = () => {
   }
 
   useEffect(() => {
-    const onWheel = (e) => {
+    // Shared gesture processor used by BOTH mouse-wheel (desktop) and
+    // touch-swipe (mobile / Android) input. `delta` follows the same sign
+    // convention as a native WheelEvent.deltaY: positive = scrolling
+    // forward/down, negative = scrolling backward/up.
+    // `evt`, when provided and preventable, is used to stop the page's
+    // native scroll only in the exact branches that need to take over
+    // (entry / active-sequence) — every other scroll passes through
+    // untouched, exactly like the original wheel-only behaviour.
+    const processGesture = (delta, evt) => {
       const host = hostRef.current
       if (!host) { return }
-
-      // Support both horizontal touchpad swipes and vertical scroll
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
       if (!delta || Math.abs(delta) < 0.5) { return }
       const direction = delta > 0 ? 1 : -1
 
       // ---- Fullscreen sequence ACTIVE: smooth gesture video navigation ----
       if (sequenceActiveRef.current) {
-        e.preventDefault()
-        e.stopImmediatePropagation()
+        if (evt) { evt.preventDefault(); evt.stopImmediatePropagation && evt.stopImmediatePropagation() }
 
         const now = Date.now()
         const atLastForward = direction > 0 && indexRef.current === SLIDER_ORDER.length - 1
@@ -115,7 +142,7 @@ const ServiceSlider = () => {
             sequenceActiveRef.current = false
             setSequenceActive(false)
             resetExpansion()
-            reentryLockedUntilRef.current = Date.now() + 1200
+            reentryLockedUntilRef.current = Date.now() + 1500
           }
           return
         }
@@ -170,11 +197,11 @@ const ServiceSlider = () => {
       if (!isVisible) { return }
 
       const winW = window.innerWidth
-      const winH = window.innerHeight
-      const isMobile = winW <= 768
-      const isCovered = isMobile
-        ? (rect.width >= winW * 0.82 || rect.height >= winH * 0.55)
-        : (rect.height >= winH * COVER_RATIO && rect.width >= winW * COVER_RATIO)
+      // On mobile viewports, the notch/address bar heights can make rect.height/width slightly less than 95% of innerHeight/innerWidth.
+      // We check if it covers 85% of screen height/width on mobile, and COVER_RATIO (95%) on desktop.
+      const ratio = winW <= 576 ? 0.85 : COVER_RATIO
+      const isCovered = rect.height >= window.innerHeight * ratio
+        && rect.width >= window.innerWidth * ratio
 
       if (handoffPassedRef.current) {
         if (direction < 0 || !isCovered) {
@@ -188,8 +215,7 @@ const ServiceSlider = () => {
       const isBackwardEntry = direction < 0 && isCovered
 
       if (isForwardEntry) {
-        e.preventDefault()
-        e.stopImmediatePropagation()
+        if (evt) { evt.preventDefault(); evt.stopImmediatePropagation && evt.stopImmediatePropagation() }
         lastSwitchTimeRef.current = Date.now()
         accumulatedDeltaRef.current = 0
         boundaryDeltaRef.current = 0
@@ -207,8 +233,7 @@ const ServiceSlider = () => {
       }
 
       if (isBackwardEntry) {
-        e.preventDefault()
-        e.stopImmediatePropagation()
+        if (evt) { evt.preventDefault(); evt.stopImmediatePropagation && evt.stopImmediatePropagation() }
         lastSwitchTimeRef.current = Date.now()
         accumulatedDeltaRef.current = 0
         boundaryDeltaRef.current = 0
@@ -222,46 +247,131 @@ const ServiceSlider = () => {
         sequenceActiveRef.current = true
         setSequenceActive(true)
         context.snapWheelTo = true
-        context.wheelTo = winW * 2
+        context.wheelTo = winW <= 576 ? winW + 750 : winW * 2
         return
       }
     }
 
-    // Touch gesture listener on mobile to trigger fullscreen sequence during scroll
+    const onWheel = (e) => {
+      // Support both horizontal touchpad swipes and vertical scroll
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+      processGesture(delta, e)
+    }
+
+    document.addEventListener('wheel', onWheel, { capture: true, passive: false })
+
+    // ---- Touch support (Android / mobile) ----------------------------------
+    // Native touch scrolling never dispatches a `wheel` DOM event, so on
+    // Android the listener above never fired and the fullscreen 7-video
+    // sequence never activated. We translate touch gestures into the same
+    // delta/direction shape used by processGesture() so mobile gets
+    // identical forward/backward-entry + in-sequence navigation behaviour.
+    // This only ADDS a parallel input path; the wheel path above (desktop)
+    // is untouched, so desktop/Windows behaviour cannot change.
     let touchStartY = 0
-    let touchStartX = 0
     let lastTouchY = 0
+    let touchActive = false
+    let touchRafPending = false
+    let pendingTouchDelta = 0
+    let pendingTouchEvt = null
 
     const onTouchStart = (e) => {
-      if (e.touches.length !== 1) return
-      touchStartY = e.touches[0].clientY
-      touchStartX = e.touches[0].clientX
+      const t = e.touches && e.touches[0]
+      if (!t) { return }
+      touchStartY = t.screenY
       lastTouchY = touchStartY
+      touchActive = true
     }
 
     const onTouchMove = (e) => {
-      if (e.touches.length !== 1) return
-      const currentY = e.touches[0].clientY
+      if (!touchActive) { return }
+      const t = e.touches && e.touches[0]
+      if (!t) { return }
+      const currentY = t.screenY
+      // Positive delta = finger moving up the screen = user scrolling
+      // forward/down, matching native wheel deltaY's sign convention.
       const deltaY = lastTouchY - currentY
       lastTouchY = currentY
+      if (Math.abs(deltaY) < 2) { return }
 
-      const host = hostRef.current
-      if (!host || sequenceActiveRef.current) return
-      if (Date.now() < reentryLockedUntilRef.current) return
+      // Throttle the actual gesture processing (which can force a
+      // synchronous layout via getBoundingClientRect) to once per animation
+      // frame instead of once per touchmove event. Android can fire
+      // touchmove 60-120x/sec, and doing a forced-reflow check that often
+      // on every scroll everywhere on the page was the main cause of
+      // site-wide scroll jank / high CPU usage on mobile.
+      pendingTouchDelta += deltaY
+      pendingTouchEvt = e
+      if (!touchRafPending) {
+        touchRafPending = true
+        requestAnimationFrame(() => {
+          touchRafPending = false
+          const delta = pendingTouchDelta
+          const evt = pendingTouchEvt
+          pendingTouchDelta = 0
+          pendingTouchEvt = null
+          processGesture(delta, evt)
+        })
+      }
+    }
 
-      const rect = host.getBoundingClientRect()
-      const isVisible = rect.top < window.innerHeight && rect.bottom > 0
-      if (!isVisible) return
+    const onTouchEnd = () => {
+      touchActive = false
+      pendingTouchDelta = 0
+      pendingTouchEvt = null
+    }
 
+    document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true })
+    document.addEventListener('touchmove', onTouchMove, { capture: true, passive: false })
+    document.addEventListener('touchend', onTouchEnd, { capture: true, passive: true })
+    document.addEventListener('touchcancel', onTouchEnd, { capture: true, passive: true })
+
+    // ---- Mobile Auto-Trigger via Scroll Position -------------------------
+    // Mobile viewports suffer from touchmove events and requestAnimationFrame
+    // rendering lag, preventing getBoundingClientRect() from matching the
+    // zoomed state synchronously during a gesture. We register a listener
+    // on customwheel (dispatched on every animation frame) to accurately
+    // detect when the scroll position is at the zoom peak A (window.innerWidth)
+    // and activate the fullscreen sequence.
+    let lastWheel = 0
+    const onCustomWheel = (e) => {
       const winW = window.innerWidth
-      const winH = window.innerHeight
-      const isMobile = winW <= 768
-      const isCovered = isMobile
-        ? (rect.width >= winW * 0.82 || rect.height >= winH * 0.55)
-        : (rect.height >= winH * COVER_RATIO && rect.width >= winW * COVER_RATIO)
+      if (winW > 576) { return } // ONLY trigger on mobile responsive viewports
+      // ONLY trigger when the active section is WhatCreate — customwheel fires
+      // for every section's scroll, so without this guard the portal would
+      // incorrectly activate on other sections (e.g. About Tech Era).
+      if (!context.ids || context.ids[context.active] !== 'whatcreate') { return }
 
-      if (isCovered && deltaY > 12) {
+      const wheel = e.detail.wheel
+      const direction = wheel > lastWheel ? 1 : -1
+      lastWheel = wheel
+
+      if (sequenceActiveRef.current) { return }
+      if (Date.now() < reentryLockedUntilRef.current) { return }
+
+      // Peak zoom is at A = window.innerWidth. Check if close to it.
+      const isCovered = Math.abs(wheel - winW) < 15
+
+      if (!isCovered) {
+        if (Math.abs(wheel - winW) > 50) {
+          handoffPassedRef.current = false
+        }
+        return
+      }
+
+      if (handoffPassedRef.current) {
+        if (direction < 0) {
+          handoffPassedRef.current = false
+        } else {
+          return
+        }
+      }
+
+      if (direction > 0) {
+        // Forward Entry
         lastSwitchTimeRef.current = Date.now()
+        accumulatedDeltaRef.current = 0
+        boundaryDeltaRef.current = 0
         sequenceStartRef.current = 0
         indexRef.current = 0
         setIndex(0)
@@ -270,35 +380,73 @@ const ServiceSlider = () => {
         setMorphReady(true)
         sequenceActiveRef.current = true
         setSequenceActive(true)
+        context.snapWheelTo = true
+        context.wheelTo = winW
+      } else if (direction < 0) {
+        // Backward Entry
+        lastSwitchTimeRef.current = Date.now()
+        accumulatedDeltaRef.current = 0
+        boundaryDeltaRef.current = 0
+        const lastIdx = SLIDER_ORDER.length - 1
+        sequenceStartRef.current = lastIdx
+        indexRef.current = lastIdx
+        setIndex(lastIdx)
+        setPortalReady(true)
+        setMorphVisible(true)
+        setMorphReady(true)
+        sequenceActiveRef.current = true
+        setSequenceActive(true)
+        context.snapWheelTo = true
+        context.wheelTo = winW <= 576 ? winW + 750 : winW * 2
       }
     }
 
-    document.addEventListener('wheel', onWheel, { capture: true, passive: false })
-    document.addEventListener('touchstart', onTouchStart, { passive: true })
-    document.addEventListener('touchmove', onTouchMove, { passive: true })
+    document.addEventListener('customwheel', onCustomWheel)
 
     return () => {
       document.removeEventListener('wheel', onWheel, { capture: true })
-      document.removeEventListener('touchstart', onTouchStart)
-      document.removeEventListener('touchmove', onTouchMove)
+      document.removeEventListener('touchstart', onTouchStart, { capture: true })
+      document.removeEventListener('touchmove', onTouchMove, { capture: true })
+      document.removeEventListener('touchend', onTouchEnd, { capture: true })
+      document.removeEventListener('touchcancel', onTouchEnd, { capture: true })
+      document.removeEventListener('customwheel', onCustomWheel)
     }
   }, [])
 
-  const renderVideo = (className, videoRef, extraProps = {}) => (
-    <video
-      ref={videoRef}
-      key={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video}
-      className={className}
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      {...extraProps}
-    >
-      <source src={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video} type="video/mp4" />
-    </video>
-  )
+  const renderVideo = (className, videoRef, extraProps = {}) => {
+    const current = SLIDER_ORDER[index] || SLIDER_ORDER[0]
+    // Android/mobile responsive: a static poster instead of <video>. This is
+    // the fix for the phone hang/freeze — hardware video decoders on Android
+    // only handle a handful of concurrent sessions, and this slot is one of
+    // the heaviest offenders. Desktop/Windows responsive is untouched.
+    if (isMobile) {
+      return (
+        <img
+          className={className}
+          src={current.poster}
+          alt={current.caption || ''}
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+        />
+      )
+    }
+    return (
+      <video
+        ref={videoRef}
+        key={current.video}
+        className={className}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        {...extraProps}
+      >
+        <source src={current.video} type="video/mp4" />
+      </video>
+    )
+  }
 
   return (
     <>
@@ -331,7 +479,7 @@ const ServiceSlider = () => {
               items={SLIDER_ORDER}
               startIndex={sequenceStartRef.current}
               onIndexChange={handleNavCommit}
-              onClose={handleClose}
+              isMobile={isMobile}
             />
           </div>
         </div>,
@@ -343,4 +491,3 @@ const ServiceSlider = () => {
 
 export { ServiceSlider, SLIDER_ORDER }
 export default ServiceSlider
-
