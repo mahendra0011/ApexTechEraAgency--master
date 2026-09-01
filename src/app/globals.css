@@ -1612,3 +1612,120 @@ img.apex-simple-slider__video {
     height: 100dvh;
   }
 }
+
+/* ===== New Menu Layout Fix (ApexTechEra) — v2: 3D model on RIGHT ===== */
+.menu{ padding:0; overflow-y:auto; }
+.menu__content{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  gap:2rem;
+  width:100%;
+  height:100%;
+  padding:3rem 3.5rem;
+  margin-top:0;
+}
+
+/* LEFT PANEL */
+.menu__left-panel{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  height:100%;
+  max-width:20rem;
+  flex-shrink:0;
+  order:1;
+}
+.menu__tagline-box{ margin-bottom:1.5rem; }
+.menu__subhead{
+  display:block;
+  font-family:"Plus Jakarta Sans",serif;
+  font-size:.75rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  color:#888;
+  margin-bottom:.5rem;
+}
+.menu__tagline{
+  font-family:"Plus Jakarta Sans",serif;
+  font-size:.85rem;
+  line-height:1.4;
+  color:#333;
+}
+.menu__group{ margin-top:1.25rem; }
+.menu__contact-details{ display:flex; flex-direction:column; gap:.5rem; margin-top:.4rem; }
+.menu__contact-item{ display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:#111; }
+.menu__contact-icon{ flex-shrink:0; }
+.menu__social-row{ display:flex; gap:.6rem; margin-top:.5rem; flex-wrap:wrap; }
+.menu__social-btn{
+  display:flex; align-items:center; gap:.4rem;
+  padding:.4rem .75rem; border:1px solid rgba(0,0,0,.15);
+  border-radius:2rem; font-size:.8rem;
+}
+.menu__cp{ margin-top:1.5rem; }
+.menu__cp_copyright{ font-size:.7rem; color:rgba(0,0,0,.5); }
+
+/* NAV LINKS COLUMN — middle */
+.menu__folder{ flex-shrink:0; padding-left:0; order:2; }
+
+/* 3D DANCING VIDEO — now on the RIGHT side */
+.menu__3d-model-wrap{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  height:100%;
+  min-width:0;
+  order:3;
+}
+.menu__3d-model-video{
+  max-height:80vh;
+  max-width:100%;
+  height:auto;
+  width:auto;
+  object-fit:contain;
+}
+
+.menu__close-btn{
+  position:absolute; top:1.5rem; right:1.5rem;
+  background:transparent; border:none; cursor:pointer; z-index:2;
+}
+
+/* ===== MOBILE: everything on one screen, video on the right/beside nav ===== */
+@media screen and (max-width:768px){
+  .menu{ padding:1.25rem; }
+  .menu__content{
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:stretch;
+    gap:.75rem;
+    padding:3.5rem 0 1rem;
+    height:auto;
+    min-height:100%;
+  }
+
+  .menu__left-panel{ order:1; max-width:100%; }
+  .menu__tagline-box img{ width:90px !important; }
+  .menu__tagline{ font-size:.75rem; }
+  .menu__subhead{ font-size:.65rem; }
+  .menu__group{ margin-top:.75rem; }
+  .menu__contact-item{ font-size:.75rem; }
+  .menu__social-btn{ padding:.3rem .6rem; font-size:.7rem; }
+  .menu__cp{ margin-top:.75rem; }
+
+  /* nav + video sit side by side: nav on left, video on the right filling empty space */
+  .menu__nav-video-row{ order:2; display:flex; flex-direction:row; align-items:center; gap:.5rem; }
+
+  .menu__folder{ order:2; flex:1 1 55%; }
+  .menu__folder .m{ font-size:.7rem; }
+  .menu__folder .list{ font-size:1.35rem !important; gap:.3rem; display:flex; flex-direction:column; }
+
+  .menu__3d-model-wrap{
+    order:3;
+    flex:1 1 40%;
+    justify-content:center;
+    margin:.25rem 0;
+  }
+  .menu__3d-model-video{ max-height:26vh; }
+}
