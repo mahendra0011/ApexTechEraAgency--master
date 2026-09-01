@@ -290,6 +290,13 @@ a { color: inherit; text-decoration: inherit; }
   will-change: opacity, transform;
 }
 
+/* Mobile poster <img> slides (see isMobile branch in SimpleVideoSlider.jsx):
+   use "contain" instead of "cover" so the full illustration is visible
+   instead of being cropped to fill the phone screen. */
+img.apex-simple-slider__video {
+  object-fit: contain;
+}
+
 /* Top Right Close Button for Fullscreen Video Slider */
 .apex-simple-slider__close-btn {
   position: absolute;
@@ -489,7 +496,10 @@ a { color: inherit; text-decoration: inherit; }
 
 .apex-phone-slider-container {
   position: absolute;
-  top: 2.8rem;
+  /* Clears the notch bar (top:0.3rem + height:1.6rem = 1.9rem) plus the
+     app header (top:1.95rem + height:1.6rem = 3.55rem) defined in
+     ApexDashboard.css, so the slider never overlaps/covers them. */
+  top: 3.7rem;
   left: 0.8rem;
   right: 0.8rem;
   bottom: 0.8rem;
@@ -502,7 +512,7 @@ a { color: inherit; text-decoration: inherit; }
 
 @media screen and (max-width: 576px) {
   .apex-phone-slider-container {
-    top: 1.4rem;
+    top: 3.7rem;
     left: 0.4rem;
     right: 0.4rem;
     bottom: 0.4rem;

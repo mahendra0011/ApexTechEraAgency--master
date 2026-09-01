@@ -910,6 +910,23 @@
   padding: 0.1rem 0.4rem;
 }
 
+/* The .object.m-header div is a leftover node from the original qclay
+   dashboard template, which positioned it as a tiny ~11%-wide badge in
+   the top-right corner (see the compiled .interface__stage-3 .m-header
+   rules). We repurpose that div to hold our own full-width mobile app
+   header (logo + name + badge), so its position/size must be overridden
+   to span the full phone width below the notch instead of that legacy
+   corner box — otherwise the header content is squeezed invisible and
+   the slider below ends up overlapping/covering it. */
+.interface__stage-3 .object.m-header,
+.interface__stage-3 .m-header {
+  top: 1.95rem !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 1.6rem !important;
+  z-index: 15;
+}
+
 /* Mobile Stage 3 Info Card */
 .apex-mobile-card-title {
   font-size: 0.72rem;

@@ -1,7 +1,8 @@
 import { useRef, useEffect } from 'react'
 
 import Animate from "./Animate"
-import ServiceSlider from "./ServiceSlider"
+import ServiceSlider, { SLIDER_ORDER } from "./ServiceSlider"
+import SimpleVideoSlider from "./SimpleVideoSlider"
 import { useIsMobileViewport } from "./useIsMobileViewport"
 import { MOBILE_POSTERS } from "./mobilePosters"
 import './ApexDashboard.css'
