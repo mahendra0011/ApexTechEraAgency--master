@@ -1436,3 +1436,32 @@ a { color: inherit; text-decoration: inherit; }
     touch-action: pan-y;
   }
 }
+
+/* ===== Android "content not showing" fix =====
+   Root cause: `.controller` (the fixed, overflow:hidden host for every
+   section, including the We-Create dashboard) is sized with `height:100vh`.
+   On Android Chrome, 100vh is calculated INCLUDING the address bar even
+   while it's visible, so the real visible viewport is shorter than 100vh.
+   Because the container clips overflow, whatever falls in that gap
+   (bottom of the dashboard cards, bottom sections, etc.) gets cut off /
+   never shown — this is Android-specific because iOS Safari and desktop
+   Chrome handle the dynamic toolbar differently.
+   Fix: use the dynamic-viewport-height unit (100dvh), which tracks the
+   REAL visible area and shrinks/grows as the address bar shows/hides.
+   Browsers that don't support dvh simply ignore this one declaration and
+   keep the 100vh they already had — so this is purely additive/safe.
+   Scoped to mobile widths only, per the reported issue. */
+@media screen and (max-width: 992px) {
+  .controller {
+    height: 100dvh;
+  }
+  .what-create__slider,
+  .about,
+  .designers__container,
+  .portfolio-circle,
+  .portfolio__sticky,
+  .following-sticky,
+  .few-people__container {
+    height: 100dvh;
+  }
+}
