@@ -3,15 +3,14 @@ import { useRef, useEffect } from 'react'
 import Animate from "./Animate"
 import ServiceSlider from "./ServiceSlider"
 import { useIsMobileViewport } from "./useIsMobileViewport"
+import { MOBILE_POSTERS } from "./mobilePosters"
 import './ApexDashboard.css'
-
-const POSTERS_PATH = '/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/posters'
 
 // On Android/mobile responsive, render a static poster image instead of the
 // <video>. Desktop/Windows responsive is untouched and keeps the video.
 const CardMedia = ({ isMobile, src, poster, alt }) => {
     if (isMobile) {
-        return <img src={poster} alt={alt} loading="lazy" />
+        return <img src={poster} alt={alt} loading="lazy" decoding="async" referrerPolicy="no-referrer" />
     }
     return (
         <video autoPlay muted loop playsInline preload="none">
@@ -310,7 +309,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <CardMedia
                                                         isMobile={isMobile}
                                                         src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-1-fullstack.mp4'
-                                                        poster={`${POSTERS_PATH}/service-1-fullstack.jpg`}
+                                                        poster={MOBILE_POSTERS['service-1-fullstack']}
                                                         alt="Full Stack Web Development"
                                                     />
                                                 </div>
@@ -332,7 +331,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <CardMedia
                                                         isMobile={isMobile}
                                                         src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4'
-                                                        poster={`${POSTERS_PATH}/service-2-uiux.jpg`}
+                                                        poster={MOBILE_POSTERS['service-2-uiux']}
                                                         alt="UI / UX Design"
                                                     />
                                                 </div>
@@ -353,7 +352,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <CardMedia
                                                         isMobile={isMobile}
                                                         src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4'
-                                                        poster={`${POSTERS_PATH}/service-3-mobileapps.jpg`}
+                                                        poster={MOBILE_POSTERS['service-3-mobileapps']}
                                                         alt="Android & iOS App Development"
                                                     />
                                                 </div>
@@ -375,7 +374,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <CardMedia
                                                         isMobile={isMobile}
                                                         src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4'
-                                                        poster={`${POSTERS_PATH}/service-5-aiml.jpg`}
+                                                        poster={MOBILE_POSTERS['service-5-aiml']}
                                                         alt="AI Models, Agents & Automations"
                                                     />
                                                 </div>
@@ -412,7 +411,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <CardMedia
                                                         isMobile={isMobile}
                                                         src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4'
-                                                        poster={`${POSTERS_PATH}/service-6-clouddevops.jpg`}
+                                                        poster={MOBILE_POSTERS['service-6-clouddevops']}
                                                         alt="Cloud & DevOps Architecture"
                                                     />
                                                 </div>
