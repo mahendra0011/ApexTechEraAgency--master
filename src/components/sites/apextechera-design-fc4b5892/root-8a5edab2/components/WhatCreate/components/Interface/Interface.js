@@ -2,9 +2,26 @@ import { useRef, useEffect } from 'react'
 
 import Animate from "./Animate"
 import ServiceSlider from "./ServiceSlider"
+import { useIsMobileViewport } from "./useIsMobileViewport"
 import './ApexDashboard.css'
 
+const POSTERS_PATH = '/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/posters'
+
+// On Android/mobile responsive, render a static poster image instead of the
+// <video>. Desktop/Windows responsive is untouched and keeps the video.
+const CardMedia = ({ isMobile, src, poster, alt }) => {
+    if (isMobile) {
+        return <img src={poster} alt={alt} loading="lazy" />
+    }
+    return (
+        <video autoPlay muted loop playsInline preload="none">
+            <source src={src} type='video/mp4' />
+        </video>
+    )
+}
+
 const Interface = ({ parent, parentRefs }) => {
+    const isMobile = useIsMobileViewport()
 
     const interfaceInterface = useRef()
 
@@ -290,9 +307,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-purple'>Node</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-1-fullstack.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-1-fullstack.mp4'
+                                                        poster={`${POSTERS_PATH}/service-1-fullstack.jpg`}
+                                                        alt="Full Stack Web Development"
+                                                    />
                                                 </div>
                                             </div>
 
@@ -309,9 +329,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-amber'>Wireframes</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4'
+                                                        poster={`${POSTERS_PATH}/service-2-uiux.jpg`}
+                                                        alt="UI / UX Design"
+                                                    />
                                                 </div>
                                             </div>
 
@@ -327,9 +350,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-blue'>React Native</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4'
+                                                        poster={`${POSTERS_PATH}/service-3-mobileapps.jpg`}
+                                                        alt="Android & iOS App Development"
+                                                    />
                                                 </div>
                                             </div>
 
@@ -346,9 +372,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-cyan'>Automations</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4'
+                                                        poster={`${POSTERS_PATH}/service-5-aiml.jpg`}
+                                                        alt="AI Models, Agents & Automations"
+                                                    />
                                                 </div>
                                             </div>
 
@@ -380,9 +409,12 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-green'>CI/CD</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
-                                                        <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
-                                                    </video>
+                                                    <CardMedia
+                                                        isMobile={isMobile}
+                                                        src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4'
+                                                        poster={`${POSTERS_PATH}/service-6-clouddevops.jpg`}
+                                                        alt="Cloud & DevOps Architecture"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>

@@ -3,18 +3,22 @@ import { createPortal } from 'react-dom'
 import { context } from '../../../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/utils/context'
 
 import SimpleVideoSlider from './SimpleVideoSlider'
+import { useIsMobileViewport } from './useIsMobileViewport'
 
 const VIDEOS_PATH = '/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services'
+const POSTERS_PATH = '/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/posters'
 
 // The persistent fullscreen surface cycles through these 7 videos in order.
+// `poster` is the static frame used instead of the video on Android/mobile
+// responsive (see useIsMobileViewport) — desktop/Windows keeps the videos.
 const SLIDER_ORDER = [
-  { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, caption: 'ApexTechEra Agency' },
-  { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, caption: 'Full Stack Web Development' },
-  { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, caption: 'UI / UX Design' },
-  { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, caption: 'Android & iOS App Development' },
-  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, caption: 'AI / ML Models, AI Agents, AI Automations' },
-  { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, caption: 'Cloud & DevOps Architecture' },
-  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, caption: 'Custom Software Development' }
+  { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, poster: `${POSTERS_PATH}/service-0-brand-intro.jpg`, caption: 'ApexTechEra Agency' },
+  { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, poster: `${POSTERS_PATH}/service-1-fullstack.jpg`, caption: 'Full Stack Web Development' },
+  { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, poster: `${POSTERS_PATH}/service-2-uiux.jpg`, caption: 'UI / UX Design' },
+  { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, poster: `${POSTERS_PATH}/service-3-mobileapps.jpg`, caption: 'Android & iOS App Development' },
+  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, poster: `${POSTERS_PATH}/service-5-aiml.jpg`, caption: 'AI / ML Models, AI Agents, AI Automations' },
+  { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, poster: `${POSTERS_PATH}/service-6-clouddevops.jpg`, caption: 'Cloud & DevOps Architecture' },
+  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, poster: `${POSTERS_PATH}/service-4-customsoftware.jpg`, caption: 'Custom Software Development' }
 ]
 
 // Cooldown between slide transitions: 900ms allows the user to comfortably see and watch each video
@@ -27,6 +31,7 @@ const NAV_BOUNDARY_DISTANCE = 160
 const COVER_RATIO = 0.95
 
 const ServiceSlider = () => {
+  const isMobile = useIsMobileViewport()
   const hostRef = useRef(null)
   const hostVideoRef = useRef(null)
   const portalVideoRef = useRef(null)
@@ -389,21 +394,38 @@ const ServiceSlider = () => {
     }
   }, [])
 
-  const renderVideo = (className, videoRef, extraProps = {}) => (
-    <video
-      ref={videoRef}
-      key={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video}
-      className={className}
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      {...extraProps}
-    >
-      <source src={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video} type="video/mp4" />
-    </video>
-  )
+  const renderVideo = (className, videoRef, extraProps = {}) => {
+    const current = SLIDER_ORDER[index] || SLIDER_ORDER[0]
+    // Android/mobile responsive: a static poster instead of <video>. This is
+    // the fix for the phone hang/freeze — hardware video decoders on Android
+    // only handle a handful of concurrent sessions, and this slot is one of
+    // the heaviest offenders. Desktop/Windows responsive is untouched.
+    if (isMobile) {
+      return (
+        <img
+          className={className}
+          src={current.poster}
+          alt={current.caption || ''}
+          loading="lazy"
+        />
+      )
+    }
+    return (
+      <video
+        ref={videoRef}
+        key={current.video}
+        className={className}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        {...extraProps}
+      >
+        <source src={current.video} type="video/mp4" />
+      </video>
+    )
+  }
 
   return (
     <>
@@ -421,6 +443,7 @@ const ServiceSlider = () => {
               items={SLIDER_ORDER}
               startIndex={sequenceStartRef.current}
               onIndexChange={handleNavCommit}
+              isMobile={isMobile}
             />
           </div>
         </div>,

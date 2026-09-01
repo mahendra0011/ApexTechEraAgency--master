@@ -4,7 +4,7 @@ import gsap from 'gsap'
 const SLIDE_DURATION = 0.7
 
 const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
-  { items, startIndex = 0, onIndexChange, initialTime = 0 },
+  { items, startIndex = 0, onIndexChange, initialTime = 0, isMobile = false },
   ref
 ) {
   const slidesRef = useRef([])
@@ -17,8 +17,10 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
 
   // Try to play a single video element, swallowing the AbortError that
   // fires when a play() request is interrupted (e.g. by a fast slide swap).
+  // On mobile the slides are plain <img> elements (no .play()), so this is
+  // a no-op there — guarded rather than skipped at each call site.
   const tryPlay = (el) => {
-    if (!el) { return }
+    if (!el || typeof el.play !== 'function') { return }
     try {
       const p = el.play()
       if (p && p.catch) { p.catch(() => {}) }
@@ -82,7 +84,7 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
     setIndex(nextIndex)
     onIndexChangeRef.current?.(nextIndex)
 
-    // Ensure next video is playing
+    // Ensure next video is playing (no-op on mobile img slides)
     nextSlide.style.visibility = 'visible'
     if (nextSlide.paused) { tryPlay(nextSlide) }
 
@@ -94,10 +96,10 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
     if (lookaheadSlide && lookaheadSlide.paused) { tryPlay(lookaheadSlide) }
 
     // The slide we just left two steps behind is no longer a neighbour —
-    // pause it to free up a decoder slot.
+    // pause it to free up a decoder slot (img slides have no .pause).
     const staleIndex = prevIndex - direction
     const staleSlide = slidesRef.current[staleIndex]
-    if (staleSlide && staleIndex !== nextIndex && !staleSlide.paused) { staleSlide.pause() }
+    if (staleSlide && staleIndex !== nextIndex && typeof staleSlide.pause === 'function' && !staleSlide.paused) { staleSlide.pause() }
 
     isAnimatingRef.current = true
 
@@ -174,6 +176,21 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
         // videos at once (see the warm-up effect for why that breaks
         // playback on Android/iOS).
         const isInitialNeighbour = Math.abs(i - startIndex) <= 1
+        // Android/mobile responsive: static poster images instead of videos,
+        // so the fullscreen 7-slide sequence never asks the phone's decoder
+        // to handle multiple concurrent videos. Desktop/Windows is untouched.
+        if (isMobile) {
+          return (
+            <img
+              key={item.video}
+              ref={(el) => (slidesRef.current[i] = el)}
+              className="apex-simple-slider__video"
+              src={item.poster}
+              alt={item.caption || ''}
+              loading={isInitialNeighbour ? 'eager' : 'lazy'}
+            />
+          )
+        }
         return (
           <video
             key={item.video}
