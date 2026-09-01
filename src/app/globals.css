@@ -1410,3 +1410,29 @@ a { color: inherit; text-decoration: inherit; }
     display: block !important;
   }
 }
+
+/* ===== Android/mobile scroll-jank fixes =====
+   The site scroll-jacks with translate3d transforms driven by
+   touchmove/rAF (see Controller/*). On Android, sections without an
+   explicit compositor layer get repainted (not just re-composited) on
+   every transform update, which is the main source of the "hang" feel
+   while scrolling through every section. Promoting the scrolled layers
+   to their own GPU layer via will-change/translateZ fixes this. Scoped
+   to max-width:768px only so desktop rendering/behavior is untouched. */
+@media (max-width: 768px) {
+  .section-inner,
+  #hero-anim .absolute {
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Prevent the browser's own scroll/rubber-banding + gesture handling
+     from fighting the custom touch-driven scroller, which caused extra
+     jank and occasional double-scroll on Android Chrome. */
+  html, body {
+    overscroll-behavior-y: none;
+    touch-action: pan-y;
+  }
+}

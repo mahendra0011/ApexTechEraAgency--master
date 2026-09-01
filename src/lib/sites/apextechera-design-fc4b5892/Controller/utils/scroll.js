@@ -13,11 +13,33 @@ export const scroll = {
         return true
     },
 
+    // getBoundingClientRect() forces a synchronous layout reflow. This used
+    // to run on EVERY animation frame (renderTranslateInterpolation ->
+    // calcTranslate), which is a big cost on Android combined with the 3D
+    // scene competing for the same thread. The height of a section only
+    // actually changes on resize/orientation-change, so we cache it per
+    // element and only re-measure when the window size changes.
+    _maxLerpCache: new WeakMap(),
+    _lastViewport: { w: 0, h: 0 },
+    getMaxLerp(ref) {
+        const w = window.innerWidth, h = window.innerHeight
+        if (this._lastViewport.w !== w || this._lastViewport.h !== h) {
+            this._lastViewport = { w, h }
+            this._maxLerpCache = new WeakMap()
+        }
+        let cached = this._maxLerpCache.get(ref)
+        if (cached === undefined) {
+            cached = ref.getBoundingClientRect().height - window.innerHeight
+            this._maxLerpCache.set(ref, cached)
+        }
+        return cached
+    },
+
     calcTranslate(sections, wheel, needDispatch = true) {
         const ref = this.getInnerRef(sections)
         if (!ref || context.wheelTo === 0) { return { ref: null, lerped: 0 } }
         const scrolled = getScrollCoordsFromElement(ref).windowTop.fromTop
-        const maxLerp = ref.getBoundingClientRect().height - window.innerHeight
+        const maxLerp = this.getMaxLerp(ref)
         let lerped
         if (context.snapWheelTo) {
             context.snapWheelTo = false
