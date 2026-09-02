@@ -14,6 +14,16 @@ const CursorWrapper = ({ className, t, children }) => {
             label,
             handler: () => {
                 if (!cursor.current) { return }
+                // The custom cursor is hidden via CSS below 992px
+                // (`@media (max-width:992px){.custom-cursor{display:none}}`),
+                // but this handler was still running the full lerp calc +
+                // a style.transform write on every single animation frame
+                // regardless — 60x/sec of pointless main-thread work on
+                // every phone, permanently, competing with the touch-driven
+                // scroll pipeline for the same thread and contributing to
+                // the Android scroll "hang". Skip all of it when the cursor
+                // isn't even visible.
+                if (typeof window !== 'undefined' && window.innerWidth <= 992) { return }
                 const ease = t || 0.1  
                 const m = !!t ? mouseLocale : { x: mouse.x, y: mouse.y }
 
