@@ -12,6 +12,11 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
   const isAnimatingRef = useRef(false)
   const [index, setIndex] = useState(startIndex)
 
+  // Touch gesture state for mobile swiping
+  const touchStartXRef = useRef(0)
+  const touchStartYRef = useRef(0)
+  const touchStartTimeRef = useRef(0)
+
   const onIndexChangeRef = useRef(onIndexChange)
   useEffect(() => { onIndexChangeRef.current = onIndexChange }, [onIndexChange])
 
@@ -143,6 +148,44 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
         isAnimatingRef.current = false
       }
     })
+  }
+
+  // Mobile Touch Swipe Handling
+  const handleTouchStart = (e) => {
+    if (!e.touches || e.touches.length !== 1) return
+    touchStartXRef.current = e.touches[0].clientX
+    touchStartYRef.current = e.touches[0].clientY
+    touchStartTimeRef.current = Date.now()
+  }
+
+  const handleTouchEnd = (e) => {
+    if (!e.changedTouches || e.changedTouches.length !== 1) return
+    const touchEndX = e.changedTouches[0].clientX
+    const touchEndY = e.changedTouches[0].clientY
+    const diffX = touchEndX - touchStartXRef.current
+    const diffY = touchEndY - touchStartYRef.current
+    const diffTime = Date.now() - touchStartTimeRef.current
+
+    // Quick swipe or drag distance threshold
+    const minSwipeDist = 35
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > minSwipeDist) {
+      if (diffX < 0) {
+        // Swiped Left -> Go Next Slide
+        if (currentIndexRef.current < items.length - 1) {
+          gotoSlide(currentIndexRef.current + 1, 1)
+        }
+      } else {
+        // Swiped Right -> Go Previous Slide
+        if (currentIndexRef.current > 0) {
+          gotoSlide(currentIndexRef.current - 1, -1)
+        }
+      }
+    } else if (Math.abs(diffY) > 70 && Math.abs(diffY) > Math.abs(diffX)) {
+      // Large vertical swipe down to dismiss/exit on mobile
+      if (diffY > 0 && typeof onClose === 'function') {
+        onClose()
+      }
+    }
   }
 
   useImperativeHandle(ref, () => ({

@@ -91,6 +91,25 @@ const ServiceSlider = () => {
     setIndex(nextIndex)
   }
 
+  const handleClose = () => {
+    sequenceActiveRef.current = false
+    setSequenceActive(false)
+    resetExpansion()
+    reentryLockedUntilRef.current = Date.now() + 1000
+  }
+
+  const handleHostClick = () => {
+    lastSwitchTimeRef.current = Date.now()
+    accumulatedDeltaRef.current = 0
+    boundaryDeltaRef.current = 0
+    sequenceStartRef.current = indexRef.current || 0
+    setPortalReady(true)
+    setMorphVisible(true)
+    setMorphReady(true)
+    sequenceActiveRef.current = true
+    setSequenceActive(true)
+  }
+
   useEffect(() => {
     // Shared gesture processor used by BOTH mouse-wheel (desktop) and
     // touch-swipe (mobile / Android) input. `delta` follows the same sign
@@ -431,8 +450,23 @@ const ServiceSlider = () => {
 
   return (
     <>
-      <div ref={hostRef} className="apex-slot-slider">
+      <div 
+        ref={hostRef} 
+        className="apex-slot-slider"
+        onClick={handleHostClick}
+        role="button"
+        tabIndex={0}
+        aria-label="Tap to view fullscreen service video showcase"
+      >
         {renderVideo(`apex-service-video ${portalReady ? 'is-covered' : ''}`, hostVideoRef)}
+        <div className="apex-slot-expand-hint" title="Tap to explore services">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 3 21 3 21 9" />
+            <polyline points="9 21 3 21 3 15" />
+            <line x1="21" y1="3" x2="14" y2="10" />
+            <line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+        </div>
       </div>
       {sequenceActive && createPortal(
         <div
@@ -455,5 +489,5 @@ const ServiceSlider = () => {
   )
 }
 
-export { ServiceSlider }
+export { ServiceSlider, SLIDER_ORDER }
 export default ServiceSlider
