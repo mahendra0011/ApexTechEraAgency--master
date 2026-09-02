@@ -11,7 +11,7 @@ import './ApexDashboard.css'
 // <video>. Desktop/Windows responsive is untouched and keeps the video.
 const CardMedia = ({ isMobile, src, poster, alt }) => {
     if (isMobile) {
-        return <img src={poster} alt={alt} loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+        return <img src={poster} alt={alt} decoding="async" referrerPolicy="no-referrer" />
     }
     return (
         <video autoPlay muted loop playsInline preload="none">

@@ -438,7 +438,6 @@ const ServiceSlider = () => {
           className={className}
           src={current.poster}
           alt={current.caption || ''}
-          loading="lazy"
           decoding="async"
           referrerPolicy="no-referrer"
         />
