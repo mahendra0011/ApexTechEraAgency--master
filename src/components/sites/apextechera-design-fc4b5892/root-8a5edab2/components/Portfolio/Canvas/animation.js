@@ -63,7 +63,6 @@ class Animation extends Canvas2d {
                     velocity: this.rMinMax(3, 8)
                 })
             }
-            console.log(this.count, this.particles)
             // this.startTime = performance.now()
         // }
     }

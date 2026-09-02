@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, memo } from "react";
 import { $t } from "../../../../../../lib/sites/apextechera-design-fc4b5892/i18n/i18n";
 import RandomSpelling from "../../../shared/RandomSpelling/RandomSpelling";
 import Canvas from "../Portfolio/Canvas/Canvas";
@@ -8,7 +8,7 @@ import { screens } from "../../constants";
 import { BreakpointsContext } from "../../../../../../lib/sites/apextechera-design-fc4b5892/context/breakpointsContext";
 import "./Following.css";
 
-const Following = function Following() {
+const Following = memo(function Following() {
   const { isMaxWidth } = useContext(BreakpointsContext);
 
   const lineRef = useRef();
@@ -218,6 +218,6 @@ const Following = function Following() {
       </div>
     </section>
   );
-};
+});
 
 export default Following;
