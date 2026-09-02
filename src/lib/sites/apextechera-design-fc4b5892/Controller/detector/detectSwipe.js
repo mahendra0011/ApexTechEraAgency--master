@@ -18,16 +18,22 @@ class DetectSwipe {
         this.useCallback = this.useCallback.bind(this)
     }
 
+    // passive: true — this class never calls preventDefault(), so marking
+    // these passive lets the browser skip the "may this block scrolling?"
+    // check it otherwise has to run on every single touchmove tick (fires
+    // 60-120x/sec on Android) before it can even start scrolling/painting.
+    // That check is a real, measurable per-event cost across the whole
+    // site since this listener sits on the root scroll element.
     #start() {
-        this.#element.addEventListener('touchstart', this.#touchstart.bind(this), false)
-        this.#element.addEventListener('touchmove', this.#touchmove.bind(this), false)
-        this.#element.addEventListener('touchend', this.#touchend.bind(this), false)
+        this.#element.addEventListener('touchstart', this.#touchstart.bind(this), { passive: true })
+        this.#element.addEventListener('touchmove', this.#touchmove.bind(this), { passive: true })
+        this.#element.addEventListener('touchend', this.#touchend.bind(this), { passive: true })
     }
 
     destroy() {
-        this.#element.removeEventListener('touchstart', this.#touchstart, false)
-        this.#element.removeEventListener('touchmove', this.#touchmove, false)
-        this.#element.removeEventListener('touchend', this.#touchend, false)
+        this.#element.removeEventListener('touchstart', this.#touchstart, { passive: true })
+        this.#element.removeEventListener('touchmove', this.#touchmove, { passive: true })
+        this.#element.removeEventListener('touchend', this.#touchend, { passive: true })
     }
 
     // Android fires touchmove far more often than the screen can repaint
