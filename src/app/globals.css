@@ -1696,16 +1696,19 @@ img.apex-simple-slider__video {
 @media screen and (max-width:768px){
   .menu{ padding:1.25rem; }
   .menu__content{
-    flex-direction:column;
-    justify-content:flex-start;
-    align-items:stretch;
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "left  left"
+      "folder video";
+    align-items:start;
     gap:.75rem;
     padding:3.5rem 0 1rem;
     height:auto;
     min-height:100%;
   }
 
-  .menu__left-panel{ order:1; max-width:100%; }
+  .menu__left-panel{ grid-area:left; max-width:100%; order:initial; }
   .menu__tagline-box img{ width:90px !important; }
   .menu__tagline{ font-size:.75rem; }
   .menu__subhead{ font-size:.65rem; }
@@ -1714,18 +1717,20 @@ img.apex-simple-slider__video {
   .menu__social-btn{ padding:.3rem .6rem; font-size:.7rem; }
   .menu__cp{ margin-top:.75rem; }
 
-  /* nav + video sit side by side: nav on left, video on the right filling empty space */
-  .menu__nav-video-row{ order:2; display:flex; flex-direction:row; align-items:center; gap:.5rem; }
-
-  .menu__folder{ order:2; flex:1 1 55%; }
+  /* folder stays on the left, 3D video now sits beside it in the
+     empty right-hand space, in the same row (no more falling to the bottom) */
+  .menu__folder{ grid-area:folder; order:initial; align-self:start; }
   .menu__folder .m{ font-size:.7rem; }
   .menu__folder .list{ font-size:1.35rem !important; gap:.3rem; display:flex; flex-direction:column; }
 
   .menu__3d-model-wrap{
-    order:3;
-    flex:1 1 40%;
-    justify-content:center;
-    margin:.25rem 0;
+    grid-area:video;
+    order:initial;
+    display:flex !important;
+    justify-content:flex-end;
+    align-items:center;
+    height:auto;
+    margin:0;
   }
-  .menu__3d-model-video{ max-height:26vh; }
+  .menu__3d-model-video{ max-height:26vh; max-width:100%; }
 }
