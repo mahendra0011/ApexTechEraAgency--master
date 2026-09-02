@@ -1,6 +1,6 @@
+import dynamic from "next/dynamic"
 import Header from "../shared/Header/Header"
 import Main from "./components/Main/Main"
-import { HeroSection } from "../../www.apextechera.com-e7b86841/root-8a5edab2/HeroSection"
 import About from "./components/About/About"
 import SkillJourney from "./components/SkillJourney/SkillJourney"
 import WhatCreate from "./components/WhatCreate/WhatCreate"
@@ -33,6 +33,11 @@ import { useContext, useEffect } from "react";
 import { BreakpointsContext } from "../../../../lib/sites/apextechera-design-fc4b5892/context/breakpointsContext"
 import renderer from "../../../../lib/sites/apextechera-design-fc4b5892/Animator/js/renderer"
 import { FixedControls } from "../shared/FixedControls/fixed-controls"
+
+const HeroSection = dynamic(
+  () => import("../../www.apextechera.com-e7b86841/root-8a5edab2/HeroSection").then((m) => m.HeroSection),
+  { ssr: false }
+)
 
 const Home = () => {
   useEffect(() => {
