@@ -19,15 +19,41 @@ const Timeline = (refs, cache) => {
     const A = window.innerWidth
     const B = window.innerWidth + 1
     const C = isMobile ? window.innerWidth + 750 : window.innerWidth*2
-    const rawDelta = (dist - C) / 7
-    // Guard: on small viewports dist < 2*winW => rawDelta negative -> timeline reverses and NaN
-    const delta = Math.max(rawDelta, 120)
-    const D = C + delta
-    const E = C + delta * 2
-    const F = C + delta * 3
-    const G = C + delta * 4
-    const H = C + delta * 5
-    const I = C + delta * 6
+    const totalBudget = Math.max(dist - C, 840) // guards against negative/tiny budgets on very narrow viewports
+
+    let D, E, F, G, H, I
+    if (isMobile) {
+        // The skeleton/real-dashboard crossfade used to live in a razor-thin
+        // scroll window (~1/7th of the total, ~170px). A fast fling on
+        // Android can move the scroll position by more than that between
+        // two consecutive rendered animation frames, so the window was
+        // getting skipped entirely — the dashboard never got a chance to
+        // render, only the video slider appeared to "fast forward" through
+        // it. Slower backward scroll used smaller per-frame steps, so it
+        // always landed inside the window and rendered fine.
+        // Fix: give the C -> G span (stage1 skeleton + stage2 dashboard
+        // dwell time) a much larger share of the total scroll budget, so
+        // even a large per-frame jump is very unlikely to land entirely
+        // outside it. The tail (H -> END, zoom into the mobile-app view)
+        // is compressed to compensate — that phase has no
+        // skeleton/dashboard visibility logic riding on it, so it's safe
+        // to shorten.
+        D = C + totalBudget * 0.12
+        E = C + totalBudget * 0.48
+        F = C + totalBudget * 0.58
+        G = C + totalBudget * 0.72
+        H = C + totalBudget * 0.82
+        I = C + totalBudget * 0.92
+    } else {
+        const rawDelta = totalBudget / 7
+        const delta = Math.max(rawDelta, 120)
+        D = C + delta
+        E = C + delta * 2
+        F = C + delta * 3
+        G = C + delta * 4
+        H = C + delta * 5
+        I = C + delta * 6
+    }
     const END = dist
 
 
