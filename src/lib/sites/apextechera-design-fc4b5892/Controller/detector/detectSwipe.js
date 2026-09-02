@@ -106,7 +106,11 @@ class DetectSwipe {
             if (deltaY) {
                 this.cb({
                     dir: deltaY / Math.abs(deltaY),
-                    wheel: deltaY / 13
+                    // was /13 — Android swipes felt sluggish since each
+                    // touch delta mapped to a small scroll distance.
+                    // Smaller divisor = more scroll per swipe (touch-only,
+                    // desktop wheel scroll in detectWheel.js is untouched).
+                    wheel: deltaY / 9
                 })
             }
         }

@@ -4,7 +4,7 @@ import { state } from "./state"
 
 export const scroll = {
     ease: .04,
-    easeMobile: .35,
+    easeMobile: .5,
     intensity: .1,
     class: 'section-inner',
 
