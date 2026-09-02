@@ -96,7 +96,7 @@ export default function MarqueeRow({ projects, isRTL = true, speed = 28 }) {
     <div
       ref={containerRef}
       className="marquee-row relative z-20 w-full py-2 md:py-2.5 cursor-grab active:cursor-grabbing select-none overflow-hidden pointer-events-auto"
-      style={{ willChange: "transform" }}
+      style={{ willChange: "transform", touchAction: "pan-y" }}
     >
       {/* Track: w-max contains 2 identical groups for seamless -50% loop */}
       <div
