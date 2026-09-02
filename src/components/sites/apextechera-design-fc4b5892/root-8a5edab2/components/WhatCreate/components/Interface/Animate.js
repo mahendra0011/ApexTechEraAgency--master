@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { useTransform } from "../../../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/hooks/useTransform/index"
 import { screens } from "../../../../constants"
 import { itl } from "../../../../../../../../lib/sites/apextechera-design-fc4b5892/Animator/js/utils/itl"
@@ -11,6 +11,21 @@ const Animate = ({ parent, target, initRefs, children }) => {
     // wheel event (getBoundingClientRect right after a style write is
     // the classic forced-reflow jank source). Invalidated on resize.
     const dimsCache = useRef(null)
+    // window 'resize' alone doesn't catch every reason the actual slider/
+    // interface box can change size on mobile — e.g. the lazy-loaded poster
+    // <img>s (loading="lazy") finishing decode after the scroll animation
+    // has already started and run at least one frame, or a webfont swap
+    // reflowing text width. When that happens dimsCache keeps the stale
+    // pre-layout-shift numbers for the rest of the session (nothing ever
+    // clears it), so every Timeline() calc afterwards is scaled against
+    // the wrong sliderWidth/interfaceWidth — this is what was producing
+    // both symptoms: the skeleton/dashboard crossfade window landing in
+    // the wrong place (looks like it "skips"/fast-forwards) and parts of
+    // the dashboard rendering at the wrong position/size (looks clipped
+    // or missing). A ResizeObserver on the actual measured elements
+    // catches every real size change, not just window resize.
+    const resizeObserver = useRef(null)
+    const observedRefs = useRef(null)
     useTransform({ onChange, onResize }, { id: screens.WHATCREATE, parent, target })
     function onChange({ wheel }) {
         if ( !target.current ) { return } 
@@ -19,12 +34,29 @@ const Animate = ({ parent, target, initRefs, children }) => {
         let refs
         try { refs = initRefs() } catch { return }
         if ( !refs?.mounted ) { return }
+        ensureResizeObserver(refs)
         // Guard: timeline may have produced NaN if dist invalid — skip frame instead of corrupting transforms
         try { animate({ wheel, ...refs }) } catch {}
     }
     function onResize() {
         dimsCache.current = null
     }
+    function ensureResizeObserver(refs) {
+        if (typeof ResizeObserver === 'undefined') { return }
+        if (observedRefs.current === refs.slider) { return }
+        if (resizeObserver.current) { resizeObserver.current.disconnect() }
+        resizeObserver.current = new ResizeObserver(() => {
+            dimsCache.current = null
+        })
+        if (refs.slider) { resizeObserver.current.observe(refs.slider) }
+        if (refs.mainInterface) { resizeObserver.current.observe(refs.mainInterface) }
+        observedRefs.current = refs.slider
+    }
+    useEffect(() => {
+        return () => {
+            if (resizeObserver.current) { resizeObserver.current.disconnect() }
+        }
+    }, [])
 
     function animate(refs) {
         if (!dimsCache.current) {
