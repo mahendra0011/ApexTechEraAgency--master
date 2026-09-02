@@ -1,7 +1,7 @@
 import { frames } from "./frames"
 
-const Timeline = (refs) => {
-    const dist = refs.scr.getBoundingClientRect().height - window.innerHeight
+const Timeline = (refs, cachedDist) => {
+    const dist = (typeof cachedDist === 'number') ? cachedDist : (refs.scr.getBoundingClientRect().height - window.innerHeight)
     const START = 0
     const B = 100
     const C = dist * 3/4

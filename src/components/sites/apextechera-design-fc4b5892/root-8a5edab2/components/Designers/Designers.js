@@ -5,7 +5,7 @@ import { screens } from "../../constants"
 import { useTransform } from "../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/hooks/useTransform/index"
 import { itl } from "../../../../../../lib/sites/apextechera-design-fc4b5892/Animator/js/utils/itl"
 import { Timeline } from "./timeline"
-import { useRef, useContext } from "react"
+import { useRef, useContext, useEffect } from "react"
 import PortfolioCircle from "../../../shared/PortfolioCircle/PortfolioCircle"
 import { BreakpointsContext } from "../../../../../../lib/sites/apextechera-design-fc4b5892/context/breakpointsContext"
 import cn from "classnames"
@@ -120,6 +120,28 @@ const DesignersSubcontent = ({ parent, image1Ref, image2Ref, image3Ref, circleRe
   const textRef = useRef()
 
   useTransform({ onChange }, { id: screens.DESIGNERS, parent })
+
+  // Caches the two values Timeline() otherwise had to re-read from the DOM
+  // (getBoundingClientRect + getComputedStyle — both force a synchronous
+  // layout/style recalc) on EVERY scroll tick. Same forced-reflow jank
+  // pattern already fixed elsewhere in this codebase (see scroll.js
+  // getMaxLerp / WhatCreate Animate.js dimsCache). Only re-measured on
+  // resize, since these values only actually change then.
+  const dimsCache = useRef(null)
+  useEffect(() => {
+    const measure = () => {
+      const refs = initRefs()
+      if (!refs.mounted) { return }
+      dimsCache.current = {
+        dist: refs.designers.getBoundingClientRect().height - window.innerHeight,
+        avatarsWidth: parseInt(getComputedStyle(refs.avatars).getPropertyValue('--width')),
+      }
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
+
   function onChange({ wheel }) {
     const refs = initRefs()
     if (!refs.mounted) { return }
@@ -140,7 +162,7 @@ const DesignersSubcontent = ({ parent, image1Ref, image2Ref, image3Ref, circleRe
   }
 
   function animate(refs, wheel) {
-    const timeline = Timeline(refs)
+    const timeline = Timeline(refs, dimsCache.current)
     const t = itl(timeline, wheel)
     refs.avatars.style.cssText = `max-width: ${t.avatars.width}rem; opacity: ${t.avatars.opacity};`
     refs.avatarsInner.style.cssText = `transform: translate3d(0, ${t.avatarsInner.y}px, 0) scale(${t.avatarsInner.scale}); opacity: ${t.avatarsInner.opacity};`
