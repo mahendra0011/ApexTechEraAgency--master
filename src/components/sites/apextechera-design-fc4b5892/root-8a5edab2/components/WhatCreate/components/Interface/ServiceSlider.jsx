@@ -120,6 +120,19 @@ const ServiceSlider = () => {
     // (entry / active-sequence) — every other scroll passes through
     // untouched, exactly like the original wheel-only behaviour.
     const processGesture = (delta, evt) => {
+      // These wheel/touchmove listeners are registered on `document` for
+      // the entire lifetime of the page (this component never unmounts on
+      // a single-page scroll-jacked site), so without this guard every
+      // wheel tick and every touchmove frame ANYWHERE on the site — on
+      // every other section — was paying for a host.getBoundingClientRect()
+      // forced-layout read below, even when the user is nowhere near this
+      // section. That's on top of this being a non-passive, capture-phase
+      // touchmove listener, which already makes the browser wait for this
+      // JS to return before it can start the native scroll/paint — doing
+      // real work (layout reads) in there on every section makes it worse.
+      // Bail immediately unless we're actually in/near WhatCreate or the
+      // fullscreen sequence is already open.
+      if (!sequenceActiveRef.current && context.ids && context.ids[context.active] !== 'whatcreate') { return }
       const host = hostRef.current
       if (!host) { return }
       if (!delta || Math.abs(delta) < 0.5) { return }
