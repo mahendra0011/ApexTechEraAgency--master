@@ -49,17 +49,33 @@ const SkillJourney = memo(function SkillJourney() {
 
   const targetProgressRef = useRef(0);
   const currentProgressRef = useRef(0);
+  // Caches parent height so onChange (runs on every scroll tick) doesn't
+  // force a synchronous layout reflow via getBoundingClientRect() 60-120x/
+  // sec — same forced-reflow jank pattern already fixed elsewhere in this
+  // codebase (see scroll.js getMaxLerp / WhatCreate Animate.js dimsCache).
+  // Only re-measured on resize.
+  const parentHeightRef = useRef(0);
 
   const { parent, target } = useTransform({ onChange }, { id: screens.SKILLJOURNEY });
+
+  useEffect(() => {
+    const measure = () => {
+      if (parent.current) {
+        parentHeightRef.current = parent.current.getBoundingClientRect().height;
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [parent]);
 
   function onChange({ wheel }) {
     if (typeof wheel !== "number") return;
     if (target.current) {
       target.current.style.transform = `translate3d(0, ${wheel}px, 0)`;
     }
-    if (parent.current) {
-      const parentH = parent.current.getBoundingClientRect().height;
-      const maxScroll = Math.max(1, parentH - window.innerHeight);
+    if (parentHeightRef.current) {
+      const maxScroll = Math.max(1, parentHeightRef.current - window.innerHeight);
       targetProgressRef.current = clamp(wheel / maxScroll, 0, 1);
     }
   }

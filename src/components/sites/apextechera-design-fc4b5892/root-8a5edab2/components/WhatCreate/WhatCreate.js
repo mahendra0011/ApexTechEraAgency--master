@@ -17,8 +17,24 @@ const WhatCreate = memo(function WhatCreate() {
   const cursor5 = useRef()
   const cursor6 = useRef()
 
-  const { parent, target } = useTransform('horizontalScroll', { id: screens.WHATCREATE })
+  // Shared parent ref, created up front so both useTransform hooks below
+  // can bind to the same <section> no matter which one registers first.
+  const parent = useRef()
+
+  // Registered BEFORE 'horizontalScroll' on purpose. Previously this ran
+  // second, so on every single scroll frame it called
+  // getBoundingClientRect() (inside getScrollCoordsFromElement) right
+  // after horizontalScroll had just written a new translate3d to the
+  // slider in that same tick. Reading layout immediately after a write
+  // forces the browser to synchronously flush and recompute it before
+  // it can answer — a "layout thrashing" stall that repeated 60x/second
+  // for as long as this section was active, which is what froze the
+  // page while scrolling here. Registering this first means it reads
+  // the previous (already-settled) frame's layout instead, so no
+  // forced synchronous flush — same visual result, ~1 frame (16ms)
+  // earlier in the pipeline, no jank.
   const scaleRef = useTransform({ onChange: handler, onResize: handler }, { id: screens.WHATCREATE, parent })
+  const { target } = useTransform('horizontalScroll', { id: screens.WHATCREATE, parent })
   function handler({ target }) {
     if (typeof window === 'undefined' || !target) return
     const distance = window.innerWidth

@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, memo } from "react";
 import { getReelRows } from "./techStackData";
 import ReelRow from "./ReelRow";
 
-export default function TechReelGallery({
+function TechReelGallery({
   rows = 7,
   rowHeight = 92,
   rowGap = 20,
@@ -151,3 +151,5 @@ export default function TechReelGallery({
     </section>
   );
 }
+
+export default memo(TechReelGallery);

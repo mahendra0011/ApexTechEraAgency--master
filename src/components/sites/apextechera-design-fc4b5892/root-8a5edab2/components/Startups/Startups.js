@@ -5,14 +5,12 @@ import { useTransform } from "../../../../../../lib/sites/apextechera-design-fc4
 import { screens } from "../../constants"
 import Spelling from "../../../shared/Spelling/Spelling"
 import FrameByFrame from "./FrameByFrame/FrameByFrame"
-import { useRef } from "react"
-import { memo } from "react"
+import { useRef, memo } from "react"
 
-const Startups = function Startups() {
+const Startups = memo(function Startups() {
   const { parent, target } = useTransform('sticky', { id: screens.STARTUPS })
   const fillRef = useRef()
   const logoBlur = useRef()
-  console.log('rerender')
   return (
     <section ref={parent} className="startups">
       <div ref={target} className="startups__sticky">
@@ -34,6 +32,6 @@ const Startups = function Startups() {
       </div>
     </section>
   )
-}
+})
 
 export default Startups

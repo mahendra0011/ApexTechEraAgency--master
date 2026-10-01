@@ -3,18 +3,22 @@ import { createPortal } from 'react-dom'
 import { context } from '../../../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/utils/context'
 
 import SimpleVideoSlider from './SimpleVideoSlider'
+import { useIsMobileViewport } from './useIsMobileViewport'
+import { MOBILE_POSTERS } from './mobilePosters'
 
 const VIDEOS_PATH = '/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services'
 
 // The persistent fullscreen surface cycles through these 7 videos in order.
+// `poster` is the static frame used instead of the video on Android/mobile
+// responsive (see useIsMobileViewport) — desktop/Windows keeps the videos.
 const SLIDER_ORDER = [
-  { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, caption: 'ApexTechEra Agency' },
-  { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, caption: 'Full Stack Web Development' },
-  { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, caption: 'UI / UX Design' },
-  { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, caption: 'Android & iOS App Development' },
-  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, caption: 'AI / ML Models, AI Agents, AI Automations' },
-  { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, caption: 'Cloud & DevOps Architecture' },
-  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, caption: 'Custom Software Development' }
+  { video: `${VIDEOS_PATH}/service-0-brand-intro.mp4`, poster: MOBILE_POSTERS['service-0-brand-intro'], caption: 'ApexTechEra Agency' },
+  { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, poster: MOBILE_POSTERS['service-1-fullstack'], caption: 'Full Stack Web Development' },
+  { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, poster: MOBILE_POSTERS['service-2-uiux'], caption: 'UI / UX Design' },
+  { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, poster: MOBILE_POSTERS['service-3-mobileapps'], caption: 'Android & iOS App Development' },
+  { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, poster: MOBILE_POSTERS['service-5-aiml'], caption: 'AI / ML Models, AI Agents, AI Automations' },
+  { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, poster: MOBILE_POSTERS['service-6-clouddevops'], caption: 'Cloud & DevOps Architecture' },
+  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, poster: MOBILE_POSTERS['service-4-customsoftware'], caption: 'Custom Software Development' }
 ]
 
 // Cooldown between slide transitions: 900ms allows the user to comfortably see and watch each video
@@ -27,6 +31,7 @@ const NAV_BOUNDARY_DISTANCE = 160
 const COVER_RATIO = 0.95
 
 const ServiceSlider = () => {
+  const isMobile = useIsMobileViewport()
   const hostRef = useRef(null)
   const hostVideoRef = useRef(null)
   const portalVideoRef = useRef(null)
@@ -86,6 +91,25 @@ const ServiceSlider = () => {
     setIndex(nextIndex)
   }
 
+  const handleClose = () => {
+    sequenceActiveRef.current = false
+    setSequenceActive(false)
+    resetExpansion()
+    reentryLockedUntilRef.current = Date.now() + 1000
+  }
+
+  const handleHostClick = () => {
+    lastSwitchTimeRef.current = Date.now()
+    accumulatedDeltaRef.current = 0
+    boundaryDeltaRef.current = 0
+    sequenceStartRef.current = indexRef.current || 0
+    setPortalReady(true)
+    setMorphVisible(true)
+    setMorphReady(true)
+    sequenceActiveRef.current = true
+    setSequenceActive(true)
+  }
+
   useEffect(() => {
     // Shared gesture processor used by BOTH mouse-wheel (desktop) and
     // touch-swipe (mobile / Android) input. `delta` follows the same sign
@@ -96,6 +120,19 @@ const ServiceSlider = () => {
     // (entry / active-sequence) — every other scroll passes through
     // untouched, exactly like the original wheel-only behaviour.
     const processGesture = (delta, evt) => {
+      // These wheel/touchmove listeners are registered on `document` for
+      // the entire lifetime of the page (this component never unmounts on
+      // a single-page scroll-jacked site), so without this guard every
+      // wheel tick and every touchmove frame ANYWHERE on the site — on
+      // every other section — was paying for a host.getBoundingClientRect()
+      // forced-layout read below, even when the user is nowhere near this
+      // section. That's on top of this being a non-passive, capture-phase
+      // touchmove listener, which already makes the browser wait for this
+      // JS to return before it can start the native scroll/paint — doing
+      // real work (layout reads) in there on every section makes it worse.
+      // Bail immediately unless we're actually in/near WhatCreate or the
+      // fullscreen sequence is already open.
+      if (!sequenceActiveRef.current && context.ids && context.ids[context.active] !== 'whatcreate') { return }
       const host = hostRef.current
       if (!host) { return }
       if (!delta || Math.abs(delta) < 0.5) { return }
@@ -247,6 +284,9 @@ const ServiceSlider = () => {
     let touchStartY = 0
     let lastTouchY = 0
     let touchActive = false
+    let touchRafPending = false
+    let pendingTouchDelta = 0
+    let pendingTouchEvt = null
 
     const onTouchStart = (e) => {
       const t = e.touches && e.touches[0]
@@ -266,11 +306,32 @@ const ServiceSlider = () => {
       const deltaY = lastTouchY - currentY
       lastTouchY = currentY
       if (Math.abs(deltaY) < 2) { return }
-      processGesture(deltaY, e)
+
+      // Throttle the actual gesture processing (which can force a
+      // synchronous layout via getBoundingClientRect) to once per animation
+      // frame instead of once per touchmove event. Android can fire
+      // touchmove 60-120x/sec, and doing a forced-reflow check that often
+      // on every scroll everywhere on the page was the main cause of
+      // site-wide scroll jank / high CPU usage on mobile.
+      pendingTouchDelta += deltaY
+      pendingTouchEvt = e
+      if (!touchRafPending) {
+        touchRafPending = true
+        requestAnimationFrame(() => {
+          touchRafPending = false
+          const delta = pendingTouchDelta
+          const evt = pendingTouchEvt
+          pendingTouchDelta = 0
+          pendingTouchEvt = null
+          processGesture(delta, evt)
+        })
+      }
     }
 
     const onTouchEnd = () => {
       touchActive = false
+      pendingTouchDelta = 0
+      pendingTouchEvt = null
     }
 
     document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true })
@@ -365,29 +426,62 @@ const ServiceSlider = () => {
     }
   }, [])
 
-  const renderVideo = (className, videoRef, extraProps = {}) => (
-    <video
-      ref={videoRef}
-      key={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video}
-      className={className}
-      // data-autoplay (not autoPlay): the global videoGate owns playback for
-      // this slot video, so it stays paused — and never downloads/decodes —
-      // while the WhatCreate section is off-screen.
-      data-autoplay
-      muted
-      loop
-      playsInline
-      preload="metadata"
-      {...extraProps}
-    >
-      <source src={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video} type="video/mp4" />
-    </video>
-  )
+  const renderVideo = (className, videoRef, extraProps = {}) => {
+    const current = SLIDER_ORDER[index] || SLIDER_ORDER[0]
+    // Android/mobile responsive: a static poster instead of <video>. This is
+    // the fix for the phone hang/freeze — hardware video decoders on Android
+    // only handle a handful of concurrent sessions, and this slot is one of
+    // the heaviest offenders. Desktop/Windows responsive keeps the videos.
+    if (isMobile) {
+      return (
+        <img
+          className={className}
+          src={current.poster}
+          alt={current.caption || ''}
+          decoding="async"
+          referrerPolicy="no-referrer"
+        />
+      )
+    }
+    return (
+      <video
+        ref={videoRef}
+        key={current.video}
+        className={className}
+        // data-autoplay (not autoPlay): the global videoGate owns playback for
+        // this slot video, so it stays paused — and never downloads/decodes —
+        // while the WhatCreate section is off-screen.
+        data-autoplay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        {...extraProps}
+      >
+        <source src={current.video} type="video/mp4" />
+      </video>
+    )
+  }
 
   return (
     <>
-      <div ref={hostRef} className="apex-slot-slider">
+      <div 
+        ref={hostRef} 
+        className="apex-slot-slider"
+        onClick={handleHostClick}
+        role="button"
+        tabIndex={0}
+        aria-label="Tap to view fullscreen service video showcase"
+      >
         {renderVideo(`apex-service-video ${portalReady ? 'is-covered' : ''}`, hostVideoRef)}
+        <div className="apex-slot-expand-hint" title="Tap to explore services">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 3 21 3 21 9" />
+            <polyline points="9 21 3 21 3 15" />
+            <line x1="21" y1="3" x2="14" y2="10" />
+            <line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+        </div>
       </div>
       {sequenceActive && createPortal(
         <div
@@ -400,6 +494,7 @@ const ServiceSlider = () => {
               items={SLIDER_ORDER}
               startIndex={sequenceStartRef.current}
               onIndexChange={handleNavCommit}
+              isMobile={isMobile}
             />
           </div>
         </div>,
@@ -409,5 +504,5 @@ const ServiceSlider = () => {
   )
 }
 
-export { ServiceSlider }
+export { ServiceSlider, SLIDER_ORDER }
 export default ServiceSlider

@@ -130,11 +130,12 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
 
     const renderer = new THREE.WebGLRenderer({
       // MSAA on mobile GPUs doubles fragment cost for little benefit at
-      // phone DPI — disable it and cap DPR lower to stop Android thermal
-      // throttling/freeze during the hero animation.
+      // phone DPI — disable it, prefer the low-power GPU on phones and cap
+      // DPR lower to stop Android thermal throttling/freeze during the hero
+      // animation.
       antialias: !isMobile,
       alpha: true,
-      powerPreference: "high-performance",
+      powerPreference: isMobile ? "low-power" : "high-performance",
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(
@@ -160,7 +161,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     earthTexture.anisotropy = 4;
     const specularMap = textureLoader.load(`${BASE}/4k_earth_specular_map.webp`);
     const earth = new THREE.Mesh(
-      new THREE.SphereGeometry(6, 32, 32),
+      new THREE.SphereGeometry(6, isMobile ? 16 : 32, isMobile ? 16 : 32),
       new THREE.MeshPhongMaterial({
         map: earthTexture,
         specularMap,
@@ -181,7 +182,9 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       transparent: true,
       depthWrite: false,
     });
-    const COUNT = isMobile ? 3500 : 7500;
+    // Fewer particles on phones: the points mesh shares the frame budget
+    // with the scroll handlers, so 2200 is enough for the same visual.
+    const COUNT = isMobile ? 2200 : 7500;
     const positions = new Float32Array(3 * COUNT);
     for (let i = 0; i < COUNT; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 53;
@@ -294,9 +297,36 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1) : Math.min(window.devicePixelRatio || 1, 1.5));
     };
     window.addEventListener("resize", onResize);
+
+    let isPageVisible = !document.hidden;
+    const onVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    // The site keeps every section permanently mounted and switches between
+    // them with CSS transforms (rather than mounting/unmounting), so this
+    // WebGL scene would otherwise keep rendering every single frame FOREVER
+    // — even hours later while the user is on a totally different section
+    // like "We Create". That's a full 3D scene (earth, particles, astronaut
+    // model) competing for CPU/GPU non-stop in the background, which was a
+    // major contributor to the overall site feeling heavy/hanging on
+    // Android. Use an IntersectionObserver on the scene's own container to
+    // detect when the Hero section has been scrolled/transformed off-screen
+    // and skip rendering entirely until it's back in view.
+    let isSectionVisible = true;
+    const visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isSectionVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0 }
+    );
+    visibilityObserver.observe(container);
 
     const clock = new THREE.Clock();
     let smoothScroll = 0;
@@ -335,8 +365,14 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
 
     const tick = () => {
       if (disposed) return;
-      if (!sceneVisible || document.hidden) {
-        raf = 0; // stopped; IO/visibility handlers restart it
+      // Nothing visible: stop the loop completely instead of scheduling empty
+      // frames. `sceneVisible` (this section's IO) and `isSectionVisible`
+      // (page-level IO) must BOTH report hidden, so one stale flag can never
+      // freeze a hero that is actually on screen; `isPageVisible` and
+      // document.hidden cover the backgrounded-tab case. The visibility/IO
+      // handlers below restart the loop through raf.
+      if ((!sceneVisible && !isSectionVisible) || !isPageVisible || document.hidden) {
+        raf = 0;
         return;
       }
       const dt = Math.min(clock.getDelta(), 0.1);
@@ -383,6 +419,8 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      visibilityObserver.disconnect();
       video.pause();
       video.removeAttribute("src");
       video.load();

@@ -18,32 +18,56 @@ class DetectSwipe {
         this.useCallback = this.useCallback.bind(this)
     }
 
+    // passive: true — this class never calls preventDefault(), so marking
+    // these passive lets the browser skip the "may this block scrolling?"
+    // check it otherwise has to run on every single touchmove tick (fires
+    // 60-120x/sec on Android) before it can even start scrolling/painting.
+    // That check is a real, measurable per-event cost across the whole
+    // site since this listener sits on the root scroll element.
     #start() {
-        this.#element.addEventListener('touchstart', this.#touchstart.bind(this), false)
-        this.#element.addEventListener('touchmove', this.#touchmove.bind(this), false)
-        this.#element.addEventListener('touchend', this.#touchend.bind(this), false)
+        this.#element.addEventListener('touchstart', this.#touchstart.bind(this), { passive: true })
+        this.#element.addEventListener('touchmove', this.#touchmove.bind(this), { passive: true })
+        this.#element.addEventListener('touchend', this.#touchend.bind(this), { passive: true })
     }
 
     destroy() {
-        this.#element.removeEventListener('touchstart', this.#touchstart, false)
-        this.#element.removeEventListener('touchmove', this.#touchmove, false)
-        this.#element.removeEventListener('touchend', this.#touchend, false)
+        this.#element.removeEventListener('touchstart', this.#touchstart, { passive: true })
+        this.#element.removeEventListener('touchmove', this.#touchmove, { passive: true })
+        this.#element.removeEventListener('touchend', this.#touchend, { passive: true })
     }
 
+    // Android fires touchmove far more often than the screen can repaint
+    // (sometimes 60-120 events/sec). Previously every single touchmove ran
+    // the full scroll-calc + DOM read/write pipeline synchronously, which
+    // saturated the main thread and made the whole page (not just the 3D
+    // section) feel like it was hanging while swiping on Android. We now
+    // just record the latest raw touch position on touchmove, and only run
+    // the actual scroll pipeline once per animation frame via rAF — this
+    // caps the work to the display refresh rate instead of the touch
+    // sampling rate, with zero change to desktop wheel behavior.
+    #pendingMove = false
     #touchstart(e) {
         const t = e.touches[0]
         this.#swipe_det.sY = t.screenY
         this.prevY = this.#swipe_det.sY
         this.#swipe_det.eY = this.#swipe_det.sY
+        this.#pendingMove = false
     }
     #touchmove(e) {
         this.isRendering = false
-        // if (this.deltaY < this.minDelta) { return }
-
         const t = e.touches[0]
+        this.#latestScreenY = t.screenY
+        if (this.#pendingMove) { return }
+        this.#pendingMove = true
+        requestAnimationFrame(() => {
+            this.#pendingMove = false
+            this.#processMove(this.#latestScreenY)
+        })
+    }
+    #latestScreenY = 0
+    #processMove(screenY) {
         this.prevY = this.#swipe_det.eY
-        this.#swipe_det.eY = t.screenY
-
+        this.#swipe_det.eY = screenY
 
         this.deltaY = this.#swipe_det.sY - this.#swipe_det.eY
         const prevDeltaY = this.#swipe_det.sY - this.prevY
@@ -82,7 +106,11 @@ class DetectSwipe {
             if (deltaY) {
                 this.cb({
                     dir: deltaY / Math.abs(deltaY),
-                    wheel: deltaY / 13
+                    // was /13 — Android swipes felt sluggish since each
+                    // touch delta mapped to a small scroll distance.
+                    // Smaller divisor = more scroll per swipe (touch-only,
+                    // desktop wheel scroll in detectWheel.js is untouched).
+                    wheel: deltaY / 9
                 })
             }
         }

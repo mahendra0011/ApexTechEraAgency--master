@@ -1,5 +1,6 @@
-const Timeline = (refs) => {
-    const dist = refs.designers.getBoundingClientRect().height - window.innerHeight
+const Timeline = (refs, cache) => {
+    const dist = cache ? cache.dist : (refs.designers.getBoundingClientRect().height - window.innerHeight)
+    const avatarsWidth = cache ? cache.avatarsWidth : parseInt(getComputedStyle(refs.avatars).getPropertyValue('--width'))
 
     const START = 0
     const START_B = dist / 12
@@ -77,7 +78,7 @@ const Timeline = (refs) => {
                 r3: 0,
             },
             avatars: {
-                width: parseInt(getComputedStyle(refs.avatars).getPropertyValue('--width')),
+                width: avatarsWidth,
                 opacity: 1,
             },
         },

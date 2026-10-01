@@ -353,10 +353,16 @@
     word-break: break-word;
   }
   .mcode-terminal-pill {
-    padding: 0.1rem 0.75rem;
-    border-radius: 12px;
+    padding: 0.35rem 1rem;
+    border-radius: 14px;
     margin-left: 0;
-    font-size: 0.9em;
+    font-size: 0.62em;
+    gap: 0.4rem;
+  }
+  .mcode-growth-svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-left: 0.1rem;
   }
   .mcode-badge {
     font-size: 0.8rem;

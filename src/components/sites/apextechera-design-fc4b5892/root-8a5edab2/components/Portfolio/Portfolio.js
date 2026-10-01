@@ -10,7 +10,7 @@ import { getProjects } from "../../../../../../lib/sites/apextechera-design-fc4b
 import RequestForm from "../RequestForm/RequestForm";
 import { ModalContext } from "../../../shared/Modal/Modal";
 
-const Portfolio = function Portfolio() {
+const Portfolio = memo(function Portfolio() {
   const [sliderProps, setSliderProps] = useState({ index: 0, length: 0 });
   const [useMarquee, setUseMarquee] = useState(true);
 
@@ -292,6 +292,6 @@ const Portfolio = function Portfolio() {
       </div>
     </section>
   );
-};
+});
 
 export default Portfolio;

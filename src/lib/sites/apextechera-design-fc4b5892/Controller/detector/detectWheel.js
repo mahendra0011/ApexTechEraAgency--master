@@ -9,11 +9,14 @@ class DetectWheel {
     }
 
     subscribe() {
-        this.element.addEventListener('wheel', this.listener)
+        // passive: true — listener never calls preventDefault(), so this
+        // avoids the browser having to wait on the handler before it can
+        // scroll/paint in response to the wheel event.
+        this.element.addEventListener('wheel', this.listener, { passive: true })
     }
 
     unsubscribe() {
-        this.element.removeEventListener('wheel', this.listener)
+        this.element.removeEventListener('wheel', this.listener, { passive: true })
     }
 
     listener(e) {

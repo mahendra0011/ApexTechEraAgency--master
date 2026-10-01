@@ -17,11 +17,26 @@ const FrameByFrame = ({ screen, fillRef, logoBlur }) => {
     const logo = useRef()
     const title = useRef()
     const [isActive, setIsActive] = useState(false)
+    // Caches screen.getBoundingClientRect().height so Timeline() (called on
+    // every scroll tick) doesn't force a synchronous layout reflow each
+    // time — same forced-reflow jank pattern already fixed elsewhere in
+    // this codebase. Only re-measured on resize.
+    const distCache = useRef(null)
+    useEffect(() => {
+        const measure = () => {
+            if (screen.current) {
+                distCache.current = screen.current.getBoundingClientRect().height - window.innerHeight
+            }
+        }
+        measure()
+        window.addEventListener('resize', measure)
+        return () => window.removeEventListener('resize', measure)
+    }, [screen])
     function onChange({ wheel }) {
         const refs = initRefs()
         if (!refs.mounted || !state.canvas) { return }
         if (!state.canvas.isLoaded) { return }
-        const timeline = Timeline(refs)
+        const timeline = Timeline(refs, distCache.current)
         const t = itl(timeline, wheel)
         state.canvas.drawFrame(Math.round(t.canvas.frame))
         refs.par.style.cssText = `
