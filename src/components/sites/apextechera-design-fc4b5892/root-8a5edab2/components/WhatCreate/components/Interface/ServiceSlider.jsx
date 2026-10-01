@@ -16,9 +16,9 @@ const SLIDER_ORDER = [
   { video: `${VIDEOS_PATH}/service-1-fullstack.mp4`, poster: MOBILE_POSTERS['service-1-fullstack'], caption: 'Full Stack Web Development' },
   { video: `${VIDEOS_PATH}/service-2-uiux.mp4`, poster: MOBILE_POSTERS['service-2-uiux'], caption: 'UI / UX Design' },
   { video: `${VIDEOS_PATH}/service-3-mobileapps.mp4`, poster: MOBILE_POSTERS['service-3-mobileapps'], caption: 'Android & iOS App Development' },
+  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, poster: MOBILE_POSTERS['service-4-customsoftware'], caption: 'Custom Software Development' },
   { video: `${VIDEOS_PATH}/service-5-aiml.mp4`, poster: MOBILE_POSTERS['service-5-aiml'], caption: 'AI / ML Models, AI Agents, AI Automations' },
   { video: `${VIDEOS_PATH}/service-6-clouddevops.mp4`, poster: MOBILE_POSTERS['service-6-clouddevops'], caption: 'Cloud & DevOps Architecture' },
-  { video: `${VIDEOS_PATH}/service-4-customsoftware.mp4`, poster: MOBILE_POSTERS['service-4-customsoftware'], caption: 'Custom Software Development' }
 ]
 
 // Cooldown between slide transitions: 900ms allows the user to comfortably see and watch each video
@@ -155,6 +155,8 @@ const ServiceSlider = () => {
             sequenceActiveRef.current = false
             setSequenceActive(false)
             resetExpansion()
+            setIndex(4)
+            indexRef.current = 4
             reentryLockedUntilRef.current = Date.now() + 1500
           }
           return

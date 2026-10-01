@@ -47,16 +47,16 @@ const KEYFRAMES: Keyframe[] = [
   { s: 2300, x: -0.698, y: -2.001, z: 1.995, ry: -217, rx: 20, op: 1 },
   { s: 2400, x: -0.418, y: -1.894, z: 2.341, ry: -203, rx: 18, op: 1 },
   { s: 2460, x: -0.334, y: -1.86, z: 2.439, ry: -198, rx: 18, op: 1 },
-  { s: 2560, x: -0.16, y: -1.8, z: 2.643, ry: -189, rx: 17, op: 0 },
-  { s: 2600, x: -0.065, y: -1.762, z: 2.768, ry: -184, rx: 16, op: 0 },
-  { s: 2700, x: 0.014, y: -1.732, z: 2.863, ry: -180, rx: 16, op: 0 },
-  { s: 2800, x: 0.02, y: -1.698, z: 2.87, ry: -180, rx: 16, op: 0 },
-  { s: 2900, x: 0.02, y: -1.534, z: 2.87, ry: -180, rx: 16, op: 0 },
-  { s: 3000, x: 0.02, y: -1.459, z: 2.87, ry: -180, rx: 16, op: 0 },
-  { s: 3100, x: 0.02, y: -1.337, z: 2.87, ry: -180, rx: 16, op: 0 },
-  { s: 3200, x: 0.02, y: -1.256, z: 2.87, ry: -180, rx: 16, op: 0 },
-  { s: 3300, x: 0.02, y: -1.198, z: 2.87, ry: -180, rx: 16, op: 0 },
-  { s: 3400, x: 0.02, y: -1.167, z: 2.87, ry: -180, rx: 16, op: 0 },
+  { s: 2560, x: -0.16, y: -1.8, z: 2.643, ry: -189, rx: 17, op: 1 },
+  { s: 2600, x: -0.065, y: -1.762, z: 2.768, ry: -184, rx: 16, op: 1 },
+  { s: 2700, x: 0.014, y: -1.732, z: 2.863, ry: -180, rx: 16, op: 1 },
+  { s: 2800, x: 0.02, y: -1.698, z: 2.87, ry: -180, rx: 16, op: 1 },
+  { s: 2900, x: 0.02, y: -1.534, z: 2.87, ry: -180, rx: 16, op: 1 },
+  { s: 3000, x: 0.02, y: -1.459, z: 2.87, ry: -180, rx: 16, op: 1 },
+  { s: 3100, x: 0.02, y: -1.337, z: 2.87, ry: -180, rx: 16, op: 0.95 },
+  { s: 3200, x: 0.02, y: -1.256, z: 2.87, ry: -180, rx: 16, op: 0.8 },
+  { s: 3300, x: 0.02, y: -1.198, z: 2.87, ry: -180, rx: 16, op: 0.5 },
+  { s: 3400, x: 0.02, y: -1.167, z: 2.87, ry: -180, rx: 16, op: 0.2 },
   { s: 3467, x: 0.02, y: -1.15, z: 2.87, ry: -180, rx: 16, op: 0 },
 ];
 
@@ -381,7 +381,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       const dt = Math.min(clock.getDelta(), 0.1);
       // Snappy and fast response across both Mobile (Android/iOS) and Desktop
       const lerpSpeed = 0.08;
-      const targetScroll = wheelRef.current * 1.45;
+      const targetScroll = Math.max(0, Math.min(wheelRef.current, 3467));
 
       smoothScroll += (targetScroll - smoothScroll) * (1 - Math.exp(-dt / lerpSpeed));
 

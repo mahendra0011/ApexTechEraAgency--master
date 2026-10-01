@@ -54,6 +54,7 @@ export function HeroSection({ id }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const wheelRef = useRef(0);
   const cameraInRef = useRef({ start: -1 });
   const { activeId } = useContext(ControllerContext);
@@ -91,6 +92,17 @@ export function HeroSection({ id }: Props) {
         const yOffset = -w * 0.9;
         titleRef.current.style.transform = `translate3d(0, ${yOffset}px, 0)`;
       }
+
+      // Bottom text fades out smoothly during the exit range together with the 3D model
+      if (bottomRef.current) {
+        if (w <= start) {
+          bottomRef.current.style.opacity = "1";
+        } else {
+          const f = (w - start) / END_RANGE;
+          const fade = Math.max(0, 1 - f * f);
+          bottomRef.current.style.opacity = `${fade}`;
+        }
+      }
     }
   }
 
@@ -119,7 +131,10 @@ export function HeroSection({ id }: Props) {
         {/* 3D Model Astronaut Scene at z-[2] in FRONT of the text */}
         <HeroAstronautScene trackRef={trackRef} wheelRef={wheelRef} cameraInRef={cameraInRef} />
 
-        <div className="absolute inset-x-0 bottom-0 z-[3] px-4 pb-12 sm:px-10 sm:pb-16">
+        <div
+          ref={bottomRef}
+          className="absolute inset-x-0 bottom-0 z-[3] px-4 pb-12 sm:px-10 sm:pb-16 will-change-[transform,opacity]"
+        >
           <div className="flex items-end justify-between gap-4 sm:gap-8">
             <div className="mb-2 sm:mb-16">
               <div className="mb-2 sm:mb-6 text-[min(4.2vw,32px)] lg:text-[min(3vw,32px)] font-normal uppercase leading-[0.95] tracking-[-0.5px] sm:tracking-[-1px] text-foreground [font-family:RmNeue]">

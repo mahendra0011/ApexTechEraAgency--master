@@ -54,6 +54,11 @@ const Interface = ({ parent, parentRefs }) => {
     const interfaceLogo = useRef()
     const interfaceSlot = useRef()
 
+    const interfaceSideCard1 = useRef()
+    const interfaceSideCard3 = useRef()
+    const interfaceSideCard4 = useRef()
+    const interfaceSideCard6 = useRef()
+
     // The 6-card dashboard (Stage 2) has up to 5 always-mounted <video autoPlay>
     // elements, plus 1 more in the persistent ServiceSlider slot. Android's
     // hardware video decoder can only handle a handful of concurrent video
@@ -136,6 +141,11 @@ const Interface = ({ parent, parentRefs }) => {
 
         const slot = interfaceSlot.current
 
+        const sideCard1 = interfaceSideCard1.current
+        const sideCard3 = interfaceSideCard3.current
+        const sideCard4 = interfaceSideCard4.current
+        const sideCard6 = interfaceSideCard6.current
+
         const cursor1 = parentRefs.cursor1.current
         const cursor2 = parentRefs.cursor2.current
         const cursor3 = parentRefs.cursor3.current
@@ -158,6 +168,7 @@ const Interface = ({ parent, parentRefs }) => {
             mode, modeTrX,
             dHeader, sidebar, otherOps,
             row, title, tasks, mOps, mHeader, logo, slot,
+            sideCard1, sideCard3, sideCard4, sideCard6,
             cursor1, cursor2, cursor3, cursor4, cursor5, cursor6
         }
     }
@@ -276,7 +287,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     </div>
                                                 </div>
 
-                                                {/* Middle Column - Card 5 (Slot Host: Single video rendered by ServiceSlider) */}
+                                                {/* Middle Column - Card 5 (Custom Software Development) */}
                                                 <div className='apex-skel-card'>
                                                     <div className='apex-skel-card-head'>
                                                         <span className='apex-skel-dot dot-purple' />
@@ -287,7 +298,11 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                         <div className='apex-skel-tag' />
                                                     </div>
-                                                    <div className='apex-skel-video-box' />
+                                                    <div className='apex-skel-video-box'>
+                                                        <video data-autoplay muted loop playsInline preload="none" poster={MOBILE_POSTERS['service-4-customsoftware']}>
+                                                            <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-4-customsoftware.mp4' type='video/mp4' />
+                                                        </video>
+                                                    </div>
                                                 </div>
 
                                                 {/* Right Column - Card 6 (Bottom Right) */}
@@ -318,7 +333,7 @@ const Interface = ({ parent, parentRefs }) => {
                                     <div ref={interfaceTasks} className='object tasks'>
                                         <div className='apex-tasks-grid-6'>
                                             {/* Column 1 (Left) - Card 1 (Top Left) */}
-                                            <div className='apex-grid-card'>
+                                            <div ref={interfaceSideCard1} className='apex-grid-card'>
                                                 <div className='apex-card-top-head'>
                                                     <span><span className='dot dot-blue' />Web Development</span>
                                                     <span>01</span>
@@ -362,7 +377,7 @@ const Interface = ({ parent, parentRefs }) => {
                                             </div>
 
                                             {/* Column 3 (Right) - Card 3 (Top Right) */}
-                                            <div className='apex-grid-card'>
+                                            <div ref={interfaceSideCard3} className='apex-grid-card'>
                                                 <div className='apex-card-top-head'>
                                                     <span><span className='dot dot-cyan' />Mobile Apps</span>
                                                     <span>03</span>
@@ -383,7 +398,7 @@ const Interface = ({ parent, parentRefs }) => {
                                             </div>
 
                                             {/* Column 1 (Left) - Card 4 (Bottom Left) */}
-                                            <div className='apex-grid-card'>
+                                            <div ref={interfaceSideCard4} className='apex-grid-card'>
                                                 <div className='apex-card-top-head'>
                                                     <span><span className='dot dot-amber' />AI &amp; Automation</span>
                                                     <span>04</span>
@@ -404,7 +419,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                 </div>
                                             </div>
 
-                                            {/* Column 2 (Middle) - Card 5 (Slot Host: Single video rendered by ServiceSlider) */}
+                                            {/* Column 2 (Middle) - Card 5 (Custom Software Development) */}
                                             <div className='apex-grid-card'>
                                                 <div className='apex-card-top-head'>
                                                     <span><span className='dot dot-purple' />Software</span>
@@ -420,7 +435,7 @@ const Interface = ({ parent, parentRefs }) => {
                                             </div>
 
                                             {/* Column 3 (Right) - Card 6 (Bottom Right) */}
-                                            <div className='apex-grid-card'>
+                                            <div ref={interfaceSideCard6} className='apex-grid-card'>
                                                 <div className='apex-card-top-head'>
                                                     <span><span className='dot dot-rose' />Cloud &amp; DevOps</span>
                                                     <span>06</span>
@@ -496,7 +511,7 @@ const Interface = ({ parent, parentRefs }) => {
                                 </div>
 
                                 {/* Mobile Stage 3 Phone Screen Overlay */}
-                                <div ref={interfaceStage3} className='interface__stage-3'>
+                                <div ref={interfaceStage3} className='interface__stage-3' style={{ pointerEvents: 'none' }}>
                                     <div className='apex-phone-notch-bar'>
                                         <div className='apex-phone-notch-pill'></div>
                                     </div>
@@ -513,9 +528,6 @@ const Interface = ({ parent, parentRefs }) => {
                                             </div>
                                             <span className='apex-mheader-badge'>Services</span>
                                         </div>
-                                    </div>
-                                    <div className='apex-phone-slider-container'>
-                                        <SimpleVideoSlider items={SLIDER_ORDER} />
                                     </div>
                                 </div>
 

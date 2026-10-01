@@ -207,7 +207,7 @@ const Timeline = (refs, cache) => {
         // 
         {
             $TIME: H,
-            stage2: { opacity: 0 },
+            stage2: { opacity: 1 },
             cursor: {
                 x1: window.innerWidth / 3,
                 y1: window.innerHeight / 4,
@@ -233,6 +233,7 @@ const Timeline = (refs, cache) => {
         {
             $TIME: END,
             view: { x: END - A },
+            stage2: { opacity: 1 },
             stage3: { opacity: 1 },
             tag3: { y: -100, opacity: 0 },
             tag4: { y: 0, opacity: 1 },
@@ -241,7 +242,7 @@ const Timeline = (refs, cache) => {
                 x1: (desktopWidth - mobileWidth) / 2 - sidebarWidth,
                 x2: (desktopWidth - mobileWidth) / 2,
                 x3: sidebarWidth / -2,
-                y3: innerOffset
+                y3: isMobile ? -14 : -(desktopWidth * 0.056)
             },
             cursor: {
                 x6: -100,

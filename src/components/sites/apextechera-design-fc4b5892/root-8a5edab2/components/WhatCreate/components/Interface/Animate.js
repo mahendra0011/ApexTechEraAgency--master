@@ -96,6 +96,27 @@ const Animate = ({ parent, target, initRefs, children }) => {
         refs.sidebar.style.opacity = t.desktopEl.opacity
         refs.otherOps.style.opacity = t.desktopEl.opacity
 
+        const sideOpacity = t.desktopEl.opacity
+        if (refs.title) {
+            refs.title.style.opacity = sideOpacity
+        }
+        if (refs.sideCard1) {
+            refs.sideCard1.style.opacity = sideOpacity
+            refs.sideCard1.style.pointerEvents = sideOpacity > 0.05 ? 'auto' : 'none'
+        }
+        if (refs.sideCard3) {
+            refs.sideCard3.style.opacity = sideOpacity
+            refs.sideCard3.style.pointerEvents = sideOpacity > 0.05 ? 'auto' : 'none'
+        }
+        if (refs.sideCard4) {
+            refs.sideCard4.style.opacity = sideOpacity
+            refs.sideCard4.style.pointerEvents = sideOpacity > 0.05 ? 'auto' : 'none'
+        }
+        if (refs.sideCard6) {
+            refs.sideCard6.style.opacity = sideOpacity
+            refs.sideCard6.style.pointerEvents = sideOpacity > 0.05 ? 'auto' : 'none'
+        }
+
         refs.title.style.transform = `translate3d(${t.toCenter.x1}px, 0, 0)`
         refs.row.style.transform = `translate3d(${t.toCenter.x1}px, 0, 0)`
         refs.mOps.style.transform = `translate3d(${-t.toCenter.x2}px, 0, 0)`
