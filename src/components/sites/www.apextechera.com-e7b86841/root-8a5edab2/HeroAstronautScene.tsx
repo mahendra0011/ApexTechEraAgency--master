@@ -227,7 +227,10 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       envMapIntensity: 1,
       side: THREE.DoubleSide,
     });
-    const noteTexture = textureLoader.load(`${BASE}/macbook-fill.png`);
+    // WebP instead of the 334 KB source PNG (~130 KB): same 1024x1024, same
+    // pixels, but it lands with the rest of the hero preloads instead of
+    // lagging behind and popping the keyboard texture in late.
+    const noteTexture = textureLoader.load(`${BASE}/macbook-fill.webp`);
     noteTexture.colorSpace = THREE.SRGBColorSpace;
     noteTexture.flipY = false;
     const noteMaterial = new THREE.MeshBasicMaterial({

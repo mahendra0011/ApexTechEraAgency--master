@@ -14,7 +14,10 @@ const CardMedia = ({ isMobile, src, poster, alt }) => {
         return <img src={poster} alt={alt} decoding="async" referrerPolicy="no-referrer" />
     }
     return (
-        <video data-autoplay muted loop playsInline preload="none">
+        // Same poster as mobile: the still frame paints the moment the card
+        // enters the layout, so a desktop card is never a blank/black box
+        // while the mp4 streams in behind it.
+        <video data-autoplay muted loop playsInline preload="none" poster={poster}>
             <source src={src} type='video/mp4' />
         </video>
     )
@@ -231,7 +234,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                     </div>
                                                     <div className='apex-skel-video-box'>
-                                                        <video data-autoplay muted loop playsInline preload="none">
+                                                        <video data-autoplay muted loop playsInline preload="none" poster="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/poster-2.webp">
                                                             <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
@@ -249,7 +252,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                     </div>
                                                     <div className='apex-skel-video-box'>
-                                                        <video data-autoplay muted loop playsInline preload="none">
+                                                        <video data-autoplay muted loop playsInline preload="none" poster="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/poster-3.webp">
                                                             <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
@@ -267,7 +270,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                     </div>
                                                     <div className='apex-skel-video-box'>
-                                                        <video data-autoplay muted loop playsInline preload="none">
+                                                        <video data-autoplay muted loop playsInline preload="none" poster="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/poster-5.webp">
                                                             <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>

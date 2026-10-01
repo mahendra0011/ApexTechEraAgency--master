@@ -208,6 +208,22 @@ export default function RootLayout({
           as="image"
           href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/texture_earth.webp"
         />
+        {/* Remaining astronaut-scene assets. These two used to be discovered by
+            JS only after hydration, so the HDR reflections and the keyboard
+            texture on the model were still in flight when the user reached the
+            section — the astronaut popped in a beat after the text. Both are
+            now part of the parse-time preload set. */}
+        <link
+          rel="preload"
+          as="fetch"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/space.hdr"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/macbook-fill.webp"
+        />
 
         {/* Design-site hero background (Main.js): each viewport preloads only
             the file it paints — both are ~50 KB WebP now (1.4 MB PNG before). */}

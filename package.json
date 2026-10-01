@@ -29,6 +29,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "preview": "node scripts/preview.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
