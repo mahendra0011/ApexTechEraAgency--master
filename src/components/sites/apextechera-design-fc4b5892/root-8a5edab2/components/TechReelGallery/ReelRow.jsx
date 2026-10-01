@@ -65,6 +65,9 @@ export default function ReelRow({
 
       // ticker lerp for damping
       const ticker = () => {
+        // Nothing to damp while the row is off-screen (paused by the
+        // IntersectionObserver below) — skip the work entirely.
+        if (tween.paused()) return;
         // inertia decay
         velocity *= inertia;
         // damping catch up
@@ -114,10 +117,26 @@ export default function ReelRow({
         wheelObserver = { kill: () => container.removeEventListener("wheel", onWheel) };
       }
 
+      // Rows used to keep looping (plus a per-frame ticker callback each)
+      // while the gallery was scrolled far out of view. Pause off-screen,
+      // resume on re-entry — the whole gallery is 6 rows.
+      const visibility = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) {
+            tween.pause();
+            return;
+          }
+          if (!document.body.classList.contains("is-reel-dragging")) tween.play();
+        },
+        { rootMargin: "200px" }
+      );
+      visibility.observe(container);
+
       return () => {
         container.removeEventListener("mouseenter", onEnter);
         container.removeEventListener("mouseleave", onLeave);
         gsap.ticker.remove(ticker);
+        visibility.disconnect();
         observer && observer.kill();
         wheelObserver && wheelObserver.kill();
         tween.kill();

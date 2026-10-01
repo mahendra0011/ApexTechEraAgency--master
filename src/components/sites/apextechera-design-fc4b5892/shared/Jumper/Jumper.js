@@ -16,7 +16,7 @@ const Jumper = () => {
                     {/* Central 3D Metallic Emblem */}
                     <div className='jumper-logo-container'>
                         <img
-                            src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.png"
+                            src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.webp"
                             alt="ApexTechEra Agency"
                             className='jumper-brand-image'
                         />

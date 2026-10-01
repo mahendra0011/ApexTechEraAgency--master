@@ -179,16 +179,6 @@ const ServiceSlider = () => {
       const isCovered = rect.height >= window.innerHeight * ratio
         && rect.width >= window.innerWidth * ratio
 
-      console.log('Mobile Check:', {
-        rectWidth: rect.width,
-        rectHeight: rect.height,
-        winW: winW,
-        winH: window.innerHeight,
-        neededW: winW * ratio,
-        neededH: window.innerHeight * ratio,
-        isCovered
-      })
-
       if (handoffPassedRef.current) {
         if (direction < 0 || !isCovered) {
           handoffPassedRef.current = false
@@ -380,11 +370,14 @@ const ServiceSlider = () => {
       ref={videoRef}
       key={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video}
       className={className}
-      autoPlay
+      // data-autoplay (not autoPlay): the global videoGate owns playback for
+      // this slot video, so it stays paused — and never downloads/decodes —
+      // while the WhatCreate section is off-screen.
+      data-autoplay
       muted
       loop
       playsInline
-      preload="auto"
+      preload="metadata"
       {...extraProps}
     >
       <source src={SLIDER_ORDER[index]?.video || SLIDER_ORDER[0].video} type="video/mp4" />

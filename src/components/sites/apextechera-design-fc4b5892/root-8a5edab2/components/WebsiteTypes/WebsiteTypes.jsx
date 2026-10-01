@@ -46,8 +46,8 @@ const WebsiteTypes = memo(function WebsiteTypes({ id }) {
           {/* LEFT: Image Showcase */}
           <div className="wt-left-col">
             <div className="wt-image-wrapper">
-              <img
-                src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/categories-showcase.png"
+              <img loading="lazy" decoding="async"
+                src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/categories-showcase.webp"
                 alt="Explore Website Types Showcase"
                 className="wt-image"
               />

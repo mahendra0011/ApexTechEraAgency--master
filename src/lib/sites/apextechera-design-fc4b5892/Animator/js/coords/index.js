@@ -9,13 +9,17 @@ const getElementCoords = (domElement) => {
             width: null
         } 
     }
+    // Single getBoundingClientRect() call: this helper runs on EVERY frame of
+    // the scroll render loop, and calling it 6x forced a synchronous layout
+    // recalc each time — the biggest source of scroll jank on mobile.
+    const rect = domElement.getBoundingClientRect()
     return {
-        top: domElement.getBoundingClientRect().top + window.scrollY,
-        bottom: domElement.getBoundingClientRect().bottom + window.scrollY,
-        left: domElement.getBoundingClientRect().left + window.scrollX,
-        right: domElement.getBoundingClientRect().right + window.scrollX,
-        height: domElement.getBoundingClientRect().height,
-        width: domElement.getBoundingClientRect().width,
+        top: rect.top + window.scrollY,
+        bottom: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        right: rect.right + window.scrollX,
+        height: rect.height,
+        width: rect.width,
     }
 }
 

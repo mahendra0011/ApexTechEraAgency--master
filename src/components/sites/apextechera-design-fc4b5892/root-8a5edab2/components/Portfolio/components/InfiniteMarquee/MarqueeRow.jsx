@@ -77,12 +77,33 @@ export default function MarqueeRow({ projects, isRTL = true, speed = 28 }) {
         },
       });
 
+      // The row loops forever, even while scrolled far out of view — that is
+      // pure wasted compositing on every frame. Pause it off-screen and pick
+      // the loop back up the moment it scrolls into view again.
+      const visibility = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) {
+            tween.pause();
+            return;
+          }
+          if (
+            !document.body.classList.contains("is-dragging") &&
+            !container.matches(":hover")
+          ) {
+            tween.play();
+          }
+        },
+        { rootMargin: "200px" }
+      );
+      visibility.observe(container);
+
       return () => {
         container.removeEventListener("mouseenter", onEnter);
         container.removeEventListener("mouseleave", onLeave);
         container.removeEventListener("pointerenter", onEnter);
         container.removeEventListener("pointerleave", onLeave);
         observer.kill();
+        visibility.disconnect();
         tween.kill();
       };
     }, container);

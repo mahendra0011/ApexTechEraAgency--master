@@ -118,8 +118,8 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     const container = containerRef.current;
     if (!container) return;
 
-    const scene = new THREE.Scene();
     const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+    const scene = new THREE.Scene();
     const fov = isMobile ? 42 : 30;
     const camera = new THREE.PerspectiveCamera(
       fov,
@@ -129,11 +129,17 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     scene.add(camera);
 
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      // MSAA on mobile GPUs doubles fragment cost for little benefit at
+      // phone DPI — disable it and cap DPR lower to stop Android thermal
+      // throttling/freeze during the hero animation.
+      antialias: !isMobile,
       alpha: true,
+      powerPreference: "high-performance",
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.5)
+    );
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     container.appendChild(renderer.domElement);
@@ -175,7 +181,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       transparent: true,
       depthWrite: false,
     });
-    const COUNT = 7500;
+    const COUNT = isMobile ? 3500 : 7500;
     const positions = new Float32Array(3 * COUNT);
     for (let i = 0; i < COUNT; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 53;
@@ -294,8 +300,45 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
 
     const clock = new THREE.Clock();
     let smoothScroll = 0;
+    // Render ONLY while the hero stage is on screen. The old loop kept
+    // drawing WebGL (earth + 7.5k particles + video texture) forever, even
+    // when the user was 10 sections away — a major Android battery/freeze
+    // source. IntersectionObserver flips `sceneVisible` as sections swap.
+    let sceneVisible = true;
+    const io = new IntersectionObserver(
+      (entries) => {
+        sceneVisible = entries[0]?.isIntersecting ?? true;
+        if (sceneVisible && !raf) {
+          clock.getDelta();
+          raf = requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0 }
+    );
+    io.observe(container);
+    const onVisibility = () => {
+      if (document.hidden) {
+        if (raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+        video.pause();
+      } else {
+        video.play().catch(() => {});
+        if (!raf && sceneVisible) {
+          clock.getDelta();
+          raf = requestAnimationFrame(tick);
+        }
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     const tick = () => {
       if (disposed) return;
+      if (!sceneVisible || document.hidden) {
+        raf = 0; // stopped; IO/visibility handlers restart it
+        return;
+      }
       const dt = Math.min(clock.getDelta(), 0.1);
       // Snappy and fast response across both Mobile (Android/iOS) and Desktop
       const lerpSpeed = 0.08;
@@ -324,7 +367,9 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
         for (const mat of fadeMaterials) {
           (mat as THREE.MeshStandardMaterial).opacity = kf.op;
         }
-        videoTexture.needsUpdate = true;
+        if (video.readyState >= 2) {
+          videoTexture.needsUpdate = true;
+        }
       }
 
       renderer.render(scene, camera);
@@ -335,6 +380,8 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);
       video.pause();
       video.removeAttribute("src");

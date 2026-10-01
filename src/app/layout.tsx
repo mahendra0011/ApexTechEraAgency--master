@@ -169,6 +169,62 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* The live first screen (src/.../design/.../Home.js → www HeroSection) is
+            the astronaut WebGL stage, so its assets start downloading during
+            HTML parse instead of after hydration. Every file below was also
+            downscaled/re-encoded (4096 textures → 1024, hero video 9.15 MB →
+            0.32 MB, GLB 0.81 MB), so the whole preload set is ~1.2 MB. */}
+        <link
+          rel="preload"
+          as="fetch"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/astro-compressed.glb.txt"
+          crossOrigin="anonymous"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="video"
+          type="video/mp4"
+          href="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/tech-agency-logo.mp4"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/webgl-normal.webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/webgl-roughness.webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/webgl-metalness.webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/texture_earth.webp"
+        />
+
+        {/* Design-site hero background (Main.js): each viewport preloads only
+            the file it paints — both are ~50 KB WebP now (1.4 MB PNG before). */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-bg.webp"
+          media="(min-width: 769px)"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-mobile-bg.webp"
+          media="(max-width: 768px)"
+          fetchPriority="high"
+        />
       </head>
       <body suppressHydrationWarning>{children}</body>
     </html>

@@ -335,7 +335,7 @@
     justify-content: center;
   }
   .mcode-hero-bg {
-    background-image: url(/images/hero-mobile-bg.png) !important;
+    background-image: url(/images/hero-mobile-bg.webp) !important;
     background-size: cover !important;
     background-position: center center !important;
     opacity: 1 !important;

@@ -15,7 +15,7 @@ const AI_DATA = {
     "Powerful workflow automations, RAG pipelines & Vector DB search",
   ],
   buttonText: "Explore AI Stack",
-  image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/aiml-628.png",
+  image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/aiml-628.webp",
   imageAlt: "In AI, Agents & Automation We Use",
 };
 
@@ -170,7 +170,7 @@ const AISection = memo(function AISection({ id }) {
                 e.currentTarget.style.boxShadow = "0 20px 60px rgba(0,0,0,0.55), 0 0 40px rgba(234,88,12,0.12)";
               }}
             >
-              <img
+              <img loading="lazy" decoding="async"
                 src={AI_DATA.image}
                 alt={AI_DATA.imageAlt}
                 width={1536}
@@ -209,7 +209,7 @@ const AISection = memo(function AISection({ id }) {
             style={{ position: "relative", maxWidth: "96vw", maxHeight: "94vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={activeImage}
               alt="AI Stack Preview"
               style={{

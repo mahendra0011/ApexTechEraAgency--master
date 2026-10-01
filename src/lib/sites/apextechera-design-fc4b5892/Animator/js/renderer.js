@@ -4,10 +4,11 @@ const renderer = {
     handlers: [],
     mouse: null,
     isRendering: false,
+    rafId: 0,
 
     subscribeMouse() {
-        document.addEventListener('mousemove', mouseListener)
-        document.addEventListener('mouseenter', mouseListener)
+        document.addEventListener('mousemove', mouseListener, { passive: true })
+        document.addEventListener('mouseenter', mouseListener, { passive: true })
     },
 
     unsubscribeMouse() {
@@ -17,23 +18,32 @@ const renderer = {
 
     stopRender() {
         this.isRendering = false
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId)
+            this.rafId = 0
+        }
     },
 
     startRender() {
+        // Guard: multiple startRender() calls (e.g. effects without a deps
+        // array) used to spawn PARALLEL rAF loops that never died — every
+        // extra loop ran all handlers again per frame and stacked up until
+        // Android froze. Only one loop may ever exist.
+        if (this.isRendering) { return }
         this.isRendering = true
-        requestAnimationFrame(function render(time) {
+        const render = (time) => {
             if (!this.isRendering) { return }
             this.handlers.forEach((item) => item.rendering(time))
-            requestAnimationFrame(render.bind(this))
-        }.bind(this))
+            this.rafId = requestAnimationFrame(render)
+        }
+        this.rafId = requestAnimationFrame(render)
     },
 }
 const mouseListener = function(event) {
+    // Keep the cached coords up to date WITHOUT dispatching a bubbling
+    // CustomEvent on every mousemove — nothing in the codebase listens to
+    // "mouseupdate" and the event dispatch itself caused measurable jank.
     this.mouse = event
-    document.dispatchEvent(new CustomEvent("mouseupdate", {
-        bubbles: true, 
-        detail: { ...getMouseCoords() } 
-    }))
 }.bind(renderer)
 
 

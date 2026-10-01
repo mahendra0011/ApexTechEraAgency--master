@@ -65,11 +65,14 @@ const FormBlock = ({ fixed }) => {
 
           {/* APEXTECHERA 3D DANCING CHARACTER */}
           <div className="contact-pure-dancer">
+            {/* data-autoplay: the gate plays the dancer only while the
+                contact section (or the mobile fixed overlay) is on screen. */}
             <video
-              autoPlay
+              data-autoplay
               loop
               muted
               playsInline
+              preload="metadata"
               className="contact-pure-dancer-video"
             >
               <source src="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/apextechera-dance_Rumba.webm" type="video/webm" />

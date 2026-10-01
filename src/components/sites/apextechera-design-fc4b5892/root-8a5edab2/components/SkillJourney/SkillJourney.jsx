@@ -17,7 +17,7 @@ const skillPillars = [
   {
     title: "Software Development",
     desc: "Custom software engineered for your unique needs.",
-    imgUrl: `${IMG}/software.png`,
+    imgUrl: `${IMG}/software.webp`,
     imgClass: "scale-[0.85]",
   },
   {
@@ -204,8 +204,8 @@ const SkillJourney = memo(function SkillJourney() {
             className="absolute left-1/2 top-1/2 w-[110vw] md:w-[105vw] max-w-[2000px] aspect-[1672/941] flex items-center justify-center z-[15] will-change-transform pointer-events-none"
             style={{ transform: "translate(-50%, -60%)", opacity: 1 }}
           >
-            <img
-              src={`${IMG}/left_hand_new.png`}
+            <img loading="lazy" decoding="async"
+              src={`${IMG}/left_hand_new.webp`}
               alt="Left Hand"
               className="w-full h-auto object-contain"
               style={{ transform: "scale(1.12) translate(-1%, -8%)" }}
@@ -218,8 +218,8 @@ const SkillJourney = memo(function SkillJourney() {
             className="absolute left-1/2 top-1/2 w-[110vw] md:w-[105vw] max-w-[2000px] aspect-[1672/941] flex items-center justify-center z-[10] will-change-transform pointer-events-none"
             style={{ transform: "translate(-50%, -60%)", opacity: 1 }}
           >
-            <img
-              src={`${IMG}/right_hand_new.png`}
+            <img loading="lazy" decoding="async"
+              src={`${IMG}/right_hand_new.webp`}
               alt="Right Hand"
               className="w-full h-auto object-contain"
               style={{ transform: "scale(1.12) translate(1%, -8%)" }}
@@ -232,8 +232,8 @@ const SkillJourney = memo(function SkillJourney() {
             className="absolute left-1/2 top-1/2 w-[110vw] md:w-[105vw] max-w-[2000px] aspect-[1672/941] flex items-center justify-center z-[20] will-change-transform pointer-events-none"
             style={{ transform: "translate(-50%, -60%)", opacity: 0 }}
           >
-            <img
-              src={`${IMG}/hands_joined_new.png`}
+            <img loading="lazy" decoding="async"
+              src={`${IMG}/hands_joined_new.webp`}
               alt="One Partner Solution"
               className="w-full h-auto object-contain drop-shadow-[0_0_35px_rgba(168,85,247,0.35)]"
             />
@@ -275,7 +275,7 @@ const SkillJourney = memo(function SkillJourney() {
                 style={{ opacity: index === 0 ? 1 : 0.45 }}
               >
                 <div className="relative w-12 h-12 sm:w-20 sm:h-20 md:w-28 md:h-28 flex items-center justify-center transition-all duration-300 cursor-pointer">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={pillar.imgUrl}
                     className={`w-full h-full object-cover transition-all duration-300 ${pillar.imgClass || ""}`}
                     alt={pillar.title}

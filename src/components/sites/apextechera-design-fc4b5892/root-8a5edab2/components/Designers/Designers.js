@@ -12,26 +12,26 @@ import cn from "classnames"
 import { memo } from 'react'
 
 const avatarsDesktop = [
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_logo.png',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_logo.webp',
   '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug11.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug7.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug4.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/evento.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/medicore.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/mindsupport.png',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug7.webp',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug4.webp',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/evento.webp',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/medicore.webp',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/mindsupport.webp',
 ]
 
 const avatarsMobile1 = [
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_logo.png',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_logo.webp',
   '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug11.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug7.png',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug7.webp',
 ]
 
 const avatarsMobile2 = [
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug4.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/evento.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/medicore.png',
-  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/mindsupport.png',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/icon_aug4.webp',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/evento.webp',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/medicore.webp',
+  '/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/icons/mindsupport.webp',
 ]
 
 
@@ -82,27 +82,27 @@ const Designers = memo(function Designers() {
 
         <div className="designers__images">
           <div className="designers__image-1">
-            <img 
+            <img loading="lazy" decoding="async" 
               ref={image1Ref} 
-              src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/designdroid.png'} 
+              src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/designdroid.webp'} 
               alt="DesignDroid"
               style={{ borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', objectFit: 'cover' }}
             />
           </div>
 
           <div className="designers__image-2">
-            <img 
+            <img loading="lazy" decoding="async" 
               ref={image2Ref} 
-              src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/FrontCrafter.png'} 
+              src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/FrontCrafter.webp'} 
               alt="FrontCrafter"
               style={{ borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', objectFit: 'cover' }}
             />
           </div>
 
           <div className="designers__image-3">
-            <img 
+            <img loading="lazy" decoding="async" 
               ref={image3Ref} 
-              src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/MUI.png'} 
+              src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/projects/MUI.webp'} 
               alt="Modern UI"
               style={{ borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', objectFit: 'cover' }}
             />
@@ -156,7 +156,7 @@ const DesignersSubcontent = ({ parent, image1Ref, image2Ref, image3Ref, circleRe
       <span ref={avatarsRef} className={cn("designers__subcontent", className)}>
         <span ref={avatarsInnerRef} className="subcontent__avatars">
           { avatars.map((item, i) => (
-            <img 
+            <img loading="lazy" decoding="async" 
               key={i} 
               src={item} 
               width={80} 

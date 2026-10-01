@@ -11,7 +11,7 @@ const Main = memo(function Main() {
       <div 
         className="mcode-hero-bg" 
         style={{ 
-          backgroundImage: `url(/images/hero-bg.png)`,
+          backgroundImage: `url(/images/hero-bg.webp)`,
         }}
         aria-hidden="true"
       />

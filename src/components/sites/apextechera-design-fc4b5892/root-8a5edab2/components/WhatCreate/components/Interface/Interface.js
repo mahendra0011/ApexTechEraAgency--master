@@ -150,7 +150,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                     </div>
                                                     <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none" poster="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/poster-1.webp">
+                                                        <video data-autoplay muted loop playsInline preload="none" poster="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/poster-1.webp">
                                                             <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-1-fullstack.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
@@ -168,7 +168,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                     </div>
                                                     <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none">
+                                                        <video data-autoplay muted loop playsInline preload="none">
                                                             <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
@@ -186,7 +186,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                     </div>
                                                     <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none">
+                                                        <video data-autoplay muted loop playsInline preload="none">
                                                             <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
@@ -204,7 +204,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                     </div>
                                                     <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none">
+                                                        <video data-autoplay muted loop playsInline preload="none">
                                                             <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
@@ -236,7 +236,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                         <div className='apex-skel-tag' />
                                                     </div>
                                                     <div className='apex-skel-video-box'>
-                                                        <video autoPlay muted loop playsInline preload="none">
+                                                        <video data-autoplay muted loop playsInline preload="none">
                                                             <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
                                                         </video>
                                                     </div>
@@ -264,7 +264,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-purple'>Node</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
+                                                    <video data-autoplay muted loop playsInline preload="none">
                                                         <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-1-fullstack.mp4' type='video/mp4' />
                                                     </video>
                                                 </div>
@@ -283,7 +283,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-amber'>Wireframes</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
+                                                    <video data-autoplay muted loop playsInline preload="none">
                                                         <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-2-uiux.mp4' type='video/mp4' />
                                                     </video>
                                                 </div>
@@ -301,7 +301,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-blue'>React Native</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
+                                                    <video data-autoplay muted loop playsInline preload="none">
                                                         <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-3-mobileapps.mp4' type='video/mp4' />
                                                     </video>
                                                 </div>
@@ -320,7 +320,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-cyan'>Automations</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
+                                                    <video data-autoplay muted loop playsInline preload="none">
                                                         <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-5-aiml.mp4' type='video/mp4' />
                                                     </video>
                                                 </div>
@@ -354,7 +354,7 @@ const Interface = ({ parent, parentRefs }) => {
                                                     <span className='apex-service-tag tag-green'>CI/CD</span>
                                                 </div>
                                                 <div className='apex-card-video-box'>
-                                                    <video autoPlay muted loop playsInline preload="none">
+                                                    <video data-autoplay muted loop playsInline preload="none">
                                                         <source src='/sites/apextechera-design-fc4b5892/root-8a5edab2/video/services/service-6-clouddevops.mp4' type='video/mp4' />
                                                     </video>
                                                 </div>
@@ -424,7 +424,7 @@ const Interface = ({ parent, parentRefs }) => {
                                         <div className='apex-mheader-inner'>
                                             <div className='apex-mheader-logo'>
                                                 <img 
-                                                    src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/interface/apex-logo.png'} 
+                                                    src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/interface/apex-logo.webp'} 
                                                     alt="Logo" 
                                                     className='apex-mheader-img'
                                                 />
@@ -438,7 +438,7 @@ const Interface = ({ parent, parentRefs }) => {
                                 {/* Top Left Brand Logo (Desktop) */}
                                 <div ref={interfaceLogo} className='logo'>
                                     <img 
-                                        src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/interface/apex-logo.png'} 
+                                        src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/interface/apex-logo.webp'} 
                                         width={34} 
                                         height={34} 
                                         alt="ApexTechEra Logo" 

@@ -179,6 +179,10 @@ const SimpleVideoSlider = forwardRef(function SimpleVideoSlider(
             key={item.video}
             ref={(el) => (slidesRef.current[i] = el)}
             className="apex-simple-slider__video"
+            // data-gate-manual: this slider (mounted in the fullscreen portal)
+            // drives its own neighbour warm-up / pause logic below — the global
+            // videoGate must never interfere with it.
+            data-gate-manual=""
             autoPlay={isInitialNeighbour}
             muted
             loop

@@ -32,18 +32,22 @@ import FormBlock from "./components/RequestForm/components/FormBlock"
 import { useContext, useEffect } from "react";
 import { BreakpointsContext } from "../../../../lib/sites/apextechera-design-fc4b5892/context/breakpointsContext"
 import renderer from "../../../../lib/sites/apextechera-design-fc4b5892/Animator/js/renderer"
+import { startVideoGate } from "../../../../lib/sites/apextechera-design-fc4b5892/utils/videoGate"
 import { FixedControls } from "../shared/FixedControls/fixed-controls"
 
 const Home = () => {
   useEffect(() => {
       renderer.startRender();
       renderer.subscribeMouse();
+      startVideoGate();
 
+      // Empty deps: must only mount/unmount once. Re-running this effect on
+      // every render used to add extra render loops (see renderer.js guard).
       return () => {
           renderer.stopRender();
           renderer.unsubscribeMouse();
       };
-  });
+  }, []);
 
   const { isMaxWidth } = useContext(BreakpointsContext)
 

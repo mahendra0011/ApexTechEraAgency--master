@@ -71,7 +71,7 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
         <div className="menu__left-panel">
           <div className="menu__tagline-box">
             <img 
-              src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.png" 
+              src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.webp" 
               alt="ApexTechEra Agency"
               style={{
                 width: '120px',
@@ -146,11 +146,16 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
 
         {/* Center: Large 3D Dancing Model */}
         <div className="menu__3d-model-wrap">
+          {/* data-autoplay instead of autoPlay: the closed drawer sits
+              off-screen (translate -150%) and the global videoGate keeps this
+              dancer paused until the menu actually slides into view, so it no
+              longer holds a mobile hardware decoder slot for the whole visit. */}
           <video
-            autoPlay
+            data-autoplay
             loop
             muted
             playsInline
+            preload="metadata"
             className="menu__3d-model-video"
           >
             <source src="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/apextechera-dance_Rumba.webm" type="video/webm" />

@@ -224,7 +224,7 @@ const Courses = memo(function Courses() {
           >
             <div className="courses__card-inner">
               <div className="courses__card-media" style={{ padding: 0, position: 'relative', overflow: 'hidden' }}>
-                <img 
+                <img loading="lazy" decoding="async" 
                   src={card.image} 
                   alt={card.title}
                   style={{

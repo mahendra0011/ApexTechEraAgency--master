@@ -8,7 +8,7 @@ const FOCUS_CARDS_DATA = [
   {
     id: "01",
     color: "#F6E7E5",
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/quality2.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/quality2.webp",
     word1: "High",
     word2: "Quality",
     desc: "Every pixel, animation, and backend service is crafted to international standards with clean, maintainable architecture.",
@@ -16,7 +16,7 @@ const FOCUS_CARDS_DATA = [
   {
     id: "02",
     color: "#DDF3EB",
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/perfomance2.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/perfomance2.webp",
     word1: "Peak",
     word2: "Performance",
     desc: "Lightning-fast page loads, sub-second API responses, and buttery smooth 60fps animations engineered for conversion.",
@@ -24,7 +24,7 @@ const FOCUS_CARDS_DATA = [
   {
     id: "03",
     color: "#EBE9F5",
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/affordablity2.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/affordablity2.webp",
     word1: "Honest",
     word2: "Affordability",
     desc: "Enterprise-grade solutions without the enterprise price tag — transparent pricing, zero hidden costs.",
@@ -32,7 +32,7 @@ const FOCUS_CARDS_DATA = [
   {
     id: "04",
     color: "#EFF3DC",
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/secuarity2.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/secuarity2.webp",
     word1: "Bulletproof",
     word2: "Security",
     desc: "Enterprise-grade encryption, secure authentication, OWASP compliance, and proactive vulnerability testing.",
@@ -40,7 +40,7 @@ const FOCUS_CARDS_DATA = [
   {
     id: "05",
     color: "#E0F2FE",
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/fast-delivery.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/fast-delivery.webp",
     word1: "Fast",
     word2: "Delivery",
     desc: "Rapid sprint turnaround, agile iterations, and punctual on-time launches designed to accelerate your go-to-market speed.",
@@ -129,7 +129,7 @@ const FocusCardItem = memo(function FocusCardItem({ item, index }) {
 
       <div ref={parent} className="focus-card__media">
         <div ref={target} className="focus-card__image-wrap">
-          <img
+          <img loading="lazy" decoding="async"
             src={item.image}
             alt={`${item.word1} ${item.word2}`}
             className={`focus-card__img focus-card__img--${item.id}`}
@@ -281,7 +281,7 @@ const FocusSection = memo(function FocusSection() {
           {hoveredIndex !== null && (
             <div className="focus-hover-card">
               <div className="focus-hover-card-img-wrap">
-                <img
+                <img loading="lazy" decoding="async"
                   src={INDUSTRIES_DATA[hoveredIndex].image}
                   alt={INDUSTRIES_DATA[hoveredIndex].title}
                   className="focus-hover-card-img"
@@ -303,8 +303,8 @@ const FocusSection = memo(function FocusSection() {
       {/* 3. OVAL STUDIO BANNER + QUOTE */}
       <div className="focus-banner-quote-section">
         <div className="focus-banner-oval-wrap">
-          <img
-            src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/bannertrans.png"
+          <img loading="lazy" decoding="async"
+            src="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/bannertrans.webp"
             alt="ApexTechEra Studio"
             className="focus-banner-oval-img"
           />

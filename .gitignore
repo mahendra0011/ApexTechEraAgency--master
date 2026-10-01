@@ -47,3 +47,7 @@ next-env.d.ts
 
 # Local temp files
 temp/
+
+# Source-media backups kept by the performance pass (originals of every
+# re-encoded image/video); not part of the deployable site.
+_asset-backups/

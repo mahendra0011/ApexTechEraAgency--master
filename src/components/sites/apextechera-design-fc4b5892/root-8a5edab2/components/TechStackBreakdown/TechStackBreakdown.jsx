@@ -30,7 +30,7 @@ const STACK_ITEMS = [
     ],
     buttonText: "Explore Web Stack",
     buttonIcon: Search,
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/web-dev-stack.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/web-dev-stack.webp",
     imageAlt: "In Web Development We Use",
   },
   {
@@ -49,7 +49,7 @@ const STACK_ITEMS = [
     ],
     buttonText: "Explore Mobile Stack",
     buttonIcon: Smartphone,
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/app-dev-stack.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/app-dev-stack.webp",
     imageAlt: "In App Development We Use",
   },
   {
@@ -68,7 +68,7 @@ const STACK_ITEMS = [
     ],
     buttonText: "Explore Cloud Stack",
     buttonIcon: Cloud,
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/cloud-devops-stack.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/cloud-devops-stack.webp",
     imageAlt: "In Cloud and DevOps We Use",
   },
   {
@@ -87,7 +87,7 @@ const STACK_ITEMS = [
     ],
     buttonText: "Explore UI/UX Stack",
     buttonIcon: Palette,
-    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/uiux-figma-stack.png",
+    image: "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/tech-breakdown/uiux-figma-stack.webp",
     imageAlt: "In UI/UX Design We Use",
   },
 ];
@@ -319,7 +319,7 @@ const TechStackBreakdown = memo(function TechStackBreakdown({ id }) {
                   className="tech-image-card"
                   onClick={() => setActiveImage(item.image)}
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={item.image}
                     alt={item.imageAlt}
                     width={1536}
@@ -376,7 +376,7 @@ const TechStackBreakdown = memo(function TechStackBreakdown({ id }) {
             style={{ position: "relative", maxWidth: "96vw", maxHeight: "94vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={activeImage}
               alt="Tech Stack Enlarged Preview"
               style={{

@@ -1,9 +1,18 @@
 "use client";
 
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { HeroAstronautScene } from "./HeroAstronautScene";
+import dynamic from "next/dynamic";
 import { useTransform } from "../../../../lib/sites/apextechera-design-fc4b5892/Controller/hooks/useTransform/index";
 import { ControllerContext } from "../../../../lib/sites/apextechera-design-fc4b5892/Controller/Controller";
+
+// three.js (~600KB) + GLTF/DRACO loaders are code-split out of the critical
+// first-paint bundle. The scene hydrates right after the shell, while the
+// heavy assets (GLB/textures) are already being fetched via <link rel=preload>
+// in the layout head — so the astronaut appears sooner instead of later.
+const HeroAstronautScene = dynamic(
+  () => import("./HeroAstronautScene").then((m) => ({ default: m.HeroAstronautScene })),
+  { ssr: false }
+);
 
 function AnimatedLine({ text, started }: { text: string; started: boolean }) {
   const order = useMemo(() => {
