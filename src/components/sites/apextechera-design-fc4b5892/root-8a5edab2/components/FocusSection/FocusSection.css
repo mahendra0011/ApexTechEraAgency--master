@@ -12,6 +12,7 @@
 .focus-cards-scroll-wrap {
   position: relative;
   width: 100%;
+  min-height: 100vh;
   overflow: hidden;
 }
 
@@ -20,7 +21,14 @@
   align-items: center;
   height: 100vh;
   padding-left: 6vw;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  box-sizing: border-box;
+  will-change: transform;
 }
 
 .focus-cards-container {
@@ -518,12 +526,19 @@
      the rest of the page, instead of relying on the (disabled) JS pin. */
   .focus-cards-scroll-wrap {
     overflow: visible;
+    min-height: auto;
+    height: auto !important;
   }
 
   .focus-cards-scroll {
-    height: auto;
-    padding-left: 0;
-    display: block;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    height: auto !important;
+    width: 100% !important;
+    display: block !important;
+    padding-left: 0 !important;
+    transform: none !important;
   }
 
   .focus-cards-container {

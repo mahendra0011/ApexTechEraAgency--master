@@ -1,0 +1,295 @@
+import {
+  Lead,
+  Project,
+  Invoice,
+  TeamMember,
+  ServiceCatalogItem,
+  Client,
+  Proposal,
+  Task,
+  Payment,
+  Message,
+  SupportTicket,
+  FileItem,
+  CallLog,
+  Target,
+  DailyReport,
+  AuditLogEntry,
+} from "./types";
+
+// ========================================================
+// 1. THE 11 OFFICIAL DIGITAL SERVICES CATALOG (Production)
+// ========================================================
+export const INITIAL_SERVICES: ServiceCatalogItem[] = [
+  {
+    id: "srv-1",
+    name: "Full Stack Web Development",
+    shortTag: "Web Dev",
+    startingPrice: 35000,
+    estimatedDays: "7–14 Days",
+    description: "High-performance custom web applications built with Next.js 15, TypeScript, Tailwind CSS, PostgreSQL, and serverless edge architecture.",
+    deliverables: [
+      "Custom responsive Next.js frontend",
+      "Robust REST & Server Actions backend",
+      "PostgreSQL / MongoDB database integration",
+      "Payment gateway & auth setup",
+      "Vercel / AWS cloud deployment",
+    ],
+    pitchIdeaTemplate: "Current site is slow (4.8s load time). Next.js rebuild will achieve sub-second speeds and double conversion rates.",
+  },
+  {
+    id: "srv-2",
+    name: "App Development",
+    shortTag: "Mobile Apps",
+    startingPrice: 65000,
+    estimatedDays: "14–25 Days",
+    description: "Cross-platform iOS and Android mobile apps engineered with React Native and Flutter with real-time push notifications and offline sync.",
+    deliverables: [
+      "Single codebase for iOS & Android",
+      "Native device API integrations (Camera, GPS, Biometrics)",
+      "App Store & Play Store deployment assistance",
+      "Automated push notifications & deep-links",
+    ],
+    pitchIdeaTemplate: "D2C customers want a 1-tap re-order app. Push notifications bring 3x higher retention than email.",
+  },
+  {
+    id: "srv-3",
+    name: "Cloud & DevOps Solutions",
+    shortTag: "DevOps & Cloud",
+    startingPrice: 40000,
+    estimatedDays: "5–10 Days",
+    description: "Enterprise AWS, GCP, and DigitalOcean infrastructure setup, Docker containerization, Kubernetes orchestration, and automated CI/CD pipelines.",
+    deliverables: [
+      "Zero-downtime CI/CD deployment pipelines",
+      "Docker & Kubernetes cluster configuration",
+      "SSL, Cloudflare WAF, and DDoS mitigation",
+      "Auto-scaling server architecture",
+    ],
+    pitchIdeaTemplate: "Frequent server crashes during flash sales. Migrate to scalable autoscaling cloud with zero downtime.",
+  },
+  {
+    id: "srv-4",
+    name: "Software Development",
+    shortTag: "Custom SaaS",
+    startingPrice: 85000,
+    estimatedDays: "20–35 Days",
+    description: "Custom enterprise software solutions, internal ERPs, billing portals, multi-tenant SaaS architectures, and automated inventory systems.",
+    deliverables: [
+      "Role-based access control (RBAC)",
+      "Automated PDF invoice generation & ledger",
+      "Third-party API webhooks & integrations",
+      "Complete source code ownership",
+    ],
+    pitchIdeaTemplate: "Replacing messy Excel spreadsheets with a unified custom software portal saving 20 staff hours weekly.",
+  },
+  {
+    id: "srv-5",
+    name: "AI/ML Models",
+    shortTag: "AI Models",
+    startingPrice: 75000,
+    estimatedDays: "10–20 Days",
+    description: "Domain-specific AI model fine-tuning, embeddings pipelines, predictive analytics, recommendation algorithms, and computer vision classification.",
+    deliverables: [
+      "Custom fine-tuned LLM / Open-source weights",
+      "Vector search & RAG knowledge base",
+      "Prediction API endpoints & monitoring",
+    ],
+    pitchIdeaTemplate: "Predict customer churn or demand forecasting based on past 12 months order history.",
+  },
+  {
+    id: "srv-6",
+    name: "AI Agents",
+    shortTag: "AI Agents",
+    startingPrice: 50000,
+    estimatedDays: "7–15 Days",
+    description: "Autonomous multi-agent workflows (LangChain, LangGraph, Gemini API) that perform complex tasks like client qualification, research, and support.",
+    deliverables: [
+      "Autonomous 24/7 client booking agent",
+      "Multi-tool reasoning & database lookup",
+      "Voice & text interface integrations",
+    ],
+    pitchIdeaTemplate: "24/7 AI Sales Agent qualifies incoming leads on WhatsApp and directly books calls on your calendar.",
+  },
+  {
+    id: "srv-7",
+    name: "AI Automation",
+    shortTag: "Automation",
+    startingPrice: 25000,
+    estimatedDays: "3–7 Days",
+    description: "End-to-end business process automations connecting Make.com, n8n, WhatsApp Business API, CRM leads, and billing webhooks.",
+    deliverables: [
+      "Instant WhatsApp lead notification to sales team",
+      "Automated GST invoice generation upon payment",
+      "Multi-platform lead syncing (FB/Insta -> CRM)",
+    ],
+    pitchIdeaTemplate: "Never lose an Insta lead: automated instant WhatsApp reply within 30 seconds of an ad click.",
+  },
+  {
+    id: "srv-8",
+    name: "Graphics Designing",
+    shortTag: "Graphics",
+    startingPrice: 15000,
+    estimatedDays: "3–5 Days",
+    description: "High-impact visual brand assets, social media performance ad creatives, packaging designs, vector logos, and pitch decks.",
+    deliverables: [
+      "High-converting Meta & Google ad creatives",
+      "Complete Brand Identity Guidelines & SVG logos",
+      "Print-ready brochures and packaging boxes",
+    ],
+    pitchIdeaTemplate: "Current Instagram creatives look outdated. Fresh modern aesthetic will decrease customer acquisition costs.",
+  },
+  {
+    id: "srv-9",
+    name: "UI/UX Designing",
+    shortTag: "UI/UX Design",
+    startingPrice: 30000,
+    estimatedDays: "7–12 Days",
+    description: "World-class Figma design systems, user journeys, responsive mobile wireframes, and interactive high-fidelity clickable prototypes.",
+    deliverables: [
+      "Design tokens & atomic component library",
+      "Desktop & mobile responsive layouts",
+      "Interactive Figma presentation prototype",
+      "Developer handoff documentation",
+    ],
+    pitchIdeaTemplate: "Interactive Figma prototype allows testing the user journey before writing a single line of code.",
+  },
+  {
+    id: "srv-10",
+    name: "Video Editing",
+    shortTag: "Video Editing",
+    startingPrice: 20000,
+    estimatedDays: "3–6 Days",
+    description: "Dynamic short-form Reels/Shorts/TikToks, founder brand documentaries, YouTube masterclasses, kinetic typography, and sound design.",
+    deliverables: [
+      "Fast-paced retention hooks & sound design",
+      "Motion graphics & animated titles",
+      "Color grading (DaVinci Resolve)",
+    ],
+    pitchIdeaTemplate: "Turn podcast clips into viral Instagram Reels with kinetic subtitles to build founder authority.",
+  },
+  {
+    id: "srv-11",
+    name: "AI Video Generation",
+    shortTag: "AI Video",
+    startingPrice: 30000,
+    estimatedDays: "5–10 Days",
+    description: "Cutting-edge synthetic AI commercials, AI avatar spokesperson videos, Runway Gen-3/Kling/Midjourney visual production without physical cameras.",
+    deliverables: [
+      "Photorealistic AI product commercials",
+      "Multilingual AI avatar spokesperson videos",
+      "Cinematic background environments",
+    ],
+    pitchIdeaTemplate: "Create high-end product commercial videos in 5 international languages without physical studio shoot costs.",
+  },
+];
+
+// ========================================================
+// 2. OFFICIAL TEAM ROSTER (4 Real Production Accounts)
+// ========================================================
+export const INITIAL_TEAM: TeamMember[] = [
+  {
+    id: "tm-mahendra",
+    name: "Mahendra Prajapat",
+    role: "SUPER_ADMIN",
+    email: "mahendrapra0077@gmail.com",
+    phone: "+91 98200 11223",
+    avatarColor: "bg-emerald-700",
+    assignedProjectsCount: 0,
+    skills: ["Founder", "Agency Direction", "Full Stack Architecture", "Enterprise Sales"],
+    permissions: {
+      canDeleteLead: true,
+      canExport: true,
+      seeAllLeads: true,
+      createInvoice: true,
+      seeClientContact: true,
+      seeLeaderboard: true,
+    },
+    isActive: true,
+    lastLoginAt: new Date().toISOString().replace("T", " ").substring(0, 16),
+    joinedDate: "2025-01-01",
+  },
+  {
+    id: "tm-nishant",
+    name: "Nishant Kushwaha",
+    role: "MEMBER",
+    memberType: "SALES",
+    email: "nishantkushwaha145@gmail.com",
+    phone: "+91 98234 56781",
+    avatarColor: "bg-blue-600",
+    assignedProjectsCount: 0,
+    skills: ["Cold Calling", "Outreach Pipeline", "Objection Handling", "Closing"],
+    permissions: {
+      canDeleteLead: false,
+      canExport: false,
+      seeAllLeads: false,
+      createInvoice: false,
+      seeClientContact: true,
+      seeLeaderboard: true,
+    },
+    isActive: true,
+    lastLoginAt: new Date().toISOString().replace("T", " ").substring(0, 16),
+    joinedDate: "2026-03-10",
+  },
+  {
+    id: "tm-kshitij",
+    name: "Kshitij Bhunjwa",
+    role: "MEMBER",
+    memberType: "PROJECT_MANAGER",
+    email: "kshitijbhunjwa@gmail.com",
+    phone: "+91 97123 45672",
+    avatarColor: "bg-purple-600",
+    assignedProjectsCount: 0,
+    skills: ["Sprint Delivery", "Client Communication", "Milestones", "QA"],
+    permissions: {
+      canDeleteLead: false,
+      canExport: true,
+      seeAllLeads: true,
+      createInvoice: true,
+      seeClientContact: true,
+      seeLeaderboard: true,
+    },
+    isActive: true,
+    lastLoginAt: new Date().toISOString().replace("T", " ").substring(0, 16),
+    joinedDate: "2026-02-15",
+  },
+  {
+    id: "tm-ankit",
+    name: "Ankit Kumawat",
+    role: "MEMBER",
+    memberType: "DEVELOPER",
+    email: "ankitkumawat43657@gmail.com",
+    phone: "+91 99876 54323",
+    avatarColor: "bg-indigo-600",
+    assignedProjectsCount: 0,
+    skills: ["Full Stack Web", "React", "Next.js", "AI Agents", "Python", "APIs"],
+    permissions: {
+      canDeleteLead: false,
+      canExport: false,
+      seeAllLeads: false,
+      createInvoice: false,
+      seeClientContact: false,
+      seeLeaderboard: true,
+    },
+    isActive: true,
+    lastLoginAt: new Date().toISOString().replace("T", " ").substring(0, 16),
+    joinedDate: "2026-04-01",
+  },
+];
+
+// ========================================================
+// 3. CLEAN PRODUCTION DATASETS (All Start Empty)
+// ========================================================
+export const INITIAL_LEADS: Lead[] = [];
+export const INITIAL_CLIENTS: Client[] = [];
+export const INITIAL_PROPOSALS: Proposal[] = [];
+export const INITIAL_PROJECTS: Project[] = [];
+export const INITIAL_TASKS: Task[] = [];
+export const INITIAL_INVOICES: Invoice[] = [];
+export const INITIAL_PAYMENTS: Payment[] = [];
+export const INITIAL_MESSAGES: Message[] = [];
+export const INITIAL_SUPPORT_TICKETS: SupportTicket[] = [];
+export const INITIAL_FILES: FileItem[] = [];
+export const INITIAL_CALL_LOGS: CallLog[] = [];
+export const INITIAL_TARGETS: Target[] = [];
+export const INITIAL_DAILY_REPORTS: DailyReport[] = [];
+export const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [];

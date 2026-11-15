@@ -155,6 +155,46 @@ const Menu = ({isMenuShow, setIsMenuShow}) => {
             </div>
           </div>
 
+          <div className="menu__group">
+            <span className="menu__subhead">PORTALS &amp; OPERATIONS</span>
+            <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.4rem', flexWrap: 'wrap' }}>
+              <a 
+                href="/login" 
+                className="menu__social-btn"
+                style={{ background: '#0F5C4D', color: '#ffffff', borderColor: '#0F5C4D', fontWeight: 600 }}
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <span>⚡ Login</span>
+              </a>
+              <a 
+                href="/admin" 
+                className="menu__social-btn"
+                style={{ background: '#0f172a', color: '#ffffff', borderColor: '#0f172a' }}
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <span>👑 Super Admin</span>
+              </a>
+              <a 
+                href="/team" 
+                className="menu__social-btn"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <span>👥 Team</span>
+              </a>
+              <a 
+                href="/portal" 
+                className="menu__social-btn"
+                onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+                onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+              >
+                <span>👤 Client Portal</span>
+              </a>
+            </div>
+          </div>
+
           <div className="menu__cp">
             <p className="menu__cp_copyright">&copy; {new Date().getFullYear()} ApexTechEra Agency. All rights reserved.</p>
           </div>

@@ -63,6 +63,16 @@ const Header = () => {
           ))}
         </div>
         <div className="buttons">
+          <a
+            href="/login"
+            className="header-portal-btn"
+            onMouseEnter={() => setCursorStyle(cursorStyles.HOVER_NAV)}
+            onMouseLeave={() => setCursorStyle(cursorStyles.DEFAULT)}
+            title="Agency Management & Client Portal Login"
+          >
+            <span className="dot"></span>
+            <span>Login</span>
+          </a>
           <TalkButton 
             isShow={isMenuShow} 
             name="black"

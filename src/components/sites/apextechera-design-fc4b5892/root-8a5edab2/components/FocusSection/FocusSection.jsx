@@ -159,11 +159,6 @@ const FocusCardItem = memo(function FocusCardItem({ item, index }) {
 });
 
 const FocusSection = memo(function FocusSection() {
-  const { parent, target } = useTransform("horizontalScroll", {
-    id: screens.FOCUS,
-    minWidth: 576,
-  });
-
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [industriesRevealed, setIndustriesRevealed] = useState(false);
@@ -171,6 +166,88 @@ const FocusSection = memo(function FocusSection() {
 
   const industriesRef = useRef(null);
   const quoteRef = useRef(null);
+  const maxDistanceRef = useRef(0);
+  const lastWheelRef = useRef(0);
+
+  const handleResize = (cfg) => {
+    const p = cfg?.parent || parent.current;
+    const t = cfg?.target || target.current;
+    if (!p || !t || typeof window === "undefined") return;
+
+    if (window.innerWidth <= 768) {
+      p.style.height = "";
+      t.style.position = "";
+      t.style.top = "";
+      t.style.left = "";
+      t.style.transform = "";
+      maxDistanceRef.current = 0;
+      return;
+    }
+
+    const totalWidth = Math.max(t.scrollWidth || 0, t.getBoundingClientRect()?.width || 0);
+    const maxDist = Math.max(0, totalWidth - window.innerWidth);
+    maxDistanceRef.current = maxDist;
+
+    p.style.position = "relative";
+    p.style.height = `${maxDist + window.innerHeight}px`;
+    t.style.position = "absolute";
+    t.style.top = "0";
+    t.style.left = "0";
+
+    if (lastWheelRef.current != null) {
+      handleScroll({ parent: p, target: t, wheel: lastWheelRef.current });
+    }
+  };
+
+  const handleScroll = (cfg) => {
+    const p = cfg?.parent || parent.current;
+    const t = cfg?.target || target.current;
+    const wheel = cfg?.wheel ?? 0;
+    if (!p || !t || typeof window === "undefined" || window.innerWidth <= 768) return;
+
+    let maxDist = maxDistanceRef.current;
+    if (!maxDist) {
+      const totalWidth = Math.max(t.scrollWidth || 0, t.getBoundingClientRect()?.width || 0);
+      maxDist = Math.max(0, totalWidth - window.innerWidth);
+      maxDistanceRef.current = maxDist;
+      p.style.position = "relative";
+      p.style.height = `${maxDist + window.innerHeight}px`;
+      t.style.position = "absolute";
+      t.style.top = "0";
+      t.style.left = "0";
+    }
+
+    const currentWheel = Math.max(0, wheel || 0);
+    lastWheelRef.current = currentWheel;
+
+    const scrollX = Math.min(currentWheel, maxDist);
+    const pinnedY = Math.min(currentWheel, maxDist);
+
+    t.style.transform = `translate3d(${-scrollX}px, ${pinnedY}px, 0)`;
+
+    // Reveal Industries We Serve section when it approaches the viewport
+    if (industriesRef.current) {
+      const rect = industriesRef.current.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.9) {
+        setIndustriesRevealed(true);
+      }
+    }
+
+    // Scroll scrub for Quote section
+    if (quoteRef.current) {
+      const rect = quoteRef.current.getBoundingClientRect();
+      const windowH = window.innerHeight;
+      const start = windowH * 0.9;
+      const end = windowH * 0.1;
+      const pRatio = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
+      setQuoteProgress(pRatio);
+    }
+  };
+
+  const { parent, target } = useTransform(
+    { onChange: handleScroll, onResize: handleResize },
+    { id: screens.FOCUS }
+  );
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -180,7 +257,17 @@ const FocusSection = memo(function FocusSection() {
     });
   };
 
-  // Scroll reveal for Industries section
+  // Re-measure after mount once layout settles
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (parent.current && target.current) {
+        handleResize({ parent: parent.current, target: target.current });
+      }
+    }, 150);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Scroll reveal for Industries section fallback
   useEffect(() => {
     if (!industriesRef.current) return;
     const observer = new IntersectionObserver(
@@ -195,21 +282,21 @@ const FocusSection = memo(function FocusSection() {
     return () => observer.disconnect();
   }, []);
 
-  // Scroll scrub for Quote section
+  // Native scroll scrub fallback (for mobile <= 768px)
   useEffect(() => {
-    const handleScroll = () => {
+    const handleWindowScroll = () => {
       if (!quoteRef.current) return;
       const rect = quoteRef.current.getBoundingClientRect();
       const windowH = window.innerHeight;
       const start = windowH * 0.9;
       const end = windowH * 0.1;
-      const p = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
-      setQuoteProgress(p);
+      const pRatio = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
+      setQuoteProgress(pRatio);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleWindowScroll, { passive: true });
+    handleWindowScroll();
+    return () => window.removeEventListener("scroll", handleWindowScroll);
   }, []);
 
   const getLineStyle = (lineIndex, totalLines = 4) => {
