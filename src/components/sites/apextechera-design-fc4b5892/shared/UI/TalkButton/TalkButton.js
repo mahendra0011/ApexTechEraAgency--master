@@ -36,7 +36,7 @@ const TalkButton = ({name = "", isShow = false, onMouseEnter, onMouseLeave, onCl
           <div className="dot"></div>
           <div className="black-text">{talkText}</div>
           <div className="avatar">
-            <Video src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/ch.mp4'} poster={'/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/character-poster.web'} width={75} height={75}></Video>
+            <Video src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/ch.mp4'} poster={'/sites/apextechera-design-fc4b5892/root-8a5edab2/video/contact/character-poster.webp'} width={75} height={75}></Video>
           </div>
           <div ref={parent} className="hover"></div>
         </div>

@@ -331,6 +331,7 @@
 @media screen and (max-width: 768px) {
   .mcode-hero-root {
     min-height: 100vh;
+    min-height: 100dvh;
     padding: 5.5rem 1rem 3rem 1rem;
     justify-content: center;
   }

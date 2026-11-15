@@ -95,6 +95,10 @@ const Animate = ({ parent, target, initRefs, children }) => {
         refs.dHeader.style.opacity = t.desktopEl.opacity
         refs.sidebar.style.opacity = t.desktopEl.opacity
         refs.otherOps.style.opacity = t.desktopEl.opacity
+        if (refs.logo) {
+            refs.logo.style.display = 'none'
+            refs.logo.style.opacity = '0'
+        }
 
         const sideOpacity = t.desktopEl.opacity
         if (refs.title) {
@@ -120,8 +124,11 @@ const Animate = ({ parent, target, initRefs, children }) => {
         refs.title.style.transform = `translate3d(${t.toCenter.x1}px, 0, 0)`
         refs.row.style.transform = `translate3d(${t.toCenter.x1}px, 0, 0)`
         refs.mOps.style.transform = `translate3d(${-t.toCenter.x2}px, 0, 0)`
-        refs.mHeader.style.transform = `translate3d(${-t.toCenter.x2}px, 0, 0)`
-        refs.logo.style.transform = `translate3d(${t.toCenter.x2}px, 0, 0)`
+        if (refs.mHeader) refs.mHeader.style.transform = ''
+        if (refs.logo) {
+            refs.logo.style.display = 'none'
+            refs.logo.style.transform = ''
+        }
         refs.tasks.style.transform = `translate3d(${t.toCenter.x3}px, ${t.toCenter.y3}px, 0)`
         if (refs.slot) refs.slot.style.transform = `translate3d(${t.toCenter.x3}px, ${t.toCenter.y3}px, 0)`
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { frames } from "./frames"
+import { frames, mobileFrames } from "./frames"
 import { screens } from "../../../constants"
 import { useTransform } from "../../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/hooks/useTransform/index"
 import Canvas from "./canvas"
@@ -60,7 +60,14 @@ const FrameByFrame = ({ screen, fillRef, logoBlur }) => {
         if (!state.canvas) {
             const refs = initRefs()
             if (!refs.mounted) { return }
-            state.canvas = new Canvas(refs.par, refs.tar, frames)
+            const frameSet = window.innerWidth <= 768 ? mobileFrames : frames
+            state.canvas = new Canvas(refs.par, refs.tar, frameSet)
+        }
+        return () => {
+            if (state.canvas) {
+                state.canvas.destroy()
+                state.canvas = null
+            }
         }
     }, [])
 

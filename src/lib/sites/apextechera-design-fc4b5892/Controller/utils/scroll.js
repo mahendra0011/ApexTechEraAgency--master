@@ -16,6 +16,7 @@ export const scroll = {
     // on the page) unless the value actually moved — was previously fired on
     // every frame even while perfectly still.
     lastDispatched: null,
+    settledWheelTo: null,
 
     ready(sections) {
         if ( !sections ) { return false }
@@ -48,12 +49,14 @@ export const scroll = {
             this.lastDispatched = lerped
             document.dispatchEvent(new CustomEvent('customwheel', { detail: { wheel: lerped } })) // для передачи в хуки
         }
+        this.settledWheelTo = Math.abs(lerped - context.wheelTo) < 0.5 ? context.wheelTo : null
         return { ref, lerped }
     },
 
     calcWheelTo() {
         const ref = this.getInnerRef(context.sections)
         if (!ref) { return }
+        this.settledWheelTo = null
         // courses (process) & whatcreate (mobile) section: slower wheel-to-scroll ratio so the
         // transitions and cards read clearly and zoom slowly instead of racing past on one flick
         const isWhatCreateMobile = context.ids && context.ids[context.active] === 'whatcreate' && typeof window !== 'undefined' && window.innerWidth <= 576
@@ -64,9 +67,11 @@ export const scroll = {
     resetWheelTo() {
         context.wheelTo = 0
         this.lastDispatched = null
+        this.settledWheelTo = null
     },
 
     renderTranslateInterpolation(time) {
+        if (context.wheelTo === this.settledWheelTo) { return }
         const { ref, lerped } = this.calcTranslate(context.sections, context.wheel, true, time)
         if (!ref) { return }
         // console.log(lerped)
@@ -82,9 +87,9 @@ export const scroll = {
     // },
 
     resetTranslate(sections) {
-        if ( !context.externalChange ) { return }
         if ( !sections ) { return }
         if ( sections.length < 1 ) { return }
+        this.settledWheelTo = null
         this.calcTranslate(sections, 0)
 
         const refsPrev = sections.filter(_ => _.pos === state.classes.PREV)

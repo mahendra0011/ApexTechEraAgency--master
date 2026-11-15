@@ -69,8 +69,8 @@ export function HeroSection({ id }: Props) {
     }
   }, [activeId, id]);
 
-  const WHEEL_MAX = 3467;
-  const END_RANGE = 770;
+  const WHEEL_MAX = 2700;
+  const END_RANGE = 0;
 
   function apply(wheel: number) {
     wheelRef.current = wheel;
@@ -112,10 +112,11 @@ export function HeroSection({ id }: Props) {
   );
 
   return (
-    <div id="hero-anim" ref={trackRef} className="relative" style={{ height: "calc(3467px + 100vh)" }}>
+    <div id="hero-anim" ref={trackRef} className="relative" style={{ height: "calc(2700px + 100vh)" }}>
       <div
         ref={stageRef}
         className="absolute inset-x-0 top-0 z-[1] h-screen overflow-hidden"
+        style={{ height: "100dvh" }}
       >
         {/* Giant Title placed BEHIND the 3D model (z-[1]) with scroll translation */}
         <div className="pointer-events-none absolute inset-x-0 top-[24%] sm:top-[22%] lg:top-0 z-[1] px-4 sm:px-10 lg:px-10">

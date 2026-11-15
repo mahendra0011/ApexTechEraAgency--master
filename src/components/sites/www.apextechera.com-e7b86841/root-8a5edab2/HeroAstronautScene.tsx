@@ -3,8 +3,9 @@
 import { useEffect, useRef, type RefObject } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+import { HDRLoader } from "three/examples/jsm/loaders/HDRLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 const BASE = "/sites/www.apextechera.com-e7b86841/root-8a5edab2/images";
 
@@ -139,26 +140,37 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(
-      Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.5)
+      Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 1.5)
     );
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     container.appendChild(renderer.domElement);
 
     const textureLoader = new THREE.TextureLoader();
-    const rgbeLoader = new RGBELoader();
+    const hdrLoader = new HDRLoader();
+    let envTexture: THREE.Texture | null = null;
 
-    rgbeLoader.load(`${BASE}/space.hdr`, (texture) => {
-      texture.mapping = THREE.EquirectangularReflectionMapping;
-      scene.environment = texture;
-    });
+    if (isMobile) {
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      const room = new RoomEnvironment();
+      envTexture = pmrem.fromScene(room, 0.04).texture;
+      scene.environment = envTexture;
+      room.dispose();
+      pmrem.dispose();
+    } else {
+      hdrLoader.load(`${BASE}/space.hdr`, (texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        envTexture = texture;
+        scene.environment = texture;
+      });
+    }
 
     const directionLight = new THREE.DirectionalLight(0xffffff, 0);
     directionLight.position.set(0, 7, -5).normalize();
     scene.add(directionLight);
 
     const earthTexture = textureLoader.load(`${BASE}/texture_earth.webp`);
-    earthTexture.anisotropy = 4;
+    earthTexture.anisotropy = isMobile ? 1 : 4;
     const specularMap = textureLoader.load(`${BASE}/4k_earth_specular_map.webp`);
     const earth = new THREE.Mesh(
       new THREE.SphereGeometry(6, isMobile ? 16 : 32, isMobile ? 16 : 32),
@@ -175,10 +187,36 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     scene.add(earth);
 
     const particleTexture = textureLoader.load(`${BASE}/particle.webp`);
-    const pointsMaterial = new THREE.PointsMaterial({
-      color: new THREE.Color(0xbfbfc4),
-      size: 0.08,
-      map: particleTexture,
+    const pointsMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uMap: { value: particleTexture },
+        uColor: { value: new THREE.Color(0xbfbfc4) },
+        uSize: { value: 0.08 },
+        uPixelRatio: { value: renderer.getPixelRatio() },
+        uTime: { value: 0 },
+      },
+      vertexShader: `
+        uniform float uTime;
+        uniform float uSize;
+        uniform float uPixelRatio;
+        void main() {
+          vec3 p = position;
+          p.z += mod(uTime * 1.2, 60.0);
+          if (p.z > 40.0) p.z -= 60.0;
+          vec4 mv = modelViewMatrix * vec4(p, 1.0);
+          gl_PointSize = clamp(uSize * uPixelRatio * 300.0 / max(0.1, -mv.z), 1.0, 18.0 * uPixelRatio);
+          gl_Position = projectionMatrix * mv;
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D uMap;
+        uniform vec3 uColor;
+        void main() {
+          float a = texture2D(uMap, gl_PointCoord).a;
+          if (a < 0.02) discard;
+          gl_FragColor = vec4(uColor, a);
+        }
+      `,
       transparent: true,
       depthWrite: false,
     });
@@ -301,6 +339,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1) : Math.min(window.devicePixelRatio || 1, 1.5));
+      pointsMaterial.uniforms.uPixelRatio.value = renderer.getPixelRatio();
     };
     window.addEventListener("resize", onResize);
 
@@ -310,29 +349,10 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
-    // The site keeps every section permanently mounted and switches between
-    // them with CSS transforms (rather than mounting/unmounting), so this
-    // WebGL scene would otherwise keep rendering every single frame FOREVER
-    // — even hours later while the user is on a totally different section
-    // like "We Create". That's a full 3D scene (earth, particles, astronaut
-    // model) competing for CPU/GPU non-stop in the background, which was a
-    // major contributor to the overall site feeling heavy/hanging on
-    // Android. Use an IntersectionObserver on the scene's own container to
-    // detect when the Hero section has been scrolled/transformed off-screen
-    // and skip rendering entirely until it's back in view.
-    let isSectionVisible = true;
-    const visibilityObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          isSectionVisible = entry.isIntersecting;
-        });
-      },
-      { threshold: 0 }
-    );
-    visibilityObserver.observe(container);
-
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
+    timer.connect(document);
     let smoothScroll = 0;
+    let lastRender = 0;
     // Render ONLY while the hero stage is on screen. The old loop kept
     // drawing WebGL (earth + 7.5k particles + video texture) forever, even
     // when the user was 10 sections away — a major Android battery/freeze
@@ -340,9 +360,10 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     let sceneVisible = true;
     const io = new IntersectionObserver(
       (entries) => {
+        console.log('[HeroScene] io callback, intersecting:', entries[0]?.isIntersecting);
         sceneVisible = entries[0]?.isIntersecting ?? true;
         if (sceneVisible && !raf) {
-          clock.getDelta();
+          timer.update();
           raf = requestAnimationFrame(tick);
         }
       },
@@ -359,26 +380,21 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       } else {
         video.play().catch(() => {});
         if (!raf && sceneVisible) {
-          clock.getDelta();
+          timer.update();
           raf = requestAnimationFrame(tick);
         }
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
 
-    const tick = () => {
+    const tick = (time?: number) => {
       if (disposed) return;
-      // Nothing visible: stop the loop completely instead of scheduling empty
-      // frames. `sceneVisible` (this section's IO) and `isSectionVisible`
-      // (page-level IO) must BOTH report hidden, so one stale flag can never
-      // freeze a hero that is actually on screen; `isPageVisible` and
-      // document.hidden cover the backgrounded-tab case. The visibility/IO
-      // handlers below restart the loop through raf.
-      if ((!sceneVisible && !isSectionVisible) || !isPageVisible || document.hidden) {
+      if (!sceneVisible || !isPageVisible || document.hidden) {
         raf = 0;
         return;
       }
-      const dt = Math.min(clock.getDelta(), 0.1);
+      timer.update(time);
+  const dt = Math.min(timer.getDelta(), 0.1);
       // Snappy and fast response across both Mobile (Android/iOS) and Desktop
       const lerpSpeed = 0.08;
       const targetScroll = Math.max(0, Math.min(wheelRef.current, 3467));
@@ -393,11 +409,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
 
       earth.rotation.y += 0.001;
 
-      for (let i = 2; i < positions.length; i += 3) {
-        positions[i] += 0.02;
-        if (positions[i] > 40) positions[i] = -20;
-      }
-      pointsGeometry.attributes.position.needsUpdate = true;
+      pointsMaterial.uniforms.uTime.value = timer.getElapsed();
 
       if (model) {
         const kf = evalCurve(smoothScroll);
@@ -406,12 +418,16 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
         for (const mat of fadeMaterials) {
           (mat as THREE.MeshStandardMaterial).opacity = kf.op;
         }
-        if (video.readyState >= 2) {
+        if (!video.paused && video.readyState >= 2) {
           videoTexture.needsUpdate = true;
         }
       }
 
-      renderer.render(scene, camera);
+      const now = performance.now();
+      if (!isMobile || now - lastRender >= 1000 / 45) {
+        lastRender = now;
+        renderer.render(scene, camera);
+      }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -423,7 +439,8 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibilityChange);
-      visibilityObserver.disconnect();
+      scene.environment = null;
+      envTexture?.dispose();
       video.pause();
       video.removeAttribute("src");
       video.load();
@@ -444,6 +461,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       videoMaterial.dispose();
       dracoLoader.dispose();
       renderer.dispose();
+      timer.dispose();
       if (renderer.domElement.parentElement === container) {
         container.removeChild(renderer.domElement);
       }

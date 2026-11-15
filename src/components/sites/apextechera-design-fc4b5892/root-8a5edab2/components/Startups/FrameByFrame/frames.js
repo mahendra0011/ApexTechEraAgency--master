@@ -6,3 +6,7 @@ export const frames = [...new Array(framesCount)].map((_, i) => {
         frame: `/sites/apextechera-design-fc4b5892/root-8a5edab2/images/startups/frames/rope_${zeros}${i+1}.webp`
     }
 })
+
+export const mobileFrames = frames.map(({ frame }) => ({
+    frame: frame.replace('/startups/frames/', '/startups/frames-mobile/')
+}))

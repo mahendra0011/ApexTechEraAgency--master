@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useMemo, memo } from "react";
+import React, { useEffect, useRef, useMemo, memo, useState } from "react";
 import { getReelRows } from "./techStackData";
 import ReelRow from "./ReelRow";
 
@@ -27,7 +27,15 @@ function TechReelGallery({
 }) {
   const wrapperRef = useRef(null);
   const reelsRef = useRef(null);
-  const rowsData = useMemo(() => getReelRows(rows), [rows]);
+  const [isCompact] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches
+  );
+  const rowCount = isCompact ? Math.min(rows, 4) : rows;
+  const height = isCompact ? 64 : rowHeight;
+  const gap = isCompact ? 12 : rowGap;
+  const iconsGap = isCompact ? 10 : itemGap;
+  const archOffsetBase = isCompact ? 16 : arch;
+  const rowsData = useMemo(() => getReelRows(rowCount), [rowCount]);
 
   // No dull filters - logos stay crisp and bright
   // Removed grayscale/dim spotlight logic per user request (only logos, no text, no dhundla)
@@ -51,7 +59,7 @@ function TechReelGallery({
     return () => window.removeEventListener("keydown", onKey);
   }, [interactive]);
 
-  const totalHeight = rows * rowHeight + (rows - 1) * rowGap;
+  const totalHeight = rowCount * height + (rowCount - 1) * gap;
 
   return (
     <section
@@ -112,11 +120,11 @@ function TechReelGallery({
             transformStyle: "preserve-3d",
           }}
         >
-          <div className="flex flex-col" style={{ gap: rowGap }}>
+          <div className="flex flex-col" style={{ gap }}>
             {rowsData.map((items, idx) => {
-              const center = (rows - 1) / 2;
+              const center = (rowCount - 1) / 2;
               const distFromCenter = Math.abs(idx - center) / center; // 0 center, 1 outer
-              const archOffset = arch * Math.sin((idx / (rows - 1)) * Math.PI) * 0.6; // arch across frame
+              const archOffset = archOffsetBase * Math.sin((idx / (rowCount - 1)) * Math.PI) * 0.6; // arch across frame
               const dimOpacity = 1 - dim * distFromCenter;
               const taperScale = 1 - taper * distFromCenter;
 
@@ -125,7 +133,7 @@ function TechReelGallery({
                   key={idx}
                   className="reel-row-wrap relative w-[130%] -ml-[15%]"
                   style={{
-                    height: rowHeight,
+                    height,
                     transform: `translateX(${archOffset}px) scale(${taperScale})`,
                     opacity: dimOpacity,
                     transformOrigin: "center",
@@ -133,13 +141,13 @@ function TechReelGallery({
                 >
                   <ReelRow
                     items={items}
-                    rowHeight={rowHeight}
-                    itemGap={itemGap}
+                    rowHeight={height}
+                    itemGap={iconsGap}
                     isAlternate={alternate ? idx % 2 === 1 : false}
                     speedVariance={speedVariance}
                     autoScroll={autoScroll * speed}
                     rowIndex={idx}
-                    rows={rows}
+                    rows={rowCount}
                     interactive={interactive}
                   />
                 </div>

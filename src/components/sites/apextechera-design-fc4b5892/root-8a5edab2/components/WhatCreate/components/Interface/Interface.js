@@ -519,11 +519,6 @@ const Interface = ({ parent, parentRefs }) => {
                                     <div ref={interfaceMHeader} className='object m-header'>
                                         <div className='apex-mheader-inner'>
                                             <div className='apex-mheader-logo'>
-                                                <img 
-                                                    src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/interface/apex-logo.webp'} 
-                                                    alt="Logo" 
-                                                    className='apex-mheader-img'
-                                                />
                                                 <span className='apex-mheader-text'>ApexTechEra</span>
                                             </div>
                                             <span className='apex-mheader-badge'>Services</span>
@@ -531,16 +526,8 @@ const Interface = ({ parent, parentRefs }) => {
                                     </div>
                                 </div>
 
-                                {/* Top Left Brand Logo (Desktop) */}
-                                <div ref={interfaceLogo} className='logo'>
-                                    <img 
-                                        src={'/sites/apextechera-design-fc4b5892/root-8a5edab2/images/whatCreate/interface/apex-logo.webp'} 
-                                        width={34} 
-                                        height={34} 
-                                        alt="ApexTechEra Logo" 
-                                        style={{ borderRadius: '8px', objectFit: 'cover' }}
-                                    />
-                                </div>
+                                {/* Top Left Brand Logo (Desktop) - hidden */}
+                                <div ref={interfaceLogo} className='logo' style={{ display: 'none' }} />
                             </div>
                         </div>
                     </div>

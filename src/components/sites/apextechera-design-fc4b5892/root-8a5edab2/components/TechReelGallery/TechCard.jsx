@@ -49,6 +49,7 @@ export default function TechCard({ tech, rowHeight = 92 }) {
           className="w-[58%] h-[58%] object-contain"
           draggable={false}
           loading="lazy"
+          decoding="async"
           style={{ imageRendering: "auto", filter: "none" }}
           onError={() => setImgError(true)}
         />

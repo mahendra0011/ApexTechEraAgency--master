@@ -1,38 +1,45 @@
-import { useRef, useEffect, useState } from "react"
+import { useRef, useEffect, useContext, memo } from "react"
 import { setToRender, removeFromRender } from "../../../../../../../lib/sites/apextechera-design-fc4b5892/Animator/js/renderer"
 import Animation from "./animation"
-import { useContext } from "react"
 import { ControllerContext } from "../../../../../../../lib/sites/apextechera-design-fc4b5892/Controller/Controller"
 import { screens } from "../../../constants"
-import { memo } from "react"
 
-const Canvas = function Canvas({ parent, isActive }) {
-    const [isInited, setIsInited] = useState(false)
-    const { activeId } = useContext(ControllerContext)
+const Canvas = memo(function Canvas({ parent, isActive }) {
     const canvas = useRef()
-    useEffect(() => {
-        const label = 'followingParticles'
-        if (!isInited) {
-            setIsInited(true)
-            const animation = new Animation(parent.current, canvas.current, isActive && activeId === screens.FOLLOWED)
-            setToRender({
-                label,
-                handler: (t) => animation.render(t),
-                delay: 10
-            })
-        }
-        // return () => { removeFromRender(label); animation.unmount() }
-    })
+    const animationRef = useRef(null)
+    const { activeId } = useContext(ControllerContext)
+    const followingActive = isActive && activeId === screens.FOLLOWED
 
     useEffect(() => {
-        if ( canvas.current ) {
-            canvas.current.dispatchEvent(new CustomEvent('isActive', { detail: isActive && activeId === screens.FOLLOWED }))
+        if (!parent.current || !canvas.current) { return }
+        const label = `followingParticles${Date.now()}`
+        const animation = new Animation(parent.current, canvas.current, followingActive)
+        animationRef.current = animation
+        setToRender({
+            label,
+            handler: (t) => animation.render(t),
+            delay: 10
+        })
+        return () => {
+            removeFromRender(label)
+            animation.unmount()
+            animation.destroy()
+            animationRef.current = null
         }
-    }, [ isActive ])
+    }, [])
+
+    useEffect(() => {
+        const animation = animationRef.current
+        if (!animation) { return }
+        animation.isActive = followingActive
+        if (canvas.current) {
+            canvas.current.dispatchEvent(new CustomEvent('isActive', { detail: followingActive }))
+        }
+    }, [followingActive])
 
     return (
         <canvas ref={canvas}></canvas>
     )
-}
+})
 
 export default Canvas

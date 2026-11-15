@@ -183,7 +183,7 @@ export default function RootLayout({
         />
         <link
           rel="preload"
-          as="video"
+          as="fetch"
           type="video/mp4"
           href="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/tech-agency-logo.mp4"
           crossOrigin="anonymous"
@@ -192,21 +192,25 @@ export default function RootLayout({
           rel="preload"
           as="image"
           href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/webgl-normal.webp"
+          crossOrigin="anonymous"
         />
         <link
           rel="preload"
           as="image"
           href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/webgl-roughness.webp"
+          crossOrigin="anonymous"
         />
         <link
           rel="preload"
           as="image"
           href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/webgl-metalness.webp"
+          crossOrigin="anonymous"
         />
         <link
           rel="preload"
           as="image"
           href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/texture_earth.webp"
+          crossOrigin="anonymous"
         />
         {/* Remaining astronaut-scene assets. These two used to be discovered by
             JS only after hydration, so the HDR reflections and the keyboard
@@ -218,11 +222,13 @@ export default function RootLayout({
           as="fetch"
           href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/space.hdr"
           crossOrigin="anonymous"
+          media="(min-width: 769px)"
         />
         <link
           rel="preload"
           as="image"
           href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/macbook-fill.webp"
+          crossOrigin="anonymous"
         />
 
         {/* Design-site hero background (Main.js): each viewport preloads only

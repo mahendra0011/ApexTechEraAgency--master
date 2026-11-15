@@ -47,7 +47,7 @@ class Canvas2d {
         const parentCoords = getElementCoords(this.parent)
         const needResize = this.width !== parentCoords.width || this.height !== parentCoords.height
         if (needResize) {
-            this.ratio = window.devicePixelRatio
+            this.ratio = Math.min(window.devicePixelRatio || 1, 2)
 
             this.width = parentCoords.width
             this.height = parentCoords.height
@@ -64,7 +64,6 @@ class Canvas2d {
         if (!this.isRenderActive) { return }
         if (!this.parent || !this.canvas || !this.context) { return }
         this.rendering.forEach(f => f(time))
-        this.resize()
     }
 
     destroy() {

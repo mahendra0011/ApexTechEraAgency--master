@@ -1567,8 +1567,10 @@ img.apex-simple-slider__video {
    to their own GPU layer via will-change/translateZ fixes this. Scoped
    to max-width:768px only so desktop rendering/behavior is untouched. */
 @media (max-width: 768px) {
-  .section-inner,
-  #hero-anim .absolute {
+  .controller .controller-sections > .section.-prev > .section-inner,
+  .controller .controller-sections > .section.-active > .section-inner,
+  .controller .controller-sections > .section.-next > .section-inner,
+  #hero-anim > .absolute {
     will-change: transform;
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
@@ -1582,6 +1584,22 @@ img.apex-simple-slider__video {
     overscroll-behavior-y: none;
     touch-action: pan-y;
   }
+}
+
+.controller .controller-sections > .section:first-child {
+  transform: translate3d(0, -100%, 0);
+}
+
+/* QClay's unlayered `* { margin:0; padding:0 }` reset wins over Tailwind's
+   @layer utilities, so HeroSection's intended safe-area padding collapses to
+   0 and the bottom hero text gets clipped by the stage's overflow:hidden.
+   Re-declare just the utilities HeroSection uses as unlayered hero-scoped
+   rules (same approach as the .skill-journey patch above). */
+#hero-anim .px-4 { padding-left: 1rem; padding-right: 1rem; }
+#hero-anim .pb-12 { padding-bottom: 3rem; }
+@media (min-width: 640px) {
+  #hero-anim .sm\:px-10 { padding-left: 2.5rem; padding-right: 2.5rem; }
+  #hero-anim .sm\:pb-16 { padding-bottom: 4rem; }
 }
 
 /* ===== Android "content not showing" fix =====

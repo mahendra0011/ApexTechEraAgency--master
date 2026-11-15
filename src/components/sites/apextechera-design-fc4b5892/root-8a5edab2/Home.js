@@ -1,22 +1,8 @@
 import dynamic from "next/dynamic"
 import Header from "../shared/Header/Header"
 import Main from "./components/Main/Main"
-import About from "./components/About/About"
-import SkillJourney from "./components/SkillJourney/SkillJourney"
-import WhatCreate from "./components/WhatCreate/WhatCreate"
-import TechReelGallery from "./components/TechReelGallery/TechReelGallery"
-import TechStackBreakdown from "./components/TechStackBreakdown/TechStackBreakdown"
-import Designers from "./components/Designers/Designers"
-import MeetFounder from "./components/MeetFounder/MeetFounder"
-import FocusSection from "./components/FocusSection/FocusSection"
-import DesignTypes from "./components/DesignTypes/DesignTypes"
-import WebsiteTypes from "./components/WebsiteTypes/WebsiteTypes"
+import { HeroSection } from "../../www.apextechera.com-e7b86841/root-8a5edab2/HeroSection"
 
-import Courses from "./components/Courses/Courses"
-import Portfolio from "./components/Portfolio/Portfolio"
-import Startups from "./components/Startups/Startups"
-import Following from "./components/Following/Following"
-import Footer from "../shared/Footer/Footer"
 import Modal from "../shared/Modal/Modal"
 
 import Create from "./components/Create/Create"
@@ -35,10 +21,23 @@ import renderer from "../../../../lib/sites/apextechera-design-fc4b5892/Animator
 import { startVideoGate } from "../../../../lib/sites/apextechera-design-fc4b5892/utils/videoGate"
 import { FixedControls } from "../shared/FixedControls/fixed-controls"
 
-const HeroSection = dynamic(
-  () => import("../../www.apextechera.com-e7b86841/root-8a5edab2/HeroSection").then((m) => m.HeroSection),
-  { ssr: false }
-)
+const load = (loader) => dynamic(loader, { ssr: false })
+
+const About = load(() => import("./components/About/About"))
+const Following = load(() => import("./components/Following/Following"))
+const Startups = load(() => import("./components/Startups/Startups"))
+const SkillJourney = load(() => import("./components/SkillJourney/SkillJourney"))
+const WhatCreate = load(() => import("./components/WhatCreate/WhatCreate"))
+const TechReelGallery = load(() => import("./components/TechReelGallery/TechReelGallery"))
+const TechStackBreakdown = load(() => import("./components/TechStackBreakdown/TechStackBreakdown"))
+const Designers = load(() => import("./components/Designers/Designers"))
+const MeetFounder = load(() => import("./components/MeetFounder/MeetFounder"))
+const FocusSection = load(() => import("./components/FocusSection/FocusSection"))
+const DesignTypes = load(() => import("./components/DesignTypes/DesignTypes"))
+const WebsiteTypes = load(() => import("./components/WebsiteTypes/WebsiteTypes"))
+const Courses = load(() => import("./components/Courses/Courses"))
+const Portfolio = load(() => import("./components/Portfolio/Portfolio"))
+const Footer = load(() => import("../shared/Footer/Footer"))
 
 const Home = () => {
   useEffect(() => {
