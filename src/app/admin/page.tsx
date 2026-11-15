@@ -229,7 +229,7 @@ export default function SuperAdminPage() {
   const [targetLeads, setTargetLeads] = useState(5);
   const [targetMeetings, setTargetMeetings] = useState(2);
   const [targetWon, setTargetWon] = useState(1);
-  const [targetRevenue, setTargetRevenue] = useState(50000);
+  const [targetRevenue, setTargetRevenue] = useState(0);
 
   // Team Member Permission Toggles
   const [editingPermissionsMember, setEditingPermissionsMember] = useState<TeamMember | null>(null);
@@ -2807,7 +2807,7 @@ export default function SuperAdminPage() {
                 <div style={{ background: "#FFFFFF", border: "1px solid #E2DED4", borderRadius: "8px", padding: "18px" }}>
                   <div style={{ fontSize: "11px", color: "#8C877C", fontWeight: 700, textTransform: "uppercase" }}>Pipeline Value</div>
                   <div style={{ fontSize: "22px", fontWeight: 800, color: "#1F1D1A", marginTop: "4px", fontFamily: "ui-monospace, monospace" }}>
-                    ₹{leads.reduce((s, l) => s + (l.budgetMin || l.budgetMax || 45000), 0).toLocaleString("en-IN")}
+                    ₹{leads.reduce((s, l) => s + (l.budgetMin || l.budgetMax || 0), 0).toLocaleString("en-IN")}
                   </div>
                   <div style={{ fontSize: "11px", color: "#5E5A52", marginTop: "2px" }}>{leads.length} active prospects</div>
                 </div>

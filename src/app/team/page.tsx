@@ -241,7 +241,7 @@ export default function TeamMemberPage() {
       leadsAdded: 5,
       meetings: 2,
       wonDeals: 1,
-      revenue: 50000,
+      revenue: 0,
       validFrom: todayStr,
     };
   }, [targets, currentMember, todayStr]);
@@ -823,7 +823,7 @@ export default function TeamMemberPage() {
                             </span>
                           </div>
                           <div style={{ fontSize: "12px", color: "#5E5A52", marginTop: "4px" }}>
-                            Contact: <strong>{lead.contactName}</strong> ({lead.phone}) &bull; Pitch Note: <em>&ldquo;{lead.reason || "Next.js Web Rebuild"}&rdquo;</em>
+                            Contact: <strong>{lead.contactName}</strong> ({lead.phone}) &bull; Pitch Note: <em>&ldquo;{lead.reason || "Client requirement & pitch"}&rdquo;</em>
                           </div>
                         </div>
 
