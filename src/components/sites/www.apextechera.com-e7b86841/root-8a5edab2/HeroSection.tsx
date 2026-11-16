@@ -74,11 +74,13 @@ export function HeroSection({ id }: Props) {
       if (cameraInRef.current.start === -1) {
         cameraInRef.current.start = performance.now();
       }
+    } else {
+      setEntered(false);
     }
   }, [activeId, id]);
 
-  const WHEEL_MAX = 2700;
-  const END_RANGE = 0;
+  const WHEEL_MAX = 3467;
+  const END_RANGE = 770;
 
   function apply(wheel: number) {
     wheelRef.current = wheel;
@@ -120,7 +122,7 @@ export function HeroSection({ id }: Props) {
   );
 
   return (
-    <div id="hero-anim" ref={trackRef} className="relative" style={{ height: "calc(2700px + 100vh)" }}>
+    <div id="hero-anim" ref={trackRef} className="relative" style={{ height: "calc(3467px + 100vh)" }}>
       <div
         ref={stageRef}
         className="absolute inset-x-0 top-0 z-[1] h-screen overflow-hidden"

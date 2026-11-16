@@ -83,27 +83,9 @@ const Controller = ({ children, duration, externalDelay, externalDuration }) => 
         context.changing = true;
         context.active = index;
         context.externalChange = externalChange;
-        // Reset the accumulated wheel target: external navigation (header/menu
-        // links) used to leave the previous section's wheelTo behind, so the
-        // newly activated section visibly auto-scrolled when resetTranslate ran.
-        context.wheel = 0;
-        scroll.resetWheelTo();
-        // When scrolling UP into a section (arriving from a later section),
-        // its inner was sitting at the bottom (fully scrolled) and stayed
-        // there during the transition, leaving an empty/odd frame. Reset it
-        // to the top immediately so content is visible right away. Only do
-        // this for upward navigation; downward navigation keeps the previous
-        // section at the bottom (so scrolling back up resumes from there).
-        const isScrollUp = index < context.active_before_setNewActive;
-        if (isScrollUp && context.sections) {
-            const prevs = context.sections.filter(_ => _.pos === state.classes.PREV);
-            prevs.forEach(_ => {
-                if (_.ref) {
-                    const inner = _.ref.querySelector('.' + scroll.class);
-                    if (inner) { inner.style.transform = 'translate3d(0, 0px, 0)'; }
-                    document.dispatchEvent(new CustomEvent('triggerwheel', { detail: { id: _.id, wheel: 0 } }));
-                }
-            });
+        if (externalChange) {
+            context.wheel = 0;
+            scroll.resetWheelTo();
         }
         setActive(index);
         setActiveId(context.ids[context.active]);
