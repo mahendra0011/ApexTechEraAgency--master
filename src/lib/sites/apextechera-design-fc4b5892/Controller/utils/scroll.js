@@ -57,10 +57,19 @@ export const scroll = {
         const ref = this.getInnerRef(context.sections)
         if (!ref) { return }
         this.settledWheelTo = null
-        // courses (process) & whatcreate (mobile) section: slower wheel-to-scroll ratio so the
-        // transitions and cards read clearly and zoom slowly instead of racing past on one flick
+        const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
         const isWhatCreateMobile = context.ids && context.ids[context.active] === 'whatcreate' && typeof window !== 'undefined' && window.innerWidth <= 576
-        const intensity = context.ids && (context.ids[context.active] === 'courses' || context.ids[context.active] === 'apextechera' || isWhatCreateMobile) ? 0.5 : this.intensity
+        // Desktop: apextechera retains 0.5 for cinematic slow mouse wheel rotation.
+        // Mobile / Android touch: 0.5 caused severe crawling (100+ swipes). Using 0.18 on mobile allows natural 3-4 swipe rotation!
+        let intensity = this.intensity
+        if (context.ids) {
+            const currentId = context.ids[context.active]
+            if (currentId === 'courses' || isWhatCreateMobile) {
+                intensity = 0.5
+            } else if (currentId === 'apextechera') {
+                intensity = isMobile ? 0.18 : 0.5
+            }
+        }
         context.wheelTo = getScrollCoordsFromElement(ref).windowTop.fromTop + context.wheel / intensity
     },
 

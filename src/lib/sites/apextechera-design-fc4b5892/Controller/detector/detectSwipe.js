@@ -9,7 +9,7 @@ class DetectSwipe {
     isRendering = false
     deltaY
     deltaYAfter
-    minDelta = 18
+    minDelta = 8
 
     constructor(element, callbalck) {
         this.cb = callbalck
@@ -80,25 +80,23 @@ class DetectSwipe {
     }
     #touchend(e) {
         if (Math.abs(this.deltaY) < this.minDelta) { return }
-        this.deltaY = Math.min(Math.abs(this.deltaY), 200) * Math.sign(this.deltaY)
+        const initialDelta = Math.min(Math.abs(this.deltaY), 180) * Math.sign(this.deltaY)
+        this.deltaY = 0
 
         const self = this
         self.isRendering = true
-        this.deltaYAfter = this.deltaY * 5
-        self.deltaY = 0
+        this.deltaYAfter = initialDelta * 2.5
 
-        // console.log('delta', this.deltaY, this.minDelta * 1.5)
-        if (Math.abs(this.deltaY) < 300) {
-            // console.log('--> AFTER')
-            requestAnimationFrame(function render() {
-                self.deltaYAfter = self.lerp(self.deltaYAfter, 0, 0.05)
-                self.useCallback(self.deltaYAfter)
-                Math.abs(self.deltaYAfter) <= 0.1 && (self.isRendering = false)
-                if (self.isRendering) {
-                    requestAnimationFrame(render)
-                }
-            })
-        }
+        requestAnimationFrame(function render() {
+            self.deltaYAfter = self.lerp(self.deltaYAfter, 0, 0.08)
+            self.useCallback(self.deltaYAfter)
+            if (Math.abs(self.deltaYAfter) <= 0.2) {
+                self.isRendering = false
+            }
+            if (self.isRendering) {
+                requestAnimationFrame(render)
+            }
+        })
     }
 
     useCallback(deltaY) {
@@ -106,11 +104,9 @@ class DetectSwipe {
             if (deltaY) {
                 this.cb({
                     dir: deltaY / Math.abs(deltaY),
-                    // was /13 — Android swipes felt sluggish since each
-                    // touch delta mapped to a small scroll distance.
-                    // Smaller divisor = more scroll per swipe (touch-only,
-                    // desktop wheel scroll in detectWheel.js is untouched).
-                    wheel: deltaY / 9
+                    // Responsive touch multiplier: deltaY / 3.0 gives natural 1:1 mobile tracking
+                    // (touch-only path; desktop mouse wheel in detectWheel.js is untouched)
+                    wheel: deltaY / 3.0
                 })
             }
         }
