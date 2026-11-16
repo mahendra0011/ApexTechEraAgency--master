@@ -215,6 +215,7 @@ export default function LoginPage() {
           targetEmail === "kshitijbhunjwa@gmail.com" ||
           targetEmail === "ankitkumawat43657@gmail.com" ||
           targetEmail === "harshvardhanlakhera2005@gmail.com" ||
+          targetEmail === "sourceforget32@gmail.com" ||
           targetEmail.includes("apextechera")
         ) {
           finalRole = "MEMBER";

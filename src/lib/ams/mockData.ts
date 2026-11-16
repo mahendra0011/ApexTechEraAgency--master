@@ -296,6 +296,28 @@ export const INITIAL_TEAM: TeamMember[] = [
     lastLoginAt: new Date().toISOString().replace("T", " ").substring(0, 16),
     joinedDate: "2026-04-10",
   },
+  {
+    id: "tm-sourceforget",
+    name: "Source Forget",
+    role: "MEMBER",
+    memberType: "DEVELOPER",
+    email: "sourceforget32@gmail.com",
+    phone: "+91 98000 00001",
+    avatarColor: "bg-cyan-600",
+    assignedProjectsCount: 0,
+    skills: ["Full Stack Web", "React", "Next.js", "AI Integrations", "APIs"],
+    permissions: {
+      canDeleteLead: false,
+      canExport: false,
+      seeAllLeads: false,
+      createInvoice: false,
+      seeClientContact: false,
+      seeLeaderboard: true,
+    },
+    isActive: true,
+    lastLoginAt: new Date().toISOString().replace("T", " ").substring(0, 16),
+    joinedDate: "2026-11-16",
+  },
 ];
 
 // ========================================================
