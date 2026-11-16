@@ -228,7 +228,7 @@ export const InvoiceModel: Model<IInvoice> =
   mongoose.models.Invoice || mongoose.model<IInvoice>("Invoice", InvoiceSchema);
 
 // ==========================================
-// 6. User / Team Member Model
+// 6. User / Team / Client Auth Model
 // ==========================================
 export interface IUser extends Document {
   id: string;
@@ -241,6 +241,10 @@ export interface IUser extends Document {
   skills: string[];
   isActive: boolean;
   joinedDate: string;
+  passwordHash?: string;
+  passwordSalt?: string;
+  companyName?: string;
+  founderName?: string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -248,16 +252,63 @@ const UserSchema = new Schema<IUser>(
     id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    role: { type: String, required: true },
+    role: { type: String, required: true, default: "CLIENT" },
     memberType: { type: String },
     phone: { type: String },
     avatarColor: { type: String, default: "bg-teal-600" },
     skills: [{ type: String }],
     isActive: { type: Boolean, default: true },
     joinedDate: { type: String },
+    passwordHash: { type: String },
+    passwordSalt: { type: String },
+    companyName: { type: String },
+    founderName: { type: String },
   },
   { timestamps: true }
 );
 
 export const UserModel: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+
+// ==========================================
+// 7. Client Account Model
+// ==========================================
+export interface IClient extends Document {
+  id: string;
+  companyName: string;
+  contactName: string;
+  designation?: string;
+  email: string;
+  phone: string;
+  city?: string;
+  services: string[];
+  portalEnabled: boolean;
+  totalBilled: number;
+  totalPaid: number;
+  outstandingBalance: number;
+  notes?: string;
+  createdAt: string;
+}
+
+const ClientSchema = new Schema<IClient>(
+  {
+    id: { type: String, required: true, unique: true },
+    companyName: { type: String, required: true },
+    contactName: { type: String, required: true },
+    designation: { type: String, default: "Founder / Owner" },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    phone: { type: String, required: true },
+    city: { type: String },
+    services: [{ type: String }],
+    portalEnabled: { type: Boolean, default: true },
+    totalBilled: { type: Number, default: 0 },
+    totalPaid: { type: Number, default: 0 },
+    outstandingBalance: { type: Number, default: 0 },
+    notes: { type: String },
+    createdAt: { type: String, default: () => new Date().toISOString().split("T")[0] },
+  },
+  { timestamps: true }
+);
+
+export const ClientModel: Model<IClient> =
+  mongoose.models.Client || mongoose.model<IClient>("Client", ClientSchema);
