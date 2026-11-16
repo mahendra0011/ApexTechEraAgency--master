@@ -106,13 +106,151 @@ if (typeof window !== "undefined") {
 }
 
 // ========================================================
+// LEADS & CLIENTS UNIFIED SYNC
+// Keeps leads and clients 100% in sync so adding or updating
+// one automatically reflects in the other.
+// ========================================================
+function syncLeadAndClientData(leads: Lead[], clients: Client[]): { leads: Lead[]; clients: Client[] } {
+  let leadsChanged = false;
+  let clientsChanged = false;
+
+  const updatedLeads = [...leads];
+  const updatedClients = [...clients];
+
+  // 1. Ensure all clients exist as leads
+  for (const client of clients) {
+    const existingLead = updatedLeads.find(
+      (l) =>
+        (client.leadId && l.id === client.leadId) ||
+        (client.phone && l.phone === client.phone) ||
+        (client.email && l.email && l.email.toLowerCase() === client.email.toLowerCase()) ||
+        (client.companyName && l.brandName.toLowerCase() === client.companyName.toLowerCase())
+    );
+
+    if (!existingLead) {
+      const newLead: Lead = {
+        id: client.leadId || `lead-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        brandName: client.companyName,
+        contactName: client.contactName,
+        contactRole: client.contactRole || client.designation || "Founder",
+        phone: client.phone,
+        email: client.email,
+        city: client.city || "Mumbai",
+        websiteUrl: client.websiteUrl,
+        websiteStatus: client.websiteStatus || "NONE",
+        industry: client.industry || "Other",
+        services: client.services?.length ? client.services : ["Full Stack Web Development"],
+        status: client.status || "Not started",
+        responseStatus: client.status === "Not intrested" ? "NOT_INTERESTED" : "INTERESTED",
+        stage: client.status === "intrested" || client.status === "intrested need a sample" ? "INTERESTED" : "NEW",
+        priority: client.priority || "WARM",
+        budgetMin: client.budgetMin,
+        budgetMax: client.budgetMax,
+        nextFollowUpAt: client.nextFollowUpAt,
+        followersCount: client.followersCount,
+        whatTheirNeeds: client.whatTheirNeeds,
+        whatTheyDo: client.whatTheyDo,
+        screenshotUrl: client.screenshotUrl,
+        source: "INSTAGRAM",
+        reason: client.whatTheirNeeds || client.whatTheyDo || "Client outreach prospect",
+        callLogs: [],
+        convertedClientId: client.id,
+        createdAt: client.createdAt || new Date().toISOString(),
+        updatedAt: client.updatedAt || new Date().toISOString(),
+      };
+      client.leadId = newLead.id;
+      updatedLeads.unshift(newLead);
+      leadsChanged = true;
+    } else {
+      if (!existingLead.status && client.status) {
+        existingLead.status = client.status;
+        leadsChanged = true;
+      }
+      if (!client.leadId) {
+        client.leadId = existingLead.id;
+        clientsChanged = true;
+      }
+    }
+  }
+
+  // 2. Ensure all leads exist as clients
+  for (const lead of leads) {
+    const existingClient = updatedClients.find(
+      (c) =>
+        (lead.convertedClientId && c.id === lead.convertedClientId) ||
+        (lead.phone && c.phone === lead.phone) ||
+        (lead.email && c.email && c.email.toLowerCase() === lead.email.toLowerCase()) ||
+        (lead.brandName && c.companyName.toLowerCase() === lead.brandName.toLowerCase())
+    );
+
+    if (!existingClient) {
+      const newClient: Client = {
+        id: lead.convertedClientId || `client-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        companyName: lead.brandName,
+        contactName: lead.contactName,
+        designation: lead.contactRole || lead.designation || "Founder / Owner",
+        contactRole: lead.contactRole || "Founder",
+        industry: lead.industry || "Other",
+        whatTheyDo: lead.whatTheyDo,
+        websiteUrl: lead.websiteUrl,
+        websiteStatus: lead.websiteStatus,
+        status: lead.status || (lead.responseStatus === "NOT_INTERESTED" ? "Not intrested" : "Not started"),
+        priority: lead.priority || "WARM",
+        budgetMin: lead.budgetMin,
+        budgetMax: lead.budgetMax,
+        nextFollowUpAt: lead.nextFollowUpAt,
+        followersCount: lead.followersCount,
+        whatTheirNeeds: lead.whatTheirNeeds,
+        screenshotUrl: lead.screenshotUrl,
+        email: lead.email || `${lead.brandName.toLowerCase().replace(/[^a-z0-9]/g, "")}@example.com`,
+        phone: lead.phone,
+        city: lead.city || "Mumbai",
+        services: lead.services?.length ? lead.services : ["Full Stack Web Development"],
+        portalEnabled: true,
+        totalBilled: 0,
+        totalPaid: 0,
+        outstandingBalance: 0,
+        leadId: lead.id,
+        createdAt: lead.createdAt || new Date().toISOString(),
+        updatedAt: lead.updatedAt || new Date().toISOString(),
+      };
+      lead.convertedClientId = newClient.id;
+      updatedClients.unshift(newClient);
+      clientsChanged = true;
+    } else {
+      if (!existingClient.status && lead.status) {
+        existingClient.status = lead.status;
+        clientsChanged = true;
+      }
+      if (!lead.convertedClientId) {
+        lead.convertedClientId = existingClient.id;
+        leadsChanged = true;
+      }
+    }
+  }
+
+  if (typeof window !== "undefined") {
+    try {
+      if (leadsChanged) localStorage.setItem(LEADS_KEY, JSON.stringify(updatedLeads));
+      if (clientsChanged) localStorage.setItem(CLIENTS_KEY, JSON.stringify(updatedClients));
+    } catch {}
+  }
+
+  return { leads: updatedLeads, clients: updatedClients };
+}
+
+// ========================================================
 // LEADS
 // ========================================================
 export const getStoredLeads = (): Lead[] => {
   if (typeof window === "undefined") return [];
   try {
-    const data = localStorage.getItem(LEADS_KEY);
-    return data ? JSON.parse(data) : [];
+    const leadsRaw = localStorage.getItem(LEADS_KEY);
+    const clientsRaw = localStorage.getItem(CLIENTS_KEY);
+    const leads: Lead[] = leadsRaw ? JSON.parse(leadsRaw) : [];
+    const clients: Client[] = clientsRaw ? JSON.parse(clientsRaw) : [];
+    const synced = syncLeadAndClientData(leads, clients);
+    return synced.leads;
   } catch {
     return [];
   }
@@ -121,7 +259,11 @@ export const getStoredLeads = (): Lead[] => {
 export const saveStoredLeads = (leads: Lead[]) => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(LEADS_KEY, JSON.stringify(leads));
+    const clientsRaw = localStorage.getItem(CLIENTS_KEY);
+    const clients: Client[] = clientsRaw ? JSON.parse(clientsRaw) : [];
+    const synced = syncLeadAndClientData(leads, clients);
+    localStorage.setItem(LEADS_KEY, JSON.stringify(synced.leads));
+    localStorage.setItem(CLIENTS_KEY, JSON.stringify(synced.clients));
   } catch (err) {
     console.error("Failed to save leads to storage", err);
   }
@@ -133,8 +275,12 @@ export const saveStoredLeads = (leads: Lead[]) => {
 export const getStoredClients = (): Client[] => {
   if (typeof window === "undefined") return [];
   try {
-    const data = localStorage.getItem(CLIENTS_KEY);
-    return data ? JSON.parse(data) : [];
+    const leadsRaw = localStorage.getItem(LEADS_KEY);
+    const clientsRaw = localStorage.getItem(CLIENTS_KEY);
+    const leads: Lead[] = leadsRaw ? JSON.parse(leadsRaw) : [];
+    const clients: Client[] = clientsRaw ? JSON.parse(clientsRaw) : [];
+    const synced = syncLeadAndClientData(leads, clients);
+    return synced.clients;
   } catch {
     return [];
   }
@@ -143,7 +289,11 @@ export const getStoredClients = (): Client[] => {
 export const saveStoredClients = (clients: Client[]) => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+    const leadsRaw = localStorage.getItem(LEADS_KEY);
+    const leads: Lead[] = leadsRaw ? JSON.parse(leadsRaw) : [];
+    const synced = syncLeadAndClientData(leads, clients);
+    localStorage.setItem(CLIENTS_KEY, JSON.stringify(synced.clients));
+    localStorage.setItem(LEADS_KEY, JSON.stringify(synced.leads));
   } catch (err) {
     console.error("Failed to save clients to storage", err);
   }

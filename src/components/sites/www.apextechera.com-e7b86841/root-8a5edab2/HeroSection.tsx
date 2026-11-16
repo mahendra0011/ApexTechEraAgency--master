@@ -71,9 +71,9 @@ export function HeroSection({ id }: Props) {
   useEffect(() => {
     if (activeId === id) {
       setEntered(true);
-      cameraInRef.current.start = performance.now();
-    } else {
-      setEntered(false);
+      if (cameraInRef.current.start === -1) {
+        cameraInRef.current.start = performance.now();
+      }
     }
   }, [activeId, id]);
 

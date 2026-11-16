@@ -39,17 +39,31 @@ export interface ILead extends Document {
   brandName: string;
   businessDescription?: string;
   contactPerson: string;
+  contactName?: string;
+  contactRole?: string;
   contactNumber: string;
+  phone?: string;
+  city?: string;
+  whatTheyDo?: string;
   whatsappNumber?: string;
   email?: string;
   source: string;
   sourceHandleOrUrl?: string;
   websiteUrl?: string;
+  websiteStatus?: string;
   socialUrl?: string;
   followersCount?: string;
   whatTheirNeeds?: string;
   screenshotUrl?: string;
   status: string;
+  responseStatus?: string;
+  stage?: string;
+  priority?: string;
+  budgetMin?: number;
+  budgetMax?: number;
+  nextFollowUpAt?: string;
+  reason?: string;
+  services?: string[];
   interestedServices: string[];
   estimatedBudget?: number;
   currency: string;
@@ -62,6 +76,7 @@ export interface ILead extends Document {
     outcomeStatus: string;
   }>;
   createdAt: string;
+  updatedAt?: string;
 }
 
 const LeadSchema = new Schema<ILead>(
@@ -70,24 +85,39 @@ const LeadSchema = new Schema<ILead>(
     brandName: { type: String, required: true },
     businessDescription: { type: String },
     contactPerson: { type: String, default: "Founder" },
-    contactNumber: { type: String, required: true },
+    contactName: { type: String },
+    contactRole: { type: String, default: "Founder" },
+    contactNumber: { type: String, default: "" },
+    phone: { type: String },
+    city: { type: String },
+    whatTheyDo: { type: String },
     whatsappNumber: { type: String },
     email: { type: String },
     source: { type: String, default: "INSTAGRAM" },
     sourceHandleOrUrl: { type: String },
     websiteUrl: { type: String },
+    websiteStatus: { type: String, default: "NONE" },
     socialUrl: { type: String },
     followersCount: { type: String },
     whatTheirNeeds: { type: String },
     screenshotUrl: { type: String },
-    status: { type: String, default: "NEW_LEAD" },
+    status: { type: String, default: "Not started" },
+    responseStatus: { type: String, default: "INTERESTED" },
+    stage: { type: String, default: "NEW" },
+    priority: { type: String, default: "WARM" },
+    budgetMin: { type: Number },
+    budgetMax: { type: Number },
+    nextFollowUpAt: { type: String },
+    reason: { type: String },
     interestedServices: [{ type: String }],
+    services: [{ type: String }],
     estimatedBudget: { type: Number },
     currency: { type: String, default: "INR" },
     nextFollowUpDate: { type: String },
     initialNotes: { type: String },
     callLogs: [CallLogSchema],
-    createdAt: { type: String, default: () => new Date().toISOString().split("T")[0] },
+    createdAt: { type: String, default: () => new Date().toISOString() },
+    updatedAt: { type: String },
   },
   { timestamps: true }
 );

@@ -118,8 +118,11 @@ export const scroll = {
         if ( refsActive.length ) {
             refsActive.forEach( _ => {
                 const inner = _.ref.querySelector(`.${this.class}`)
-                inner.style.transform = `translate3d(0, ${0}px, 0)`
+                if (inner) {
+                    inner.style.transform = `translate3d(0, ${0}px, 0)`
+                }
                 document.dispatchEvent(new CustomEvent('triggerwheel', { detail: { id: _.id, wheel: 0 } }))
+                _.ref.style.transform = `translate3d(0, -100vh, 0)`
             } )
         }
         const refsNext = sections.filter(_ => _.pos === state.classes.NEXT)

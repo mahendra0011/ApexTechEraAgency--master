@@ -132,6 +132,8 @@ export interface Lead {
   industry?: Industry;
   contactName: string;
   designation?: string;
+  contactRole?: "Founder" | "Manager" | "Employee" | string;
+  whatTheyDo?: string;
   phone: string;
   altPhone?: string;
   whatsapp?: string;
@@ -159,6 +161,7 @@ export interface Lead {
   screenshotUrl?: string;
 
   // Status & Funnel
+  status?: string;
   responseStatus: ResponseStatus;
   stage: LeadStage;
   priority: Priority;

@@ -53,6 +53,7 @@ import {
 } from "../../lib/ams/storage";
 import QuickCallDossierModal from "../../components/ams/QuickCallDossierModal";
 import AddClientModal from "../../components/ams/AddClientModal";
+import StatusBadgeDropdown from "../../components/ams/StatusBadgeDropdown";
 import {
   LayoutDashboard,
   Users,
@@ -460,6 +461,39 @@ export default function TeamMemberPage() {
     saveStoredMessages(updated);
     setMessages(updated);
     setTeamChatInput("");
+  };
+
+  const handleUpdateLeadStatus = (leadId: string, newStatus: string) => {
+    const nowIso = new Date().toISOString();
+    const updated = leads.map((l) =>
+      l.id === leadId
+        ? {
+            ...l,
+            status: newStatus,
+            responseStatus: newStatus === "Not intrested" ? ("NOT_INTERESTED" as const) : ("INTERESTED" as const),
+            stage:
+              newStatus === "intrested" || newStatus === "intrested need a sample"
+                ? ("INTERESTED" as const)
+                : l.stage,
+            updatedAt: nowIso,
+          }
+        : l
+    );
+    setLeads(updated);
+    saveStoredLeads(updated);
+
+    const matchingLead = leads.find((l) => l.id === leadId);
+    fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: leadId,
+        brandName: matchingLead?.brandName,
+        phone: matchingLead?.phone,
+        status: newStatus,
+        updatedAt: nowIso,
+      }),
+    }).catch(() => {});
   };
 
   return (
@@ -1015,9 +1049,10 @@ export default function TeamMemberPage() {
                             <span style={{ fontSize: "11px", padding: "2px 7px", borderRadius: "4px", background: "#E3EFEB", color: "#0F5C4D", fontWeight: 700 }}>
                               {lead.source}
                             </span>
-                            <span style={{ fontSize: "11px", padding: "2px 7px", borderRadius: "4px", background: "#F1F5F9", color: "#475569", fontWeight: 600 }}>
-                              {lead.responseStatus}
-                            </span>
+                            <StatusBadgeDropdown
+                              value={lead.status || (lead.responseStatus === "NOT_INTERESTED" ? "Not intrested" : "Not started")}
+                              onChange={(newStatus) => handleUpdateLeadStatus(lead.id, newStatus)}
+                            />
                           </div>
                           <div style={{ fontSize: "12px", color: "#5E5A52", marginTop: "4px" }}>
                             Contact: <strong>{lead.contactName}</strong> ({lead.phone}) &bull; Pitch Note: <em>&ldquo;{lead.reason || "Client requirement & pitch"}&rdquo;</em>
@@ -1402,9 +1437,10 @@ export default function TeamMemberPage() {
                           )}
                         </td>
                         <td style={{ padding: "12px 12px" }}>
-                          <span style={{ fontSize: "11px", padding: "2px 7px", borderRadius: "4px", background: "#E3EFEB", color: "#0F5C4D", fontWeight: 700 }}>
-                            {lead.responseStatus}
-                          </span>
+                          <StatusBadgeDropdown
+                            value={lead.status || (lead.responseStatus === "NOT_INTERESTED" ? "Not intrested" : "Not started")}
+                            onChange={(newStatus) => handleUpdateLeadStatus(lead.id, newStatus)}
+                          />
                         </td>
                         <td style={{ padding: "12px 12px" }}>
                           <div style={{ fontSize: "11px", color: "#64748B" }}>

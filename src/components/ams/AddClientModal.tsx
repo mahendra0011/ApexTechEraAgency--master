@@ -85,62 +85,8 @@ const WEBSITE_STATUS_OPTIONS: { value: WebsiteStatus; label: string }[] = [
   { value: "FUTURE", label: "Future me banwayenge" },
 ];
 
-export const CLIENT_STATUS_LIST = [
-  {
-    id: "Not started",
-    label: "Not started",
-    group: "General",
-    bg: "#E5E7EB",
-    text: "#374151",
-    dot: "#6B7280",
-    border: "#D1D5DB",
-  },
-  {
-    id: "intrested need a sample",
-    label: "intrested need a sample",
-    group: "In progress",
-    bg: "#DCFCE7",
-    text: "#065F46",
-    dot: "#10B981",
-    border: "#A7F3D0",
-  },
-  {
-    id: "intrested",
-    label: "intrested",
-    group: "In progress",
-    bg: "#D1FAE5",
-    text: "#065F46",
-    dot: "#10B981",
-    border: "#6EE7B7",
-  },
-  {
-    id: "call is busy",
-    label: "call is busy",
-    group: "Complete",
-    bg: "#DBEAFE",
-    text: "#1E40AF",
-    dot: "#3B82F6",
-    border: "#BFDBFE",
-  },
-  {
-    id: "in future",
-    label: "in future",
-    group: "Complete",
-    bg: "#E0E7FF",
-    text: "#3730A3",
-    dot: "#6366F1",
-    border: "#C7D2FE",
-  },
-  {
-    id: "Not intrested",
-    label: "Not intrested",
-    group: "Complete",
-    bg: "#FEE2E2",
-    text: "#991B1B",
-    dot: "#EF4444",
-    border: "#FECACA",
-  },
-];
+import { CLIENT_STATUS_LIST } from "./StatusBadgeDropdown";
+export { CLIENT_STATUS_LIST };
 
 const PRIORITY_LIST: { id: Priority; label: string; bg: string; text: string; border: string }[] = [
   { id: "HOT", label: "🔥 Hot", bg: "#FEE2E2", text: "#DC2626", border: "#FECACA" },
@@ -388,6 +334,12 @@ export default function AddClientModal({
           screenshotUrl: screenshotUrl || undefined,
         }),
       }).catch((e) => console.warn("[AddClientModal] MongoDB sync notice:", e.message));
+
+      fetch("/api/clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newClient),
+      }).catch((e) => console.warn("[AddClientModal] MongoDB client sync notice:", e.message));
     } catch {}
 
     setCompanyName("");

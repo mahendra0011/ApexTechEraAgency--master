@@ -66,7 +66,8 @@ import {
 } from "../../lib/ams/storage";
 import QuickCallDossierModal from "../../components/ams/QuickCallDossierModal";
 import InvoiceModal from "../../components/ams/InvoiceModal";
-import AddClientModal, { CLIENT_STATUS_LIST } from "../../components/ams/AddClientModal";
+import AddClientModal from "../../components/ams/AddClientModal";
+import StatusBadgeDropdown, { CLIENT_STATUS_LIST } from "../../components/ams/StatusBadgeDropdown";
 import AddProjectModal from "../../components/ams/AddProjectModal";
 import CreateProposalModal from "../../components/ams/CreateProposalModal";
 import CreateInvoiceModal from "../../components/ams/CreateInvoiceModal";
@@ -574,13 +575,77 @@ export default function SuperAdminPage() {
     saveStoredClients(updated);
 
     const matchingClient = clients.find((c) => c.id === clientId);
-    if (matchingClient?.leadId) {
-      const updatedLeads = leads.map((l) =>
-        l.id === matchingClient.leadId ? { ...l, updatedAt: nowIso } : l
-      );
-      setLeads(updatedLeads);
-      saveStoredLeads(updatedLeads);
-    }
+    const updatedLeads = leads.map((l) => {
+      if (
+        (matchingClient?.leadId && l.id === matchingClient.leadId) ||
+        (matchingClient?.phone && l.phone === matchingClient.phone)
+      ) {
+        return {
+          ...l,
+          status: newStatus,
+          responseStatus: newStatus === "Not intrested" ? ("NOT_INTERESTED" as const) : ("INTERESTED" as const),
+          stage:
+            newStatus === "intrested" || newStatus === "intrested need a sample"
+              ? ("INTERESTED" as const)
+              : l.stage,
+          updatedAt: nowIso,
+        };
+      }
+      return l;
+    });
+    setLeads(updatedLeads);
+    saveStoredLeads(updatedLeads);
+
+    fetch("/api/clients", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: clientId, status: newStatus, updatedAt: nowIso }),
+    }).catch(() => {});
+  };
+
+  const handleUpdateLeadStatus = (leadId: string, newStatus: string) => {
+    const nowIso = new Date().toISOString();
+    const updatedLeads = leads.map((l) =>
+      l.id === leadId
+        ? {
+            ...l,
+            status: newStatus,
+            responseStatus: newStatus === "Not intrested" ? ("NOT_INTERESTED" as const) : ("INTERESTED" as const),
+            stage:
+              newStatus === "intrested" || newStatus === "intrested need a sample"
+                ? ("INTERESTED" as const)
+                : l.stage,
+            updatedAt: nowIso,
+          }
+        : l
+    );
+    setLeads(updatedLeads);
+    saveStoredLeads(updatedLeads);
+
+    const matchingLead = leads.find((l) => l.id === leadId);
+    const updatedClients = clients.map((c) => {
+      if (
+        (matchingLead?.convertedClientId && c.id === matchingLead.convertedClientId) ||
+        (matchingLead?.phone && c.phone === matchingLead.phone)
+      ) {
+        return { ...c, status: newStatus, updatedAt: nowIso };
+      }
+      return c;
+    });
+    setClients(updatedClients);
+    saveStoredClients(updatedClients);
+
+    fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: leadId,
+        brandName: matchingLead?.brandName,
+        phone: matchingLead?.phone,
+        status: newStatus,
+        updatedAt: nowIso,
+      }),
+    }).catch(() => {});
   };
 
   const handleDeleteClient = (clientId: string, companyName: string) => {
@@ -2275,20 +2340,25 @@ export default function SuperAdminPage() {
                           </td>
                           <td style={{ padding: "12px 12px" }}>{getSourceBadge(lead.source)}</td>
                           <td style={{ padding: "12px 12px" }}>
-                            {getResponseBadge(lead.responseStatus)}
-                            {lead.followersCount && (
-                              <div style={{ fontSize: "10px", color: "#0F5C4D", fontWeight: 700, marginTop: "2px" }}>
-                                👥 {lead.followersCount}
-                              </div>
-                            )}
-                            {lead.whatTheirNeeds && (
-                              <div style={{ fontSize: "11px", color: "#1E40AF", marginTop: "2px", fontWeight: 600 }}>
-                                🎯 {lead.whatTheirNeeds}
-                              </div>
-                            )}
-                            {lead.reason && !lead.whatTheirNeeds && (
-                              <div style={{ fontSize: "11px", color: "#8C877C", marginTop: "3px", maxWidth: "200px" }}>{lead.reason}</div>
-                            )}
+                            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                              <StatusBadgeDropdown
+                                value={lead.status || (lead.responseStatus === "NOT_INTERESTED" ? "Not intrested" : "Not started")}
+                                onChange={(newStatus) => handleUpdateLeadStatus(lead.id, newStatus)}
+                              />
+                              {lead.followersCount && (
+                                <div style={{ fontSize: "10px", color: "#0F5C4D", fontWeight: 700, marginTop: "2px" }}>
+                                  👥 {lead.followersCount}
+                                </div>
+                              )}
+                              {lead.whatTheirNeeds && (
+                                <div style={{ fontSize: "11px", color: "#1E40AF", marginTop: "2px", fontWeight: 600 }}>
+                                  🎯 {lead.whatTheirNeeds}
+                                </div>
+                              )}
+                              {lead.reason && !lead.whatTheirNeeds && (
+                                <div style={{ fontSize: "11px", color: "#8C877C", marginTop: "3px", maxWidth: "200px" }}>{lead.reason}</div>
+                              )}
+                            </div>
                           </td>
                           <td style={{ padding: "12px 12px", fontSize: "12px" }}>
                             <div style={{ fontWeight: 600 }}>{lead.nextFollowUpAt || "—"}</div>
@@ -2578,7 +2648,6 @@ export default function SuperAdminPage() {
                       </tr>
                     ) : (
                       clients.map((c) => {
-                        const statusObj = CLIENT_STATUS_LIST.find((s) => s.id === c.status) || CLIENT_STATUS_LIST[0];
                         return (
                           <tr key={c.id} style={{ borderBottom: "1px solid #E2DED4" }}>
                             {/* Company & Profile Screenshot */}
@@ -2685,30 +2754,12 @@ export default function SuperAdminPage() {
                               </div>
                             </td>
 
-                            {/* Status (Interactive Update) */}
+                            {/* Status (Interactive Notion-Style Update) */}
                             <td style={{ padding: "12px 12px" }}>
-                              <select
+                              <StatusBadgeDropdown
                                 value={c.status || "Not started"}
-                                onChange={(e) => handleUpdateClientStatus(c.id, e.target.value)}
-                                title="Click to change outreach status"
-                                style={{
-                                  fontSize: "11px",
-                                  fontWeight: 700,
-                                  padding: "4px 8px",
-                                  borderRadius: "9999px",
-                                  background: statusObj.bg,
-                                  color: statusObj.text,
-                                  border: `1px solid ${statusObj.border}`,
-                                  cursor: "pointer",
-                                  outline: "none",
-                                }}
-                              >
-                                {CLIENT_STATUS_LIST.map((s) => (
-                                  <option key={s.id} value={s.id}>
-                                    {s.label}
-                                  </option>
-                                ))}
-                              </select>
+                                onChange={(newStatus) => handleUpdateClientStatus(c.id, newStatus)}
+                              />
                             </td>
 
                             {/* Followers & Needs */}
