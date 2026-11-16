@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Lead,
   LeadSource,
@@ -26,6 +26,10 @@ import {
   ChevronUp,
   Save,
   Check,
+  Camera,
+  Trash2,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react";
 
 interface AddLeadModalProps {
@@ -95,6 +99,38 @@ export default function AddLeadModal({ isOpen, onClose, onAddLead }: AddLeadModa
   const [nextFollowUpAt, setNextFollowUpAt] = useState("");
   const [followUpReason, setFollowUpReason] = useState("");
   const [sourceNote, setSourceNote] = useState("");
+  const [followersCount, setFollowersCount] = useState("");
+  const [whatTheirNeeds, setWhatTheirNeeds] = useState("");
+  const [screenshotUrl, setScreenshotUrl] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+    setIsUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data && data.success && data.url) {
+        setScreenshotUrl(data.url);
+      } else {
+        const reader = new FileReader();
+        reader.onload = (e) => setScreenshotUrl(e.target?.result as string);
+        reader.readAsDataURL(file);
+      }
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (e) => setScreenshotUrl(e.target?.result as string);
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
 
   // Duplicate Check
   const existingLeads = getStoredLeads();
@@ -137,6 +173,9 @@ export default function AddLeadModal({ isOpen, onClose, onAddLead }: AddLeadModa
       sourceUrl: sourceUrl.trim() || undefined,
       sourceNote: sourceNote.trim() || undefined,
       reason: reason.trim() || undefined,
+      followersCount: followersCount.trim() || undefined,
+      whatTheirNeeds: whatTheirNeeds.trim() || reason.trim() || undefined,
+      screenshotUrl: screenshotUrl || undefined,
 
       responseStatus,
       stage,
@@ -441,7 +480,7 @@ export default function AddLeadModal({ isOpen, onClose, onAddLead }: AddLeadModa
                   </div>
                 </div>
 
-                {/* Contact Person & Designation */}
+                {/* Contact Person & Designation / Role */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div>
                     <label style={{ display: "block", fontSize: "11px", fontWeight: 700, color: "#5E5A52", marginBottom: "4px" }}>
@@ -458,16 +497,103 @@ export default function AddLeadModal({ isOpen, onClose, onAddLead }: AddLeadModa
 
                   <div>
                     <label style={{ display: "block", fontSize: "11px", fontWeight: 700, color: "#5E5A52", marginBottom: "4px" }}>
-                      Designation
+                      Founder / Manager / Employee
+                    </label>
+                    <select
+                      value={designation}
+                      onChange={(e) => setDesignation(e.target.value)}
+                      style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #E2DED4", fontSize: "12px", boxSizing: "border-box", background: "#FFFFFF" }}
+                    >
+                      <option value="Founder">Founder</option>
+                      <option value="Manager">Manager</option>
+                      <option value="Employee">Employee</option>
+                      <option value="Owner / Founder">Owner / Founder</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Followers / Connections & What Their Needs */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "11px", fontWeight: 700, color: "#5E5A52", marginBottom: "4px" }}>
+                      What Their Followers / Connections
                     </label>
                     <input
                       type="text"
-                      placeholder="Founder / Director / Decision Maker"
-                      value={designation}
-                      onChange={(e) => setDesignation(e.target.value)}
+                      placeholder="e.g. 50k Instagram, 10k LinkedIn"
+                      value={followersCount}
+                      onChange={(e) => setFollowersCount(e.target.value)}
                       style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #E2DED4", fontSize: "12px", boxSizing: "border-box" }}
                     />
                   </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "11px", fontWeight: 700, color: "#5E5A52", marginBottom: "4px" }}>
+                      What Their Needs
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Landing page revamp, AI bot"
+                      value={whatTheirNeeds}
+                      onChange={(e) => setWhatTheirNeeds(e.target.value)}
+                      style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #E2DED4", fontSize: "12px", boxSizing: "border-box" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Instagram / Profile Screenshot Upload */}
+                <div>
+                  <label style={{ display: "block", fontSize: "11px", fontWeight: 700, color: "#5E5A52", marginBottom: "4px" }}>
+                    Profile / Instagram Screenshot (For Quick Memory)
+                  </label>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload(file);
+                    }}
+                  />
+                  {screenshotUrl ? (
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 12px", background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: "6px" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={screenshotUrl} alt="Screenshot" style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "4px" }} />
+                      <div style={{ flex: 1, fontSize: "12px", color: "#166534", fontWeight: 600 }}>Screenshot Attached</div>
+                      <button
+                        type="button"
+                        onClick={() => setScreenshotUrl("")}
+                        style={{ padding: "4px 8px", background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        width: "100%",
+                        padding: "8px 12px",
+                        border: "1px dashed #CBD5E1",
+                        borderRadius: "6px",
+                        background: "#F8FAFC",
+                        color: "#475569",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <Camera size={14} style={{ color: "#0F5C4D" }} />
+                      {isUploadingImage ? "Uploading..." : "+ Attach Instagram Profile Screenshot"}
+                    </button>
+                  )}
                 </div>
 
                 {/* Website URL & Website Status */}

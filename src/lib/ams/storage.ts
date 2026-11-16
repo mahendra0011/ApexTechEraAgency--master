@@ -317,6 +317,14 @@ export const convertLeadToClient = (lead: Lead): Client => {
     companyName: lead.brandName,
     contactName: lead.contactName,
     designation: lead.designation || "Owner",
+    contactRole: lead.designation?.toLowerCase().includes("manager")
+      ? "Manager"
+      : lead.designation?.toLowerCase().includes("employee")
+      ? "Employee"
+      : "Founder",
+    whatTheyDo: lead.businessDesc,
+    status: "intrested",
+    whatTheirNeeds: lead.reason,
     email: lead.email || `${lead.brandName.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.com`,
     phone: lead.phone,
     city: lead.city || "India",

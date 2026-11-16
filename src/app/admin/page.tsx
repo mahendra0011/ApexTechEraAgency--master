@@ -66,7 +66,7 @@ import {
 import QuickCallDossierModal from "../../components/ams/QuickCallDossierModal";
 import AddLeadModal from "../../components/ams/AddLeadModal";
 import InvoiceModal from "../../components/ams/InvoiceModal";
-import AddClientModal from "../../components/ams/AddClientModal";
+import AddClientModal, { CLIENT_STATUS_LIST } from "../../components/ams/AddClientModal";
 import AddProjectModal from "../../components/ams/AddProjectModal";
 import CreateProposalModal from "../../components/ams/CreateProposalModal";
 import CreateInvoiceModal from "../../components/ams/CreateInvoiceModal";
@@ -191,6 +191,7 @@ export default function SuperAdminPage() {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [isAddClientOpen, setIsAddClientOpen] = useState(false);
+  const [selectedPreviewImage, setSelectedPreviewImage] = useState<string | null>(null);
   const [isCreateProposalOpen, setIsCreateProposalOpen] = useState(false);
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
   const [isCreateInvoiceOpen, setIsCreateInvoiceOpen] = useState(false);
@@ -2344,37 +2345,222 @@ export default function SuperAdminPage() {
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
                   <thead>
-                    <tr style={{ background: "#FBFAF7", borderBottom: "1px solid #E2DED4" }}>
-                      <th style={{ padding: "10px 14px", color: "#8C877C" }}>COMPANY</th>
-                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>CONTACT</th>
+                    <tr style={{ background: "#FBFAF7", borderBottom: "1px solid #E2DED4", textAlign: "left" }}>
+                      <th style={{ padding: "10px 14px", color: "#8C877C" }}>COMPANY &amp; PROFILE</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>CONTACT &amp; ROLE</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>STATUS</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>FOLLOWERS &amp; NEEDS</th>
                       <th style={{ padding: "10px 12px", color: "#8C877C" }}>PHONE &amp; CITY</th>
-                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>TOTAL BILLED</th>
-                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>OUTSTANDING</th>
-                      <th style={{ padding: "10px 14px", color: "#8C877C", textAlign: "right" }}>PORTAL ACCESS</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>FINANCES</th>
+                      <th style={{ padding: "10px 14px", color: "#8C877C", textAlign: "right" }}>PORTAL</th>
                     </tr>
                   </thead>
                   <tbody>
                     {clients.length === 0 ? (
                       <tr>
-                        <td colSpan={6} style={{ textAlign: "center", padding: "48px 16px", color: "#8C877C" }}>
+                        <td colSpan={7} style={{ textAlign: "center", padding: "48px 16px", color: "#8C877C" }}>
                           <Users size={32} style={{ margin: "0 auto 10px", opacity: 0.4 }} />
                           <div style={{ fontWeight: 700, fontSize: "14px", color: "#1F1D1A" }}>No clients in directory yet</div>
-                          <div style={{ fontSize: "12px", marginTop: "4px" }}>Converted leads or manually added clients will appear here with balance tracking.</div>
+                          <div style={{ fontSize: "12px", marginTop: "4px" }}>Converted leads or manually added clients will appear here with profile screenshot and status tracking.</div>
                         </td>
                       </tr>
                     ) : (
-                      clients.map((c) => (
-                      <tr key={c.id} style={{ borderBottom: "1px solid #E2DED4" }}>
-                        <td style={{ padding: "12px 14px", fontWeight: 800 }}>{c.companyName}</td>
-                        <td style={{ padding: "12px 12px" }}>{c.contactName} ({c.email})</td>
-                        <td style={{ padding: "12px 12px" }}>{c.phone} &bull; {c.city || "India"}</td>
-                        <td style={{ padding: "12px 12px", fontFamily: "monospace", fontWeight: 700 }}>₹{c.totalBilled?.toLocaleString("en-IN") || 0}</td>
-                        <td style={{ padding: "12px 12px", fontFamily: "monospace", color: "#DC2626", fontWeight: 700 }}>₹{c.outstandingBalance?.toLocaleString("en-IN") || 0}</td>
-                        <td style={{ padding: "12px 14px", textAlign: "right" }}>
-                          <span style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "9999px", background: "#E6F2EA", color: "#2F7D4F", fontWeight: 700 }}>Active</span>
-                        </td>
-                      </tr>
-                    )))}
+                      clients.map((c) => {
+                        const statusObj = CLIENT_STATUS_LIST.find((s) => s.id === c.status) || CLIENT_STATUS_LIST[0];
+                        return (
+                          <tr key={c.id} style={{ borderBottom: "1px solid #E2DED4" }}>
+                            {/* Company & Profile Screenshot */}
+                            <td style={{ padding: "12px 14px" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                {c.screenshotUrl ? (
+                                  <div
+                                    onClick={() => setSelectedPreviewImage(c.screenshotUrl!)}
+                                    title="Click to view Instagram screenshot"
+                                    style={{
+                                      width: "42px",
+                                      height: "42px",
+                                      borderRadius: "6px",
+                                      overflow: "hidden",
+                                      flexShrink: 0,
+                                      cursor: "pointer",
+                                      border: "1px solid #CBD5E1",
+                                      background: "#F1F5F9",
+                                    }}
+                                  >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={c.screenshotUrl}
+                                      alt={c.companyName}
+                                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                    />
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      width: "36px",
+                                      height: "36px",
+                                      borderRadius: "6px",
+                                      background: "#F1F5F9",
+                                      color: "#64748B",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      fontWeight: 800,
+                                      fontSize: "13px",
+                                      flexShrink: 0,
+                                    }}
+                                  >
+                                    {c.companyName.charAt(0).toUpperCase()}
+                                  </div>
+                                )}
+                                <div>
+                                  <div style={{ fontWeight: 800, color: "#0F172A", fontSize: "13px" }}>
+                                    {c.companyName}
+                                  </div>
+                                  {c.whatTheyDo && (
+                                    <div
+                                      style={{
+                                        fontSize: "11px",
+                                        color: "#64748B",
+                                        marginTop: "2px",
+                                        maxWidth: "180px",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                      }}
+                                      title={c.whatTheyDo}
+                                    >
+                                      {c.whatTheyDo}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Contact & Role */}
+                            <td style={{ padding: "12px 12px" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                <span style={{ fontWeight: 700, color: "#1F1D1A" }}>{c.contactName}</span>
+                                <span
+                                  style={{
+                                    fontSize: "10px",
+                                    fontWeight: 700,
+                                    padding: "1px 6px",
+                                    borderRadius: "4px",
+                                    background:
+                                      c.contactRole === "Founder"
+                                        ? "#E0E7FF"
+                                        : c.contactRole === "Manager"
+                                        ? "#FEF3C7"
+                                        : "#F1F5F9",
+                                    color:
+                                      c.contactRole === "Founder"
+                                        ? "#3730A3"
+                                        : c.contactRole === "Manager"
+                                        ? "#92400E"
+                                        : "#475569",
+                                  }}
+                                >
+                                  {c.contactRole || c.designation || "Founder"}
+                                </span>
+                              </div>
+                              <div style={{ fontSize: "11px", color: "#64748B", marginTop: "2px" }}>
+                                {c.email}
+                              </div>
+                            </td>
+
+                            {/* Status */}
+                            <td style={{ padding: "12px 12px" }}>
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  fontWeight: 700,
+                                  padding: "3px 9px",
+                                  borderRadius: "9999px",
+                                  background: statusObj.bg,
+                                  color: statusObj.text,
+                                  border: `1px solid ${statusObj.border}`,
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "5px",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    width: "7px",
+                                    height: "7px",
+                                    borderRadius: "50%",
+                                    backgroundColor: statusObj.dot,
+                                  }}
+                                />
+                                {statusObj.label}
+                              </span>
+                            </td>
+
+                            {/* Followers & Needs */}
+                            <td style={{ padding: "12px 12px" }}>
+                              {c.followersCount && (
+                                <div style={{ fontSize: "11px", fontWeight: 700, color: "#0F5C4D" }}>
+                                  {c.followersCount}
+                                </div>
+                              )}
+                              {c.whatTheirNeeds && (
+                                <div
+                                  style={{
+                                    fontSize: "11px",
+                                    color: "#475569",
+                                    marginTop: "2px",
+                                    maxWidth: "180px",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                  }}
+                                  title={c.whatTheirNeeds}
+                                >
+                                  {c.whatTheirNeeds}
+                                </div>
+                              )}
+                              {!c.followersCount && !c.whatTheirNeeds && (
+                                <span style={{ fontSize: "11px", color: "#94A3B8" }}>—</span>
+                              )}
+                            </td>
+
+                            {/* Phone & City */}
+                            <td style={{ padding: "12px 12px" }}>
+                              <div style={{ fontWeight: 600 }}>{c.phone}</div>
+                              <div style={{ fontSize: "11px", color: "#64748B" }}>{c.city || "India"}</div>
+                            </td>
+
+                            {/* Finances */}
+                            <td style={{ padding: "12px 12px" }}>
+                              <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: "12px" }}>
+                                ₹{c.totalBilled?.toLocaleString("en-IN") || 0}
+                              </div>
+                              <div style={{ fontFamily: "monospace", color: "#DC2626", fontWeight: 700, fontSize: "11px" }}>
+                                Due: ₹{c.outstandingBalance?.toLocaleString("en-IN") || 0}
+                              </div>
+                            </td>
+
+                            {/* Portal Access */}
+                            <td style={{ padding: "12px 14px", textAlign: "right" }}>
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  padding: "2px 8px",
+                                  borderRadius: "9999px",
+                                  background: c.portalEnabled ? "#E6F2EA" : "#F3F4F6",
+                                  color: c.portalEnabled ? "#2F7D4F" : "#6B7280",
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {c.portalEnabled ? "Active" : "Disabled"}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -3266,6 +3452,95 @@ export default function SuperAdminPage() {
           alert(`✓ New member ${newMember.name} added!`);
         }}
       />
+
+      {/* Lightbox Modal for Profile / Instagram Screenshot Preview */}
+      {selectedPreviewImage && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15, 23, 42, 0.8)",
+            backdropFilter: "blur(4px)",
+            zIndex: 10000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+          onClick={() => setSelectedPreviewImage(null)}
+        >
+          <div
+            style={{
+              position: "relative",
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              background: "#FFFFFF",
+              borderRadius: "14px",
+              overflow: "hidden",
+              padding: "16px",
+              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                borderBottom: "1px solid #E2E8F0",
+                paddingBottom: "8px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "14px", fontWeight: 800, color: "#0F172A" }}>
+                  Instagram / Profile Screenshot Preview
+                </span>
+                <a
+                  href={selectedPreviewImage}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ fontSize: "11px", color: "#0F5C4D", fontWeight: 600, textDecoration: "underline" }}
+                >
+                  Open Original ↗
+                </a>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedPreviewImage(null)}
+                style={{
+                  background: "#F1F5F9",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "4px 10px",
+                  cursor: "pointer",
+                  fontWeight: 700,
+                  fontSize: "12px",
+                  color: "#475569",
+                }}
+              >
+                Close ✕
+              </button>
+            </div>
+            <div style={{ overflow: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={selectedPreviewImage}
+                alt="Profile Screenshot Preview"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "78vh",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

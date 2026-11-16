@@ -154,6 +154,9 @@ export interface Lead {
   sourceUrl?: string;
   sourceNote?: string; // e.g. "Reel dekha, bio me website link nahi tha"
   reason?: string; // Kis liye laya tha / Pitch idea (Crucial for cold caller)
+  followersCount?: string;
+  whatTheirNeeds?: string;
+  screenshotUrl?: string;
 
   // Status & Funnel
   responseStatus: ResponseStatus;
@@ -186,6 +189,12 @@ export interface Client {
   companyName: string;
   contactName: string;
   designation?: string;
+  contactRole?: "Founder" | "Manager" | "Employee" | string;
+  whatTheyDo?: string;
+  status?: string;
+  followersCount?: string;
+  whatTheirNeeds?: string;
+  screenshotUrl?: string;
   email: string;
   phone: string;
   city?: string;

@@ -46,6 +46,9 @@ export interface ILead extends Document {
   sourceHandleOrUrl?: string;
   websiteUrl?: string;
   socialUrl?: string;
+  followersCount?: string;
+  whatTheirNeeds?: string;
+  screenshotUrl?: string;
   status: string;
   interestedServices: string[];
   estimatedBudget?: number;
@@ -74,6 +77,9 @@ const LeadSchema = new Schema<ILead>(
     sourceHandleOrUrl: { type: String },
     websiteUrl: { type: String },
     socialUrl: { type: String },
+    followersCount: { type: String },
+    whatTheirNeeds: { type: String },
+    screenshotUrl: { type: String },
     status: { type: String, default: "NEW_LEAD" },
     interestedServices: [{ type: String }],
     estimatedBudget: { type: Number },
@@ -278,6 +284,12 @@ export interface IClient extends Document {
   companyName: string;
   contactName: string;
   designation?: string;
+  contactRole?: string;
+  whatTheyDo?: string;
+  status?: string;
+  followersCount?: string;
+  whatTheirNeeds?: string;
+  screenshotUrl?: string;
   email: string;
   phone: string;
   city?: string;
@@ -296,6 +308,12 @@ const ClientSchema = new Schema<IClient>(
     companyName: { type: String, required: true },
     contactName: { type: String, required: true },
     designation: { type: String, default: "Founder / Owner" },
+    contactRole: { type: String, default: "Founder" },
+    whatTheyDo: { type: String },
+    status: { type: String, default: "Not started" },
+    followersCount: { type: String },
+    whatTheirNeeds: { type: String },
+    screenshotUrl: { type: String },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     phone: { type: String, required: true },
     city: { type: String },
