@@ -226,3 +226,38 @@ const InvoiceSchema = new Schema<IInvoice>(
 
 export const InvoiceModel: Model<IInvoice> =
   mongoose.models.Invoice || mongoose.model<IInvoice>("Invoice", InvoiceSchema);
+
+// ==========================================
+// 6. User / Team Member Model
+// ==========================================
+export interface IUser extends Document {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  memberType?: string;
+  phone?: string;
+  avatarColor?: string;
+  skills: string[];
+  isActive: boolean;
+  joinedDate: string;
+}
+
+const UserSchema = new Schema<IUser>(
+  {
+    id: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    role: { type: String, required: true },
+    memberType: { type: String },
+    phone: { type: String },
+    avatarColor: { type: String, default: "bg-teal-600" },
+    skills: [{ type: String }],
+    isActive: { type: Boolean, default: true },
+    joinedDate: { type: String },
+  },
+  { timestamps: true }
+);
+
+export const UserModel: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);

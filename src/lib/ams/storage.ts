@@ -273,13 +273,23 @@ export const getStoredServices = (): ServiceCatalogItem[] => {
 };
 
 // ========================================================
-// TEAM (The 4 Real Accounts)
+// TEAM (Official Production Roster)
 // ========================================================
 export const getStoredTeam = (): TeamMember[] => {
   if (typeof window === "undefined") return INITIAL_TEAM;
   try {
     const data = localStorage.getItem(TEAM_KEY);
-    return data ? JSON.parse(data) : INITIAL_TEAM;
+    if (!data) return INITIAL_TEAM;
+    const parsed: TeamMember[] = JSON.parse(data);
+    const missing = INITIAL_TEAM.filter(
+      (initM) => !parsed.some((p) => p.email.toLowerCase() === initM.email.toLowerCase())
+    );
+    if (missing.length > 0) {
+      const merged = [...parsed, ...missing];
+      saveStoredTeam(merged);
+      return merged;
+    }
+    return parsed;
   } catch {
     return INITIAL_TEAM;
   }

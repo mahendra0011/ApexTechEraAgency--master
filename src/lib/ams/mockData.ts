@@ -274,6 +274,28 @@ export const INITIAL_TEAM: TeamMember[] = [
     lastLoginAt: new Date().toISOString().replace("T", " ").substring(0, 16),
     joinedDate: "2026-04-01",
   },
+  {
+    id: "tm-harshvardhan",
+    name: "Harshvardhan Lakhera",
+    role: "MEMBER",
+    memberType: "DEVELOPER",
+    email: "harshvardhanlakhera2005@gmail.com",
+    phone: "+91 98000 00000",
+    avatarColor: "bg-teal-600",
+    assignedProjectsCount: 0,
+    skills: ["Full Stack Web", "React", "Next.js", "AI Integrations", "APIs"],
+    permissions: {
+      canDeleteLead: false,
+      canExport: false,
+      seeAllLeads: false,
+      createInvoice: false,
+      seeClientContact: false,
+      seeLeaderboard: true,
+    },
+    isActive: true,
+    lastLoginAt: new Date().toISOString().replace("T", " ").substring(0, 16),
+    joinedDate: "2026-04-10",
+  },
 ];
 
 // ========================================================

@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
       cleanEmail === "nishantkushwaha145@gmail.com" ||
       cleanEmail === "kshitijbhunjwa@gmail.com" ||
       cleanEmail === "ankitkumawat43657@gmail.com" ||
+      cleanEmail === "harshvardhanlakhera2005@gmail.com" ||
       cleanEmail.includes("apextechera")
     ) {
       role = "MEMBER";
