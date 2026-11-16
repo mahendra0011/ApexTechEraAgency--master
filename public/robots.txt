@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
+# Private agency portals & backend APIs
+Disallow: /admin
+Disallow: /admin/
+Disallow: /team
+Disallow: /team/
+Disallow: /portal
+Disallow: /portal/
+Disallow: /api/
+
 Sitemap: https://apextechera.online/sitemap.xml
