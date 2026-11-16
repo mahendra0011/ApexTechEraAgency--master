@@ -124,6 +124,7 @@ import {
   UserPlus,
   RefreshCw,
   X,
+  Home,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -837,7 +838,11 @@ export default function SuperAdminPage() {
             background: "#FFFFFF",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Link
+            href="/"
+            title="Go to Main Website"
+            style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}
+          >
             <div
               style={{
                 width: "28px",
@@ -862,7 +867,7 @@ export default function SuperAdminPage() {
                 Super Admin Panel
               </div>
             </div>
-          </div>
+          </Link>
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "9999px", background: "#FEF2F2", color: "#B91C1C", fontWeight: 800 }}>
               Founder
@@ -879,13 +884,29 @@ export default function SuperAdminPage() {
           </div>
         </div>
 
-        {/* Quick Role Switch Links */}
-        <div style={{ padding: "10px 14px", borderBottom: "1px solid #E2DED4", background: "#F6F4EF", display: "flex", gap: "6px" }}>
+        {/* Quick Role & Home Switch Links */}
+        <div style={{ padding: "10px 14px", borderBottom: "1px solid #E2DED4", background: "#F6F4EF", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px" }}>
+          <Link
+            href="/"
+            title="Go to Public Website"
+            style={{
+              padding: "6px 4px",
+              borderRadius: "6px",
+              background: "#FFFFFF",
+              border: "1px solid #E2DED4",
+              fontSize: "11px",
+              fontWeight: 700,
+              color: "#0F5C4D",
+              textDecoration: "none",
+              textAlign: "center",
+            }}
+          >
+            🏠 Home
+          </Link>
           <Link
             href="/team"
             style={{
-              flex: 1,
-              padding: "6px 8px",
+              padding: "6px 4px",
               borderRadius: "6px",
               background: "#FFFFFF",
               border: "1px solid #E2DED4",
@@ -896,13 +917,12 @@ export default function SuperAdminPage() {
               textAlign: "center",
             }}
           >
-            👥 Team Panel
+            👥 Team
           </Link>
           <Link
             href="/portal"
             style={{
-              flex: 1,
-              padding: "6px 8px",
+              padding: "6px 4px",
               borderRadius: "6px",
               background: "#FFFFFF",
               border: "1px solid #E2DED4",
@@ -913,7 +933,7 @@ export default function SuperAdminPage() {
               textAlign: "center",
             }}
           >
-            🏢 Client Portal
+            🏢 Portal
           </Link>
         </div>
 
@@ -1060,7 +1080,9 @@ export default function SuperAdminPage() {
               <Menu style={{ width: "20px", height: "20px" }} />
             </button>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#5E5A52", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              <span className="hidden sm:inline">ApexTechEra</span>
+              <Link href="/" title="Go to Main Website" style={{ color: "#0F5C4D", textDecoration: "none", fontWeight: 700 }} className="hidden sm:inline hover:underline">
+                ApexTechEra
+              </Link>
               <span className="hidden sm:inline">/</span>
               <span className="hidden md:inline">Super Admin</span>
               <span className="hidden md:inline">/</span>
@@ -1069,6 +1091,27 @@ export default function SuperAdminPage() {
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            <Link
+              href="/"
+              title="Go to Main Website"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "5px",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                background: "#FBFAF7",
+                border: "1px solid #E2DED4",
+                color: "#1F1D1A",
+                fontSize: "11px",
+                fontWeight: 600,
+                textDecoration: "none",
+                cursor: "pointer",
+              }}
+            >
+              <Home style={{ width: "12px", height: "12px", color: "#0F5C4D" }} />
+              <span className="hidden sm:inline">Website</span>
+            </Link>
             <button
               type="button"
               onClick={() => setIsAddLeadOpen(true)}

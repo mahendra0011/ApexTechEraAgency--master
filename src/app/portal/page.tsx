@@ -65,6 +65,7 @@ import {
   LogOut,
   LayoutDashboard,
   X,
+  Home,
 } from "lucide-react";
 import { WhatsAppIcon } from "../../components/ams/SocialIcons";
 
@@ -410,7 +411,11 @@ export default function ClientPortalPage() {
             justifyContent: "space-between",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Link
+            href="/"
+            title="Go to Main Website"
+            style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}
+          >
             <div
               style={{
                 width: "28px",
@@ -433,7 +438,7 @@ export default function ClientPortalPage() {
                 Client Portal
               </div>
             </div>
-          </div>
+          </Link>
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <span style={{ fontSize: "10px", padding: "2px 7px", borderRadius: "9999px", background: "#E8F3EE", color: "#0F5C4D", fontWeight: 800, border: "1px solid #C4E1D4" }}>
               Client
@@ -546,13 +551,30 @@ export default function ClientPortalPage() {
           })}
         </div>
 
-        {/* Role Switcher Shortcuts */}
-        <div style={{ padding: "10px 14px", borderTop: "1px solid #E2DED4", background: "#F6F4EF", display: "flex", gap: "6px" }}>
+        {/* Role & Home Switcher Shortcuts */}
+        <div style={{ padding: "8px 14px", borderTop: "1px solid #E2DED4", background: "#F6F4EF", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px" }}>
+          <Link
+            href="/"
+            title="Go to Public Website"
+            style={{
+              padding: "6px 4px",
+              borderRadius: "6px",
+              background: "#FFFFFF",
+              border: "1px solid #E2DED4",
+              fontSize: "11px",
+              fontWeight: 700,
+              color: "#0F5C4D",
+              textDecoration: "none",
+              textAlign: "center",
+            }}
+          >
+            🏠 Home
+          </Link>
           <Link
             href="/admin"
+            title="Go to Super Admin"
             style={{
-              flex: 1,
-              padding: "6px 8px",
+              padding: "6px 4px",
               borderRadius: "6px",
               background: "#FFFFFF",
               border: "1px solid #E2DED4",
@@ -567,15 +589,15 @@ export default function ClientPortalPage() {
           </Link>
           <Link
             href="/team"
+            title="Go to Team Workspace"
             style={{
-              flex: 1,
-              padding: "6px 8px",
+              padding: "6px 4px",
               borderRadius: "6px",
               background: "#FFFFFF",
               border: "1px solid #E2DED4",
               fontSize: "11px",
               fontWeight: 700,
-              color: "#0F5C4D",
+              color: "#1F1D1A",
               textDecoration: "none",
               textAlign: "center",
             }}
@@ -650,7 +672,9 @@ export default function ClientPortalPage() {
             </button>
 
             <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#5E5A52", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              <span className="hidden sm:inline">ApexTechEra</span>
+              <Link href="/" title="Go to Main Website" style={{ color: "#0F5C4D", textDecoration: "none", fontWeight: 700 }} className="hidden sm:inline hover:underline">
+                ApexTechEra
+              </Link>
               <span className="hidden sm:inline">/</span>
               <span className="hidden md:inline">Client Portal</span>
               <span className="hidden md:inline">/</span>
@@ -660,6 +684,27 @@ export default function ClientPortalPage() {
 
           {/* Right: Quick actions */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            <Link
+              href="/"
+              title="Visit Main Website"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "4px",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                background: "#FBFAF7",
+                border: "1px solid #E2DED4",
+                color: "#1F1D1A",
+                fontSize: "11px",
+                fontWeight: 600,
+                textDecoration: "none",
+                cursor: "pointer",
+              }}
+            >
+              <Home style={{ width: "12px", height: "12px", color: "#0F5C4D" }} />
+              <span className="hidden sm:inline">Website</span>
+            </Link>
             <a
               href={`https://wa.me/919820011223?text=${encodeURIComponent(`Hi ${project?.assignedManager || "Project Manager"} (ApexTechEra), I have an update regarding project: ${project?.title || "Active Sprint"}`)}`}
               target="_blank"
