@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Client, ServiceCategory } from "../../lib/ams/types";
+import { Client, Lead, ServiceCategory } from "../../lib/ams/types";
+import { getStoredClients, getStoredLeads, saveStoredClients, saveStoredLeads } from "../../lib/ams/storage";
 import {
   X,
   Building2,
@@ -23,10 +24,11 @@ import {
   HelpCircle,
 } from "lucide-react";
 
-interface AddClientModalProps {
+export interface UnifiedContactModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddClient: (client: Client) => void;
+  onAddClient?: (client: Client) => void;
+  onAddLead?: (lead: Lead) => void;
 }
 
 const ALL_SERVICES: ServiceCategory[] = [
@@ -104,12 +106,13 @@ export default function AddClientModal({
   isOpen,
   onClose,
   onAddClient,
-}: AddClientModalProps) {
+  onAddLead,
+}: UnifiedContactModalProps) {
   const [companyName, setCompanyName] = useState("");
   const [contactRole, setContactRole] = useState("Founder");
   const [contactName, setContactName] = useState("");
   const [whatTheyDo, setWhatTheyDo] = useState("");
-  const [status, setStatus] = useState("Not started");
+  const [status, setStatus] = useState("intrested");
   const [followersCount, setFollowersCount] = useState("");
   const [whatTheirNeeds, setWhatTheirNeeds] = useState("");
   const [screenshotUrl, setScreenshotUrl] = useState("");
@@ -154,7 +157,6 @@ export default function AddClientModal({
       if (data && data.success && data.url) {
         setScreenshotUrl(data.url);
       } else {
-        // Fallback: convert directly to base64 Data URL so it always works
         const reader = new FileReader();
         reader.onload = (e) => {
           setScreenshotUrl(e.target?.result as string);
@@ -195,15 +197,65 @@ export default function AddClientModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!companyName.trim() || !contactName.trim() || !email.trim() || !phone.trim()) {
-      alert("Please fill in Company Name, Contact Person Name, Email, and Phone.");
+    if (!companyName.trim() || !contactName.trim() || !phone.trim()) {
+      alert("Please fill in Company Name, Contact Person Name, and Phone Number.");
       return;
     }
 
+    const today = new Date().toISOString().split("T")[0];
+    const cleanCompany = companyName.trim();
+    const cleanContact = contactName.trim();
+    const cleanPhone = phone.trim();
+    const cleanEmail =
+      email.trim() ||
+      `${cleanCompany.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.com`;
+
+    // 1. Create Lead Record (for CRM Pipeline & Calling Queue)
+    const newLead: Lead = {
+      id: `lead-${Date.now()}`,
+      brandName: cleanCompany,
+      contactName: cleanContact,
+      designation: contactRole.trim(),
+      phone: cleanPhone,
+      email: cleanEmail,
+      city: city.trim() || undefined,
+      businessDesc: whatTheyDo.trim() || undefined,
+      followersCount: followersCount.trim() || undefined,
+      whatTheirNeeds: whatTheirNeeds.trim() || undefined,
+      screenshotUrl: screenshotUrl || undefined,
+      services: selectedServices.length > 0 ? selectedServices : ["Full Stack Web Development"],
+      responseStatus:
+        status === "intrested" || status === "intrested need a sample"
+          ? "INTERESTED"
+          : status === "call is busy"
+          ? "NO_ANSWER"
+          : status === "in future"
+          ? "LATER"
+          : status === "Not intrested"
+          ? "NOT_INTERESTED"
+          : "INTERESTED",
+      stage:
+        status === "intrested" || status === "intrested need a sample"
+          ? "INTERESTED"
+          : "NEW",
+      priority:
+        status === "intrested need a sample"
+          ? "HOT"
+          : status === "intrested"
+          ? "WARM"
+          : "COLD",
+      source: "INSTAGRAM",
+      websiteStatus: "NONE",
+      reason: whatTheirNeeds.trim() || whatTheyDo.trim() || "Outreach prospect",
+      callLogs: [],
+      createdAt: today,
+    };
+
+    // 2. Create Client Record (for Client Directory, Invoicing & Proposals)
     const newClient: Client = {
       id: `client-${Date.now()}`,
-      companyName: companyName.trim(),
-      contactName: contactName.trim(),
+      companyName: cleanCompany,
+      contactName: cleanContact,
       designation: contactRole.trim(),
       contactRole: contactRole.trim(),
       whatTheyDo: whatTheyDo.trim() || undefined,
@@ -211,8 +263,8 @@ export default function AddClientModal({
       followersCount: followersCount.trim() || undefined,
       whatTheirNeeds: whatTheirNeeds.trim() || undefined,
       screenshotUrl: screenshotUrl || undefined,
-      email: email.trim(),
-      phone: phone.trim(),
+      email: cleanEmail,
+      phone: cleanPhone,
       city: city.trim(),
       address: address.trim() || undefined,
       gstin: gstin.trim().toUpperCase() || undefined,
@@ -222,10 +274,28 @@ export default function AddClientModal({
       totalPaid: 0,
       outstandingBalance: 0,
       notes: notes.trim() || undefined,
-      createdAt: new Date().toISOString().split("T")[0],
+      leadId: newLead.id,
+      createdAt: today,
     };
 
-    onAddClient(newClient);
+    newLead.convertedClientId = newClient.id;
+
+    // Call provided callbacks
+    if (onAddClient) onAddClient(newClient);
+    if (onAddLead) onAddLead(newLead);
+
+    // Auto-sync storage so the record is immediately in BOTH lists
+    if (typeof window !== "undefined") {
+      if (!onAddLead) {
+        const storedLeads = getStoredLeads();
+        saveStoredLeads([newLead, ...storedLeads]);
+      }
+      if (!onAddClient) {
+        const storedClients = getStoredClients();
+        saveStoredClients([newClient, ...storedClients]);
+      }
+    }
+
     onClose();
   };
 
@@ -285,7 +355,7 @@ export default function AddClientModal({
                   letterSpacing: "-0.01em",
                 }}
               >
-                Add New Client
+                Add Client / Lead
               </h2>
               <span
                 style={{
@@ -313,7 +383,7 @@ export default function AddClientModal({
               </span>
             </div>
             <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#5E5A52" }}>
-              Create a verified client profile with role, outreach status, requirements &amp; profile screenshot.
+              Unified Entry: Automatically saved in both <strong>CRM Pipeline</strong> and <strong>Clients Directory</strong>.
             </p>
           </div>
           <button
@@ -466,7 +536,7 @@ export default function AddClientModal({
                 Lead / Outreach Status
               </label>
               <span style={{ fontSize: "11px", color: "#94A3B8" }}>
-                Current: <strong style={{ color: activeStatusObj.text }}>{activeStatusObj.label}</strong>
+                Selected: <strong style={{ color: activeStatusObj.text }}>{activeStatusObj.label}</strong>
               </span>
             </div>
 
@@ -750,7 +820,7 @@ export default function AddClientModal({
             )}
           </div>
 
-          {/* Row 6: Email & Phone */}
+          {/* Row 6: Phone & Email */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
             <div>
               <label
@@ -763,14 +833,14 @@ export default function AddClientModal({
                   marginBottom: "4px",
                 }}
               >
-                Work Email *
+                Phone Number *
               </label>
               <input
-                type="email"
+                type="text"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="contact@company.com"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+91 98200 11223"
                 style={{
                   width: "100%",
                   padding: "8px 12px",
@@ -794,14 +864,13 @@ export default function AddClientModal({
                   marginBottom: "4px",
                 }}
               >
-                Phone Number *
+                Work Email (Optional)
               </label>
               <input
-                type="text"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 98200 11223"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="contact@company.com"
                 style={{
                   width: "100%",
                   padding: "8px 12px",
@@ -858,7 +927,7 @@ export default function AddClientModal({
                   marginBottom: "4px",
                 }}
               >
-                GSTIN (Tax Invoicing)
+                GSTIN (Tax Invoicing - Optional)
               </label>
               <input
                 type="text"
@@ -890,7 +959,7 @@ export default function AddClientModal({
                 marginBottom: "6px",
               }}
             >
-              Active Services (From 11 Digital Services)
+              Active / Interested Services (From 11 Digital Services)
             </label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
               {ALL_SERVICES.map((srv) => {
@@ -942,7 +1011,7 @@ export default function AddClientModal({
               htmlFor="portalEnabledCheck"
               style={{ fontSize: "13px", fontWeight: 600, color: "#1F1D1A", cursor: "pointer" }}
             >
-              Enable Client Portal Access (Login with client work email via Brevo REST OTP)
+              Enable Client Portal Access (Login with email via Brevo REST OTP)
             </label>
           </div>
 
@@ -958,13 +1027,13 @@ export default function AddClientModal({
                 marginBottom: "4px",
               }}
             >
-              Client Notes / Background
+              Client Notes / Background / Pitch Idea
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Commercial terms, preferred payment cycle, NDA requirements, call summary..."
+              placeholder="Commercial terms, meeting summary, Instagram pitch notes..."
               style={{
                 width: "100%",
                 padding: "8px 12px",
@@ -1007,7 +1076,7 @@ export default function AddClientModal({
             <button
               type="submit"
               style={{
-                padding: "9px 22px",
+                padding: "9px 24px",
                 borderRadius: "8px",
                 background: "#0F5C4D",
                 color: "#FFFFFF",
@@ -1018,7 +1087,7 @@ export default function AddClientModal({
                 boxShadow: "0 2px 6px rgba(15, 92, 77, 0.25)",
               }}
             >
-              Save Client Profile
+              Save Client &amp; Lead
             </button>
           </div>
         </form>

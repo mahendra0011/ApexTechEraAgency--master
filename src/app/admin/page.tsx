@@ -1131,8 +1131,8 @@ export default function SuperAdminPage() {
               }}
             >
               <Plus style={{ width: "12px", height: "12px" }} />
-              <span className="hidden sm:inline">+ Quick Add Lead</span>
-              <span className="sm:hidden">Add Lead</span>
+              <span className="hidden sm:inline">+ Add Client / Lead</span>
+              <span className="sm:hidden">+ Add</span>
             </button>
             <button
               type="button"
@@ -1987,7 +1987,7 @@ export default function SuperAdminPage() {
                     onClick={() => setIsAddLeadOpen(true)}
                     style={{ padding: "6px 14px", borderRadius: "6px", background: "#0F5C4D", color: "#FFFFFF", fontSize: "12px", fontWeight: 700, border: "none", cursor: "pointer" }}
                   >
-                    + Add Lead
+                    + Add Client / Lead / Lead
                   </button>
                 </div>
               </div>
@@ -2339,7 +2339,7 @@ export default function SuperAdminPage() {
                   onClick={() => setIsAddClientOpen(true)}
                   style={{ padding: "6px 14px", borderRadius: "6px", background: "#0F5C4D", color: "#FFFFFF", fontSize: "12px", fontWeight: 700, border: "none", cursor: "pointer" }}
                 >
-                  + Add Client
+                  + Add Client / Lead
                 </button>
               </div>
               <div style={{ overflowX: "auto" }}>
@@ -3314,11 +3314,20 @@ export default function SuperAdminPage() {
         </div>
       )}
 
-      {/* CORE AMS MODALS */}
+      {/* CORE AMS MODALS - UNIFIED ADD CLIENT & LEAD */}
       <AddLeadModal
         isOpen={isAddLeadOpen}
         onClose={() => setIsAddLeadOpen(false)}
-        onAddLead={handleLeadAdded}
+        onAddLead={(newLead) => {
+          handleLeadAdded(newLead);
+          setClients(getStoredClients());
+        }}
+        onAddClient={(newClient) => {
+          const updated = [newClient, ...clients];
+          setClients(updated);
+          saveStoredClients(updated);
+          setLeads(getStoredLeads());
+        }}
       />
 
       {activeDossierLead && (
@@ -3356,6 +3365,11 @@ export default function SuperAdminPage() {
           const updated = [newClient, ...clients];
           setClients(updated);
           saveStoredClients(updated);
+          setLeads(getStoredLeads());
+        }}
+        onAddLead={(newLead) => {
+          handleLeadAdded(newLead);
+          setClients(getStoredClients());
         }}
       />
 
