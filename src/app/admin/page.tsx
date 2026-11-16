@@ -10,6 +10,7 @@ import {
   LeadStage,
   Priority,
   WebsiteStatus,
+  Industry,
   Client,
   Proposal,
   Project,
@@ -64,7 +65,6 @@ import {
   convertProposalToProjectAndInvoice,
 } from "../../lib/ams/storage";
 import QuickCallDossierModal from "../../components/ams/QuickCallDossierModal";
-import AddLeadModal from "../../components/ams/AddLeadModal";
 import InvoiceModal from "../../components/ams/InvoiceModal";
 import AddClientModal, { CLIENT_STATUS_LIST } from "../../components/ams/AddClientModal";
 import AddProjectModal from "../../components/ams/AddProjectModal";
@@ -265,6 +265,51 @@ export default function SuperAdminPage() {
     setDailyReports(getStoredDailyReports());
     setAuditLogs(getStoredAuditLogs());
 
+    // Sync latest leads from MongoDB Atlas
+    fetch("/api/leads")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.leads) && data.leads.length > 0) {
+          const mongoLeads: Lead[] = data.leads.map((m: any) => ({
+            id: m.id || `lead-${Date.now()}`,
+            brandName: m.brandName || "Brand",
+            industry: (m.industry as Industry) || "Other",
+            contactName: m.contactPerson || m.contactName || "Contact Person",
+            designation: m.designation || "Owner / Founder",
+            phone: m.contactNumber || m.phone || "",
+            email: m.email || "",
+            city: m.city,
+            businessDesc: m.businessDescription || m.businessDesc,
+            websiteUrl: m.websiteUrl,
+            websiteStatus: m.websiteStatus || "NONE",
+            followersCount: m.followersCount,
+            whatTheirNeeds: m.whatTheirNeeds,
+            screenshotUrl: m.screenshotUrl,
+            services: m.interestedServices || m.services || ["Full Stack Web Development"],
+            responseStatus: m.responseStatus || "INTERESTED",
+            stage: m.stage || (m.status === "intrested" || m.status === "INTERESTED" ? "INTERESTED" : "NEW"),
+            priority: m.priority || "WARM",
+            budgetMin: m.budgetMin,
+            budgetMax: m.estimatedBudget || m.budgetMax,
+            nextFollowUpAt: m.nextFollowUpDate || m.nextFollowUpAt,
+            source: m.source || "INSTAGRAM",
+            reason: m.initialNotes || m.reason || m.whatTheirNeeds || "",
+            callLogs: m.callLogs || [],
+            createdAt: m.createdAt || new Date().toISOString().split("T")[0],
+          }));
+
+          const local = getStoredLeads();
+          const localIds = new Set(local.map((l) => l.id));
+          const newFromMongo = mongoLeads.filter((m) => !localIds.has(m.id));
+          if (newFromMongo.length > 0) {
+            const merged = [...local, ...newFromMongo];
+            setLeads(merged);
+            saveStoredLeads(merged);
+          }
+        }
+      })
+      .catch((err) => console.warn("[AdminPage] Mongo lead sync notice:", err.message));
+
     // Check auth session
     try {
       const stored = localStorage.getItem("ams_user");
@@ -437,7 +482,7 @@ export default function SuperAdminPage() {
       if (selectedStatus !== "ALL" && lead.responseStatus !== selectedStatus) return false;
 
       // Service Filter
-      if (selectedServiceFilter !== "ALL" && !lead.services.includes(selectedServiceFilter as ServiceCategory)) return false;
+      if (selectedServiceFilter !== "ALL" && !lead.services?.includes(selectedServiceFilter as ServiceCategory)) return false;
 
       // Member Filter
       if (selectedMemberFilter !== "ALL" && lead.assignedToId !== selectedMemberFilter && lead.assignedTo !== selectedMemberFilter) return false;
@@ -445,11 +490,11 @@ export default function SuperAdminPage() {
       // Search Query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const matchesBrand = lead.brandName.toLowerCase().includes(q);
-        const matchesPhone = lead.phone.includes(q);
-        const matchesContact = lead.contactName.toLowerCase().includes(q);
+        const matchesBrand = lead.brandName?.toLowerCase().includes(q);
+        const matchesPhone = lead.phone?.includes(q);
+        const matchesContact = lead.contactName?.toLowerCase().includes(q);
         const matchesReason = lead.reason?.toLowerCase().includes(q);
-        return matchesBrand || matchesPhone || matchesContact || matchesReason;
+        return Boolean(matchesBrand || matchesPhone || matchesContact || matchesReason);
       }
 
       return true;
@@ -1120,7 +1165,7 @@ export default function SuperAdminPage() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "5px",
-                padding: "6px 10px",
+                padding: "6px 12px",
                 borderRadius: "6px",
                 background: "#0F5C4D",
                 color: "#FFFFFF",
@@ -1131,8 +1176,7 @@ export default function SuperAdminPage() {
               }}
             >
               <Plus style={{ width: "12px", height: "12px" }} />
-              <span className="hidden sm:inline">+ Add Client / Lead</span>
-              <span className="sm:hidden">+ Add</span>
+              <span>Add Client / Lead</span>
             </button>
             <button
               type="button"
@@ -1985,9 +2029,22 @@ export default function SuperAdminPage() {
                   <button
                     type="button"
                     onClick={() => setIsAddLeadOpen(true)}
-                    style={{ padding: "6px 14px", borderRadius: "6px", background: "#0F5C4D", color: "#FFFFFF", fontSize: "12px", fontWeight: 700, border: "none", cursor: "pointer" }}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      padding: "6px 14px",
+                      borderRadius: "6px",
+                      background: "#0F5C4D",
+                      color: "#FFFFFF",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      border: "none",
+                      cursor: "pointer",
+                    }}
                   >
-                    + Add Client / Lead / Lead
+                    <Plus style={{ width: "13px", height: "13px" }} />
+                    <span>Add Client / Lead</span>
                   </button>
                 </div>
               </div>
@@ -2058,8 +2115,35 @@ export default function SuperAdminPage() {
                         filteredLeads.map((lead) => (
                         <tr key={lead.id} style={{ borderBottom: "1px solid #E2DED4" }}>
                           <td style={{ padding: "12px 14px" }}>
-                            <div style={{ fontWeight: 800, color: "#1F1D1A" }}>{lead.brandName}</div>
-                            <div style={{ fontSize: "11px", color: "#8C877C" }}>{lead.industry || "Digital Client"}</div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                              {lead.screenshotUrl ? (
+                                <div
+                                  onClick={() => setSelectedPreviewImage(lead.screenshotUrl!)}
+                                  title="Click to view Instagram profile screenshot"
+                                  style={{
+                                    width: "36px",
+                                    height: "36px",
+                                    borderRadius: "6px",
+                                    overflow: "hidden",
+                                    flexShrink: 0,
+                                    cursor: "pointer",
+                                    border: "1px solid #CBD5E1",
+                                    background: "#F1F5F9",
+                                  }}
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={lead.screenshotUrl}
+                                    alt={lead.brandName}
+                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                  />
+                                </div>
+                              ) : null}
+                              <div>
+                                <div style={{ fontWeight: 800, color: "#1F1D1A" }}>{lead.brandName}</div>
+                                <div style={{ fontSize: "11px", color: "#8C877C" }}>{lead.industry || "Digital Client"}</div>
+                              </div>
+                            </div>
                           </td>
                           <td style={{ padding: "12px 12px" }}>
                             <div style={{ fontWeight: 600 }}>{lead.contactName}</div>
@@ -2097,7 +2181,19 @@ export default function SuperAdminPage() {
                           <td style={{ padding: "12px 12px" }}>{getSourceBadge(lead.source)}</td>
                           <td style={{ padding: "12px 12px" }}>
                             {getResponseBadge(lead.responseStatus)}
-                            <div style={{ fontSize: "11px", color: "#8C877C", marginTop: "3px", maxWidth: "200px" }}>{lead.reason}</div>
+                            {lead.followersCount && (
+                              <div style={{ fontSize: "10px", color: "#0F5C4D", fontWeight: 700, marginTop: "2px" }}>
+                                👥 {lead.followersCount}
+                              </div>
+                            )}
+                            {lead.whatTheirNeeds && (
+                              <div style={{ fontSize: "11px", color: "#1E40AF", marginTop: "2px", fontWeight: 600 }}>
+                                🎯 {lead.whatTheirNeeds}
+                              </div>
+                            )}
+                            {lead.reason && !lead.whatTheirNeeds && (
+                              <div style={{ fontSize: "11px", color: "#8C877C", marginTop: "3px", maxWidth: "200px" }}>{lead.reason}</div>
+                            )}
                           </td>
                           <td style={{ padding: "12px 12px", fontSize: "12px" }}>
                             {lead.nextFollowUpAt || "—"}
@@ -2336,10 +2432,23 @@ export default function SuperAdminPage() {
                 <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 800 }}>Clients Directory</h3>
                 <button
                   type="button"
-                  onClick={() => setIsAddClientOpen(true)}
-                  style={{ padding: "6px 14px", borderRadius: "6px", background: "#0F5C4D", color: "#FFFFFF", fontSize: "12px", fontWeight: 700, border: "none", cursor: "pointer" }}
+                  onClick={() => setIsAddLeadOpen(true)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "6px 14px",
+                    borderRadius: "6px",
+                    background: "#0F5C4D",
+                    color: "#FFFFFF",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    border: "none",
+                    cursor: "pointer",
+                  }}
                 >
-                  + Add Client / Lead
+                  <Plus style={{ width: "13px", height: "13px" }} />
+                  <span>Add Client / Lead</span>
                 </button>
               </div>
               <div style={{ overflowX: "auto" }}>
@@ -3314,18 +3423,19 @@ export default function SuperAdminPage() {
         </div>
       )}
 
-      {/* CORE AMS MODALS - UNIFIED ADD CLIENT & LEAD */}
-      <AddLeadModal
-        isOpen={isAddLeadOpen}
-        onClose={() => setIsAddLeadOpen(false)}
-        onAddLead={(newLead) => {
-          handleLeadAdded(newLead);
+      {/* UNIFIED ADD CLIENT & LEAD MODAL */}
+      <AddClientModal
+        isOpen={isAddLeadOpen || isAddClientOpen}
+        onClose={() => {
+          setIsAddLeadOpen(false);
+          setIsAddClientOpen(false);
+        }}
+        onAddLead={() => {
+          setLeads(getStoredLeads());
           setClients(getStoredClients());
         }}
-        onAddClient={(newClient) => {
-          const updated = [newClient, ...clients];
-          setClients(updated);
-          saveStoredClients(updated);
+        onAddClient={() => {
+          setClients(getStoredClients());
           setLeads(getStoredLeads());
         }}
       />
@@ -3357,21 +3467,6 @@ export default function SuperAdminPage() {
           }}
         />
       )}
-
-      <AddClientModal
-        isOpen={isAddClientOpen}
-        onClose={() => setIsAddClientOpen(false)}
-        onAddClient={(newClient) => {
-          const updated = [newClient, ...clients];
-          setClients(updated);
-          saveStoredClients(updated);
-          setLeads(getStoredLeads());
-        }}
-        onAddLead={(newLead) => {
-          handleLeadAdded(newLead);
-          setClients(getStoredClients());
-        }}
-      />
 
       <CreateProposalModal
         isOpen={isCreateProposalOpen}

@@ -255,15 +255,15 @@ export default function AddClientModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!companyName.trim() || !contactName.trim() || !phone.trim()) {
-      alert("Please fill in Company Name, Contact Person Name, and Phone Number.");
+    if (!companyName.trim()) {
+      alert("Please enter Company / Brand Name.");
       return;
     }
 
     const today = new Date().toISOString().split("T")[0];
     const cleanCompany = companyName.trim();
-    const cleanContact = contactName.trim();
-    const cleanPhone = phone.trim();
+    const cleanContact = contactName.trim() || `${cleanCompany} (Founder)`;
+    const cleanPhone = phone.trim() || "Pending / IG DM";
     const cleanEmail =
       email.trim() ||
       `${cleanCompany.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.com`;
@@ -346,21 +346,61 @@ export default function AddClientModal({
 
     newLead.convertedClientId = newClient.id;
 
-    // Call callbacks
-    if (onAddClient) onAddClient(newClient);
-    if (onAddLead) onAddLead(newLead);
-
-    // Auto-sync storage so record is immediately available everywhere
+    // 1. Synchronously persist both to localStorage first
     if (typeof window !== "undefined") {
-      if (!onAddLead) {
+      try {
         const storedLeads = getStoredLeads();
-        saveStoredLeads([newLead, ...storedLeads]);
-      }
-      if (!onAddClient) {
+        saveStoredLeads([newLead, ...storedLeads.filter((l) => l.id !== newLead.id)]);
+
         const storedClients = getStoredClients();
-        saveStoredClients([newClient, ...storedClients]);
+        saveStoredClients([newClient, ...storedClients.filter((c) => c.id !== newClient.id)]);
+      } catch (err) {
+        console.warn("Storage sync warning:", err);
       }
     }
+
+    // 2. Notify parent components
+    if (onAddLead) onAddLead(newLead);
+    if (onAddClient) onAddClient(newClient);
+
+    // 3. Background persist to MongoDB Atlas API
+    try {
+      fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: newLead.id,
+          brandName: newLead.brandName,
+          contactPerson: newLead.contactName,
+          contactNumber: cleanPhone,
+          whatsappNumber: cleanPhone,
+          email: cleanEmail,
+          websiteUrl: websiteUrl || undefined,
+          status: status,
+          interestedServices: selectedServices,
+          estimatedBudget: budgetMax ? parseInt(budgetMax) : undefined,
+          nextFollowUpDate: nextFollowUpAt || undefined,
+          initialNotes: whatTheirNeeds || whatTheyDo || notes || undefined,
+          followersCount: followersCount || undefined,
+          whatTheirNeeds: whatTheirNeeds || undefined,
+          screenshotUrl: screenshotUrl || undefined,
+        }),
+      }).catch((e) => console.warn("[AddClientModal] MongoDB sync notice:", e.message));
+    } catch {}
+
+    setCompanyName("");
+    setContactName("");
+    setPhone("");
+    setEmail("");
+    setWhatTheyDo("");
+    setWebsiteUrl("");
+    setFollowersCount("");
+    setWhatTheirNeeds("");
+    setScreenshotUrl("");
+    setBudgetMin("");
+    setBudgetMax("");
+    setNextFollowUpAt("");
+    setNotes("");
 
     onClose();
   };
