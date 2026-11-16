@@ -324,7 +324,9 @@ export const convertLeadToClient = (lead: Lead): Client => {
       : "Founder",
     whatTheyDo: lead.businessDesc,
     status: "intrested",
-    whatTheirNeeds: lead.reason,
+    whatTheirNeeds: lead.whatTheirNeeds || lead.reason,
+    followersCount: lead.followersCount,
+    screenshotUrl: lead.screenshotUrl,
     email: lead.email || `${lead.brandName.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.com`,
     phone: lead.phone,
     city: lead.city || "India",
@@ -335,7 +337,8 @@ export const convertLeadToClient = (lead: Lead): Client => {
     totalPaid: 0,
     outstandingBalance: 0,
     notes: `Converted from lead on ${new Date().toISOString().split("T")[0]}. Pitch reason: ${lead.reason || "Digital service onboarding"}`,
-    createdAt: new Date().toISOString().split("T")[0],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 
   const updatedClients = [newClient, ...clients];
@@ -345,7 +348,7 @@ export const convertLeadToClient = (lead: Lead): Client => {
   const leads = getStoredLeads();
   const updatedLeads = leads.map((l) =>
     l.id === lead.id
-      ? { ...l, stage: "WON" as const, convertedClientId: newClient.id, responseStatus: "INTERESTED" as const }
+      ? { ...l, stage: "WON" as const, convertedClientId: newClient.id, responseStatus: "INTERESTED" as const, updatedAt: new Date().toISOString() }
       : l
   );
   saveStoredLeads(updatedLeads);
@@ -540,6 +543,7 @@ export const addCallLogRecord = (callLog: CallLog) => {
     if (l.id === callLog.leadId) {
       return {
         ...l,
+        updatedAt: new Date().toISOString(),
         callLogs: [callLog, ...(l.callLogs || [])],
         nextFollowUpAt: callLog.nextFollowUpDate || l.nextFollowUpAt,
       };
@@ -662,6 +666,7 @@ export const reassignLead = (
           assignedToId: toUserId,
           assignedTo: toUserName,
           assignedToName: toUserName,
+          updatedAt: new Date().toISOString(),
         }
       : l
   );
@@ -699,6 +704,7 @@ export const claimUnassignedLead = (
           assignedToId: memberId,
           assignedTo: memberName,
           assignedToName: memberName,
+          updatedAt: new Date().toISOString(),
         }
       : l
   );

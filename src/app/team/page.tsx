@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Lead,
+  Industry,
   LeadSource,
   ResponseStatus,
   LeadStage,
@@ -51,7 +52,7 @@ import {
   addCallLogRecord,
 } from "../../lib/ams/storage";
 import QuickCallDossierModal from "../../components/ams/QuickCallDossierModal";
-import AddLeadModal from "../../components/ams/AddLeadModal";
+import AddClientModal from "../../components/ams/AddClientModal";
 import {
   LayoutDashboard,
   Users,
@@ -85,6 +86,7 @@ import {
   Flame,
   X,
   Home,
+  Image as ImageIcon,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -145,6 +147,7 @@ export default function TeamMemberPage() {
   const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
   const [activeDossierLead, setActiveDossierLead] = useState<Lead | null>(null);
   const [isDossierOpen, setIsDossierOpen] = useState(false);
+  const [selectedPreviewImage, setSelectedPreviewImage] = useState<string | null>(null);
 
   // Pitch template copy feedback
   const [copiedPitchIndex, setCopiedPitchIndex] = useState<number | null>(null);
@@ -156,6 +159,24 @@ export default function TeamMemberPage() {
 
   // Messaging thread state
   const [teamChatInput, setTeamChatInput] = useState("");
+
+  // Helper date formatter
+  const formatDateTime = (dateStr?: string) => {
+    if (!dateStr) return "—";
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const day = String(d.getDate()).padStart(2, "0");
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const month = months[d.getMonth()];
+      const year = d.getFullYear();
+      const hours = String(d.getHours()).padStart(2, "0");
+      const mins = String(d.getMinutes()).padStart(2, "0");
+      return `${day} ${month} ${year}, ${hours}:${mins}`;
+    } catch {
+      return dateStr;
+    }
+  };
 
   useEffect(() => {
     setLeads(getStoredLeads());
@@ -171,12 +192,58 @@ export default function TeamMemberPage() {
     setTargets(getStoredTargets());
     setDailyReports(getStoredDailyReports());
 
+    // Sync latest leads from MongoDB Atlas
+    fetch("/api/leads")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.leads) && data.leads.length > 0) {
+          const mongoLeads: Lead[] = data.leads.map((m: any) => ({
+            id: m.id || `lead-${Date.now()}`,
+            brandName: m.brandName || "Brand",
+            industry: (m.industry as Industry) || "Other",
+            contactName: m.contactPerson || m.contactName || "Contact Person",
+            designation: m.designation || "Owner / Founder",
+            phone: m.contactNumber || m.phone || "",
+            email: m.email || "",
+            city: m.city,
+            businessDesc: m.businessDescription || m.businessDesc,
+            websiteUrl: m.websiteUrl,
+            websiteStatus: m.websiteStatus || "NONE",
+            followersCount: m.followersCount,
+            whatTheirNeeds: m.whatTheirNeeds,
+            screenshotUrl: m.screenshotUrl,
+            services: m.interestedServices || m.services || ["Full Stack Web Development"],
+            responseStatus: m.responseStatus || "INTERESTED",
+            stage: m.stage || (m.status === "intrested" || m.status === "INTERESTED" ? "INTERESTED" : "NEW"),
+            priority: m.priority || "WARM",
+            budgetMin: m.budgetMin,
+            budgetMax: m.estimatedBudget || m.budgetMax,
+            nextFollowUpAt: m.nextFollowUpDate || m.nextFollowUpAt,
+            source: m.source || "INSTAGRAM",
+            reason: m.initialNotes || m.reason || m.whatTheirNeeds || "",
+            callLogs: m.callLogs || [],
+            createdAt: m.createdAt || new Date().toISOString().split("T")[0],
+            updatedAt: m.updatedAt || m.createdAt,
+          }));
+
+          const local = getStoredLeads();
+          const localIds = new Set(local.map((l) => l.id));
+          const newFromMongo = mongoLeads.filter((m) => !localIds.has(m.id));
+          if (newFromMongo.length > 0) {
+            const merged = [...local, ...newFromMongo];
+            setLeads(merged);
+            saveStoredLeads(merged);
+          }
+        }
+      })
+      .catch((err) => console.warn("[Team] Leads fetch fallback:", err));
+
     // Check localStorage user
     try {
       const stored = localStorage.getItem("ams_user");
       if (stored) {
         const u = JSON.parse(stored);
-        if (u?.email && (u.email.includes("nishant") || u.email.includes("kshitij") || u.email.includes("ankit"))) {
+        if (u?.email) {
           setActiveMemberEmail(u.email);
         }
       }
@@ -192,25 +259,38 @@ export default function TeamMemberPage() {
     setDailyReports(getStoredDailyReports());
   };
 
+  const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
+
   // Find active team member object
   const currentMember = useMemo(() => {
-    return team.find((m) => m.email.toLowerCase() === activeMemberEmail.toLowerCase()) || team[1] || {
-      id: "tm-nishant",
-      name: "Nishant Kushwaha",
-      email: "nishantkushwaha145@gmail.com",
+    const found = team.find((m) => m.email.toLowerCase() === activeMemberEmail.toLowerCase());
+    if (found) return found;
+
+    let fallbackName = "Team Member";
+    try {
+      const stored = localStorage.getItem("ams_user");
+      if (stored) {
+        const u = JSON.parse(stored);
+        if (u?.name) fallbackName = u.name;
+        else if (u?.email) fallbackName = u.email.split("@")[0];
+      }
+    } catch {}
+
+    return {
+      id: `tm-${activeMemberEmail.replace(/[^a-zA-Z0-9]/g, "") || "member"}`,
+      name: fallbackName,
+      email: activeMemberEmail,
       role: "MEMBER" as const,
       memberType: "SALES" as const,
       phone: "+91 98234 56781",
-      avatarColor: "bg-blue-600",
+      avatarColor: "bg-teal-600",
       assignedProjectsCount: 0,
-      skills: ["Cold Calling", "Closing"],
+      skills: ["Cold Calling", "Closing", "Outreach"],
       permissions: { canDeleteLead: false, canExport: false, seeAllLeads: false, createInvoice: false, seeClientContact: true, seeLeaderboard: true },
       isActive: true,
-      joinedDate: "2026-03-10",
+      joinedDate: todayStr,
     };
-  }, [team, activeMemberEmail]);
-
-  const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
+  }, [team, activeMemberEmail, todayStr]);
 
   // Scoped Data: Member ONLY sees their assigned data
   const myLeads = useMemo(() => {
@@ -219,11 +299,11 @@ export default function TeamMemberPage() {
   }, [leads, currentMember]);
 
   const myTodayFollowups = useMemo(() => {
-    return myLeads.filter((l) => l.nextFollowUpAt === todayStr && l.stage !== "WON" && l.stage !== "LOST");
+    return myLeads.filter((l) => l.nextFollowUpAt && l.nextFollowUpAt.startsWith(todayStr) && l.stage !== "WON" && l.stage !== "LOST");
   }, [myLeads, todayStr]);
 
   const myOverdueFollowups = useMemo(() => {
-    return myLeads.filter((l) => l.nextFollowUpAt && l.nextFollowUpAt < todayStr && l.stage !== "WON" && l.stage !== "LOST");
+    return myLeads.filter((l) => l.nextFollowUpAt && l.nextFollowUpAt.slice(0, 10) < todayStr && l.stage !== "WON" && l.stage !== "LOST");
   }, [myLeads, todayStr]);
 
   const myCalls = useMemo(() => {
@@ -827,10 +907,10 @@ export default function TeamMemberPage() {
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 700, color: "#5E5A52", marginBottom: "4px" }}>
                       <span>Leads Added</span>
-                      <span>{myLeads.filter((l) => l.createdAt === todayStr).length} / {myTarget.leadsAdded}</span>
+                      <span>{myLeads.filter((l) => l.createdAt && l.createdAt.startsWith(todayStr)).length} / {myTarget.leadsAdded}</span>
                     </div>
                     <div style={{ height: "6px", background: "#E2DED4", borderRadius: "9999px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${Math.min(100, Math.round(((myLeads.filter((l) => l.createdAt === todayStr).length || 0) / (myTarget.leadsAdded || 5)) * 100))}%`, background: "#2563EB" }} />
+                      <div style={{ height: "100%", width: `${Math.min(100, Math.round(((myLeads.filter((l) => l.createdAt && l.createdAt.startsWith(todayStr)).length || 0) / (myTarget.leadsAdded || 5)) * 100))}%`, background: "#2563EB" }} />
                     </div>
                   </div>
 
@@ -1255,12 +1335,12 @@ export default function TeamMemberPage() {
                 <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
                   <thead>
                     <tr style={{ background: "#FBFAF7", borderBottom: "1px solid #E2DED4" }}>
-                      <th style={{ padding: "10px 14px", color: "#8C877C", fontSize: "11px" }}>BRAND</th>
-                      <th style={{ padding: "10px 12px", color: "#8C877C", fontSize: "11px" }}>CONTACT &amp; PHONE</th>
+                      <th style={{ padding: "10px 14px", color: "#8C877C", fontSize: "11px" }}>BRAND &amp; NICHE</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C", fontSize: "11px" }}>CONTACT &amp; ROLE</th>
                       <th style={{ padding: "10px 12px", color: "#8C877C", fontSize: "11px" }}>SOURCE</th>
-                      <th style={{ padding: "10px 12px", color: "#8C877C", fontSize: "11px" }}>PITCH IDEA</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C", fontSize: "11px" }}>PITCH &amp; NEEDS</th>
                       <th style={{ padding: "10px 12px", color: "#8C877C", fontSize: "11px" }}>STATUS</th>
-                      <th style={{ padding: "10px 12px", color: "#8C877C", fontSize: "11px" }}>FOLLOW-UP</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C", fontSize: "11px" }}>TIMESTAMPS &amp; FOLLOW-UP</th>
                       <th style={{ padding: "10px 14px", color: "#8C877C", fontSize: "11px", textAlign: "right" }}>ACTIONS</th>
                     </tr>
                   </thead>
@@ -1276,19 +1356,67 @@ export default function TeamMemberPage() {
                     ) : (
                       myLeads.map((lead) => (
                       <tr key={lead.id} style={{ borderBottom: "1px solid #E2DED4" }}>
-                        <td style={{ padding: "12px 14px", fontWeight: 800 }}>{lead.brandName}</td>
-                        <td style={{ padding: "12px 12px" }}>
-                          <div>{lead.contactName}</div>
-                          <div style={{ fontSize: "11px", color: "#8C877C", fontFamily: "monospace" }}>{lead.phone}</div>
+                        <td style={{ padding: "12px 14px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            {lead.screenshotUrl ? (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedPreviewImage(lead.screenshotUrl!)}
+                                style={{ border: "1px solid #E2DED4", borderRadius: "6px", overflow: "hidden", padding: 0, cursor: "pointer", background: "none", flexShrink: 0 }}
+                                title="Click to view Instagram / Profile Screenshot"
+                              >
+                                <img src={lead.screenshotUrl} alt={lead.brandName} style={{ width: "36px", height: "36px", objectFit: "cover", display: "block" }} />
+                              </button>
+                            ) : null}
+                            <div>
+                              <div style={{ fontWeight: 800, color: "#1F1D1A" }}>{lead.brandName}</div>
+                              <span style={{ fontSize: "10px", padding: "1px 6px", borderRadius: "4px", background: "#F1F5F9", color: "#475569", fontWeight: 700 }}>
+                                {lead.industry || "General"}
+                              </span>
+                            </div>
+                          </div>
                         </td>
-                        <td style={{ padding: "12px 12px" }}>{lead.source}</td>
-                        <td style={{ padding: "12px 12px", fontSize: "12px", color: "#5E5A52", maxWidth: "220px" }}>{lead.reason}</td>
+                        <td style={{ padding: "12px 12px" }}>
+                          <div style={{ fontWeight: 700 }}>{lead.contactName}</div>
+                          {lead.designation && (
+                            <span style={{ fontSize: "10px", padding: "1px 6px", borderRadius: "4px", background: "#EFF6FF", color: "#1D4ED8", fontWeight: 700 }}>
+                              {lead.designation}
+                            </span>
+                          )}
+                          <div style={{ fontSize: "11px", color: "#8C877C", fontFamily: "monospace", marginTop: "2px" }}>{lead.phone || "—"}</div>
+                        </td>
+                        <td style={{ padding: "12px 12px" }}>
+                          <span style={{ fontSize: "11px", fontWeight: 700, color: "#475569" }}>{lead.source}</span>
+                        </td>
+                        <td style={{ padding: "12px 12px", fontSize: "12px", color: "#5E5A52", maxWidth: "220px" }}>
+                          {lead.whatTheirNeeds && (
+                            <div style={{ fontWeight: 600, color: "#0F172A", marginBottom: "2px" }}>
+                              Needs: {lead.whatTheirNeeds}
+                            </div>
+                          )}
+                          <div>{lead.reason || "—"}</div>
+                          {lead.followersCount && (
+                            <div style={{ fontSize: "10px", color: "#64748B", marginTop: "2px" }}>
+                              Audience: {lead.followersCount}
+                            </div>
+                          )}
+                        </td>
                         <td style={{ padding: "12px 12px" }}>
                           <span style={{ fontSize: "11px", padding: "2px 7px", borderRadius: "4px", background: "#E3EFEB", color: "#0F5C4D", fontWeight: 700 }}>
                             {lead.responseStatus}
                           </span>
                         </td>
-                        <td style={{ padding: "12px 12px" }}>{lead.nextFollowUpAt || "—"}</td>
+                        <td style={{ padding: "12px 12px" }}>
+                          <div style={{ fontSize: "11px", color: "#64748B" }}>
+                            Added: {formatDateTime(lead.createdAt)}
+                          </div>
+                          <div style={{ fontSize: "10px", color: "#0F5C4D", fontWeight: 600, marginTop: "1px" }}>
+                            Mod: {formatDateTime(lead.updatedAt || lead.createdAt)}
+                          </div>
+                          <div style={{ fontSize: "11px", fontWeight: 700, marginTop: "2px", color: lead.nextFollowUpAt && lead.nextFollowUpAt.slice(0, 10) < todayStr ? "#DC2626" : "#1F1D1A" }}>
+                            {lead.nextFollowUpAt ? `Due: ${lead.nextFollowUpAt}` : "No follow-up set"}
+                          </div>
+                        </td>
                         <td style={{ padding: "12px 14px", textAlign: "right" }}>
                           <button
                             type="button"
@@ -1324,7 +1452,71 @@ export default function TeamMemberPage() {
                       {myTasks.filter((t) => t.status === status).map((task) => (
                         <div key={task.id} style={{ background: "#FFFFFF", border: "1px solid #E2DED4", borderRadius: "6px", padding: "10px" }}>
                           <div style={{ fontSize: "13px", fontWeight: 700, color: "#1F1D1A" }}>{task.title}</div>
-                          <div style={{ fontSize: "11px", color: "#8C877C", marginTop: "2px" }}>Due: {task.dueDate}</div>
+                          {task.description && (
+                            <div style={{ fontSize: "11px", color: "#5E5A52", marginTop: "3px" }}>{task.description}</div>
+                          )}
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px", fontSize: "11px", color: "#8C877C" }}>
+                            <span>Due: {task.dueDate || "No deadline"}</span>
+                            <span style={{ fontWeight: 700, color: task.priority === "HOT" ? "#DC2626" : "#475569" }}>{task.priority || "WARM"}</span>
+                          </div>
+                          <div style={{ marginTop: "8px", display: "flex", gap: "6px", justifyContent: "flex-end" }}>
+                            {status === "TODO" && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const all = getStoredTasks();
+                                  const updated = all.map((tk) => tk.id === task.id ? { ...tk, status: "IN_PROGRESS" as const } : tk);
+                                  setTasks(updated);
+                                  saveStoredTasks(updated);
+                                }}
+                                style={{ padding: "3px 8px", borderRadius: "4px", background: "#0F5C4D", color: "#FFFFFF", fontSize: "10px", fontWeight: 700, border: "none", cursor: "pointer" }}
+                              >
+                                Start ⚡
+                              </button>
+                            )}
+                            {status === "IN_PROGRESS" && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const all = getStoredTasks();
+                                    const updated = all.map((tk) => tk.id === task.id ? { ...tk, status: "REVIEW" as const } : tk);
+                                    setTasks(updated);
+                                    saveStoredTasks(updated);
+                                  }}
+                                  style={{ padding: "3px 8px", borderRadius: "4px", background: "#EFF6FF", color: "#1D4ED8", border: "1px solid #BFDBFE", fontSize: "10px", fontWeight: 700, cursor: "pointer" }}
+                                >
+                                  Submit Review 🔍
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const all = getStoredTasks();
+                                    const updated = all.map((tk) => tk.id === task.id ? { ...tk, status: "DONE" as const } : tk);
+                                    setTasks(updated);
+                                    saveStoredTasks(updated);
+                                  }}
+                                  style={{ padding: "3px 8px", borderRadius: "4px", background: "#E6F2EA", color: "#2F7D4F", border: "1px solid #A7F3D0", fontSize: "10px", fontWeight: 700, cursor: "pointer" }}
+                                >
+                                  Mark Done ✓
+                                </button>
+                              </>
+                            )}
+                            {status === "REVIEW" && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const all = getStoredTasks();
+                                  const updated = all.map((tk) => tk.id === task.id ? { ...tk, status: "DONE" as const } : tk);
+                                  setTasks(updated);
+                                  saveStoredTasks(updated);
+                                }}
+                                style={{ padding: "3px 8px", borderRadius: "4px", background: "#E6F2EA", color: "#2F7D4F", border: "1px solid #A7F3D0", fontSize: "10px", fontWeight: 700, cursor: "pointer" }}
+                              >
+                                Approve Done ✓
+                              </button>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -1744,14 +1936,29 @@ export default function TeamMemberPage() {
         </div>
       )}
 
-      {/* QUICK ADD LEAD MODAL */}
-      <AddLeadModal
+      {/* UNIFIED ADD CLIENT / LEAD MODAL */}
+      <AddClientModal
         isOpen={isAddLeadOpen}
         onClose={() => setIsAddLeadOpen(false)}
         onAddLead={(newLead) => {
-          const updated = [{ ...newLead, assignedToId: currentMember.id, assignedTo: currentMember.name, assignedToName: currentMember.name }, ...leads];
+          const assignedLead: Lead = {
+            ...newLead,
+            assignedToId: currentMember.id,
+            assignedTo: currentMember.name,
+            assignedToName: currentMember.name,
+          };
+          const allLeads = getStoredLeads();
+          const updated = allLeads.map((l) => (l.id === newLead.id ? assignedLead : l));
+          if (!updated.some((l) => l.id === assignedLead.id)) {
+            updated.unshift(assignedLead);
+          }
           setLeads(updated);
           saveStoredLeads(updated);
+          setClients(getStoredClients());
+        }}
+        onAddClient={() => {
+          setClients(getStoredClients());
+          setLeads(getStoredLeads());
         }}
       />
 
@@ -1770,6 +1977,96 @@ export default function TeamMemberPage() {
             saveStoredLeads(updated);
           }}
         />
+      )}
+
+      {/* Lightbox Modal for Profile / Instagram Screenshot Preview */}
+      {selectedPreviewImage && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15, 23, 42, 0.8)",
+            backdropFilter: "blur(4px)",
+            zIndex: 10000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+          onClick={() => setSelectedPreviewImage(null)}
+        >
+          <div
+            style={{
+              position: "relative",
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              background: "#FFFFFF",
+              borderRadius: "14px",
+              overflow: "hidden",
+              padding: "16px",
+              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                borderBottom: "1px solid #E2E8F0",
+                paddingBottom: "8px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "14px", fontWeight: 800, color: "#0F172A" }}>
+                  Instagram / Profile Screenshot Preview
+                </span>
+                <a
+                  href={selectedPreviewImage}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ fontSize: "11px", color: "#0F5C4D", fontWeight: 600, textDecoration: "underline" }}
+                >
+                  Open Full Resolution &rarr;
+                </a>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedPreviewImage(null)}
+                style={{
+                  background: "#F1F5F9",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: "28px",
+                  height: "28px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  color: "#64748B",
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div style={{ overflow: "auto", display: "flex", justifyContent: "center", alignItems: "center", maxHeight: "calc(90vh - 80px)" }}>
+              <img
+                src={selectedPreviewImage}
+                alt="Instagram Screenshot Preview"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  borderRadius: "8px",
+                  objectFit: "contain",
+                  boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

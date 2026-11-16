@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   Project,
@@ -11,6 +11,7 @@ import {
   Message,
   SupportTicket,
   ServiceCategory,
+  Client,
 } from "../../lib/ams/types";
 import {
   getStoredProjects,
@@ -27,6 +28,7 @@ import {
   saveStoredMessages,
   getStoredSupportTickets,
   saveStoredSupportTickets,
+  getStoredClients,
 } from "../../lib/ams/storage";
 import InvoiceModal from "../../components/ams/InvoiceModal";
 import OtpLoginModal from "../../components/ams/OtpLoginModal";
@@ -82,6 +84,7 @@ export type PortalTab =
 
 export default function ClientPortalPage() {
   const [activeTab, setActiveTab] = useState<PortalTab>("OVERVIEW");
+  const [clients, setClients] = useState<Client[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -93,7 +96,7 @@ export default function ClientPortalPage() {
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const [currentUser, setCurrentUser] = useState<{ email: string; role: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ email: string; role: string; name?: string } | null>(null);
   const [isOtpLoginOpen, setIsOtpLoginOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -125,6 +128,7 @@ export default function ClientPortalPage() {
     }
 
     // 1. Initial local load
+    setClients(getStoredClients());
     setProjects(getStoredProjects());
     setInvoices(getStoredInvoices());
     setPayments(getStoredPayments());
@@ -156,32 +160,107 @@ export default function ClientPortalPage() {
       .catch((err) => console.warn("[Portal] API fallback:", err));
   }, []);
 
+  // Find matching client record from directory
+  const matchingClient = useMemo(() => {
+    if (!currentUser?.email) return null;
+    return clients.find((c) => c.email.toLowerCase() === currentUser.email.toLowerCase()) || null;
+  }, [clients, currentUser]);
+
   const project = projects[activeProjectIndex] || null;
 
+  const effectiveClientName = useMemo(() => {
+    if (project?.clientName) return project.clientName;
+    if (matchingClient?.companyName) return matchingClient.companyName;
+    if (currentUser?.email) return currentUser.email.split("@")[0].toUpperCase();
+    return "Apex Enterprise Client";
+  }, [project, matchingClient, currentUser]);
+
   // Filter datasets strictly scoped to current client account
-  const clientInvoices = project
-    ? invoices.filter((i) => i.clientName.toLowerCase() === project.clientName.toLowerCase())
-    : invoices;
+  const clientInvoices = useMemo(() => {
+    if (project) {
+      return invoices.filter((i) => i.clientName.toLowerCase() === project.clientName.toLowerCase());
+    }
+    if (matchingClient) {
+      return invoices.filter(
+        (i) =>
+          i.clientName.toLowerCase() === matchingClient.companyName.toLowerCase() ||
+          (i.clientEmail && i.clientEmail.toLowerCase() === matchingClient.email.toLowerCase())
+      );
+    }
+    if (currentUser?.email) {
+      return invoices.filter((i) => i.clientEmail && i.clientEmail.toLowerCase() === currentUser.email.toLowerCase());
+    }
+    return invoices;
+  }, [invoices, project, matchingClient, currentUser]);
 
-  const clientPayments = project
-    ? payments.filter((p) => p.clientName.toLowerCase() === project.clientName.toLowerCase())
-    : payments;
+  const clientPayments = useMemo(() => {
+    if (project) {
+      return payments.filter((p) => p.clientName.toLowerCase() === project.clientName.toLowerCase());
+    }
+    if (matchingClient) {
+      return payments.filter(
+        (p) => p.clientName.toLowerCase() === matchingClient.companyName.toLowerCase()
+      );
+    }
+    return payments;
+  }, [payments, project, matchingClient]);
 
-  const clientProposals = project
-    ? proposals.filter((p) => p.clientName.toLowerCase() === project.clientName.toLowerCase())
-    : proposals;
+  const clientProposals = useMemo(() => {
+    if (project) {
+      return proposals.filter((p) => p.clientName.toLowerCase() === project.clientName.toLowerCase());
+    }
+    if (matchingClient) {
+      return proposals.filter(
+        (p) =>
+          p.clientName.toLowerCase() === matchingClient.companyName.toLowerCase() ||
+          (p.clientEmail && p.clientEmail.toLowerCase() === matchingClient.email.toLowerCase())
+      );
+    }
+    if (currentUser?.email) {
+      return proposals.filter((p) => p.clientEmail && p.clientEmail.toLowerCase() === currentUser.email.toLowerCase());
+    }
+    return proposals;
+  }, [proposals, project, matchingClient, currentUser]);
 
-  const clientFiles = project
-    ? files.filter((f) => f.clientName.toLowerCase() === project.clientName.toLowerCase() && f.isClientVisible)
-    : files.filter((f) => f.isClientVisible);
+  const clientFiles = useMemo(() => {
+    if (project) {
+      return files.filter((f) => f.clientName.toLowerCase() === project.clientName.toLowerCase() && f.isClientVisible);
+    }
+    if (matchingClient) {
+      return files.filter(
+        (f) => f.clientName.toLowerCase() === matchingClient.companyName.toLowerCase() && f.isClientVisible
+      );
+    }
+    return files.filter((f) => f.isClientVisible);
+  }, [files, project, matchingClient]);
 
-  const clientMessages = project
-    ? messages.filter((m) => m.projectId === project.id || m.clientName?.toLowerCase() === project.clientName.toLowerCase())
-    : messages;
+  const clientMessages = useMemo(() => {
+    if (project) {
+      return messages.filter((m) => m.projectId === project.id || m.clientName?.toLowerCase() === project.clientName.toLowerCase());
+    }
+    if (matchingClient) {
+      return messages.filter(
+        (m) =>
+          m.clientName?.toLowerCase() === matchingClient.companyName.toLowerCase() ||
+          (m.senderEmail && m.senderEmail.toLowerCase() === matchingClient.email.toLowerCase())
+      );
+    }
+    return messages;
+  }, [messages, project, matchingClient]);
 
-  const clientTickets = project
-    ? supportTickets.filter((t) => t.clientName.toLowerCase() === project.clientName.toLowerCase())
-    : supportTickets;
+  const clientTickets = useMemo(() => {
+    if (project) {
+      return supportTickets.filter((t) => t.clientName.toLowerCase() === project.clientName.toLowerCase());
+    }
+    if (matchingClient) {
+      return supportTickets.filter(
+        (t) =>
+          t.clientName.toLowerCase() === matchingClient.companyName.toLowerCase() ||
+          (t.clientEmail && t.clientEmail.toLowerCase() === matchingClient.email.toLowerCase())
+      );
+    }
+    return supportTickets;
+  }, [supportTickets, project, matchingClient]);
 
   // Actions
   const handleApproveMilestone = (milestoneId: string) => {
@@ -277,24 +356,68 @@ export default function ClientPortalPage() {
   const handleRequestProposalChanges = (proposalId: string) => {
     const note = prompt("Please describe requested commercial or scope adjustments:");
     if (!note) return;
-    alert("✓ Scope adjustment request forwarded to ApexTechEra sales lead.");
+
+    const targetProposal = proposals.find((p) => p.id === proposalId);
+    const clientName = targetProposal?.clientName || project?.clientName || matchingClient?.companyName || effectiveClientName;
+    const clientEmail = targetProposal?.clientEmail || project?.clientEmail || matchingClient?.email || currentUser?.email || "";
+
+    const todayStr = new Date().toISOString().split("T")[0];
+
+    // Create an official Commercial support ticket
+    const newTicket: SupportTicket = {
+      id: `TKT-${Date.now().toString().slice(-4)}`,
+      clientName: clientName,
+      clientEmail: clientEmail,
+      projectTitle: targetProposal?.title || "Proposal Revision Request",
+      subject: `Commercial Adjustment Request: Proposal ${targetProposal?.number || ""}`,
+      description: note,
+      category: "BILLING",
+      priority: "HIGH",
+      status: "OPEN",
+      createdAt: todayStr,
+    };
+    const updatedTickets = [newTicket, ...supportTickets];
+    setSupportTickets(updatedTickets);
+    saveStoredSupportTickets(updatedTickets);
+
+    // Also dispatch into official messaging thread
+    const newMsg: Message = {
+      id: `msg-${Date.now()}`,
+      projectId: targetProposal?.id || project?.id || "commercial",
+      projectTitle: targetProposal?.title || project?.title || "Proposal Revision",
+      clientName: clientName,
+      senderName: `${clientName} (Client)`,
+      senderRole: "CLIENT",
+      senderEmail: clientEmail,
+      content: `[Scope/Budget Revision Requested for Proposal ${targetProposal?.number || ""}]: ${note}`,
+      sentAt: new Date().toISOString().replace("T", " ").substring(0, 16),
+      read: false,
+    };
+    const updatedMsgs = [...messages, newMsg];
+    setMessages(updatedMsgs);
+    saveStoredMessages(updatedMsgs);
+
+    alert("✓ Scope adjustment request registered! ApexTechEra sales lead has been notified.");
   };
 
   const handleSendClientMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientMessageText.trim() || !project) return;
+    if (!clientMessageText.trim()) return;
+
+    const senderClientName = project?.clientName || matchingClient?.companyName || effectiveClientName;
+    const senderClientEmail = project?.clientEmail || matchingClient?.email || currentUser?.email || "";
 
     const newMsg: Message = {
       id: `msg-${Date.now()}`,
-      projectId: project.id,
-      projectTitle: project.title,
-      clientName: project.clientName,
-      senderName: `${project.clientName} (Client)`,
+      projectId: project?.id || "general-stream",
+      projectTitle: project?.title || "Direct Client Communications",
+      clientName: senderClientName,
+      senderName: `${senderClientName} (Client)`,
       senderRole: "CLIENT",
-      senderEmail: project.clientEmail,
+      senderEmail: senderClientEmail,
       content: clientMessageText.trim(),
       sentAt: new Date().toISOString().replace("T", " ").substring(0, 16),
-      read: true,
+      read: false,
     };
 
     const updated = [...messages, newMsg];
@@ -305,17 +428,20 @@ export default function ClientPortalPage() {
 
   const handleCreateSupportTicket = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!ticketSubject.trim() || !ticketDesc.trim() || !project) {
+    if (!ticketSubject.trim() || !ticketDesc.trim()) {
       alert("Please enter subject and description for your request.");
       return;
     }
 
+    const ticketClientName = project?.clientName || matchingClient?.companyName || effectiveClientName;
+    const ticketClientEmail = project?.clientEmail || matchingClient?.email || currentUser?.email || "";
+
     const todayStr = new Date().toISOString().split("T")[0];
     const newTicket: SupportTicket = {
       id: `TKT-2026-${String(Math.floor(100 + Math.random() * 900))}`,
-      clientName: project.clientName,
-      clientEmail: project.clientEmail,
-      projectTitle: project.title,
+      clientName: ticketClientName,
+      clientEmail: ticketClientEmail,
+      projectTitle: project?.title || "General Client Request",
       subject: ticketSubject.trim(),
       description: ticketDesc.trim(),
       priority: ticketPriority,
@@ -334,17 +460,18 @@ export default function ClientPortalPage() {
 
   const handleUploadClientAsset = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newFileName.trim() || !project) return;
+    if (!newFileName.trim()) return;
 
+    const uploadClientName = project?.clientName || matchingClient?.companyName || effectiveClientName;
     const todayStr = new Date().toISOString().split("T")[0];
     const newFile: FileItem = {
       id: `file-${Date.now()}`,
       name: newFileName.trim(),
       size: "4.5 MB",
       category: newFileCategory,
-      clientName: project.clientName,
-      projectTitle: project.title,
-      uploadedBy: `${project.clientName} (Client Upload)`,
+      clientName: uploadClientName,
+      projectTitle: project?.title || "Client Assets",
+      uploadedBy: `${uploadClientName} (Client Upload)`,
       uploadedAt: todayStr,
       url: newFileUrl.trim(),
       isClientVisible: true,
@@ -1531,9 +1658,16 @@ export default function ClientPortalPage() {
               <div style={{ background: "#FFFFFF", border: "1px solid #E2DED4", borderRadius: "14px", padding: "22px 24px" }}>
                 <h3 style={{ margin: "0 0 12px", fontSize: "16px", fontWeight: 800, color: "#0F172A" }}>Client Business Information</h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "13px" }}>
-                  <div><strong>Company Name:</strong> {project?.clientName || (currentUser?.email ? currentUser.email.split("@")[0].toUpperCase() : "Apex Client Account")}</div>
-                  <div><strong>Work Email:</strong> {project?.clientEmail || currentUser?.email || "Not specified"}</div>
-                  <div><strong>GSTIN:</strong> {(project as any)?.clientGstin || "Registered on Agreement"}</div>
+                  <div><strong>Company Name:</strong> {matchingClient?.companyName || project?.clientName || (currentUser?.email ? currentUser.email.split("@")[0].toUpperCase() : "Apex Client Account")}</div>
+                  <div><strong>Primary Contact:</strong> {matchingClient?.contactName || "Authorized Representative"} {matchingClient?.contactRole || matchingClient?.designation ? `(${matchingClient.contactRole || matchingClient.designation})` : ""}</div>
+                  <div><strong>Work Email:</strong> {matchingClient?.email || project?.clientEmail || currentUser?.email || "Not specified"}</div>
+                  <div><strong>Phone:</strong> {matchingClient?.phone || "Not specified"}</div>
+                  <div><strong>GSTIN:</strong> {matchingClient?.gstin || (project as any)?.clientGstin || "Registered on Agreement"}</div>
+                  <div><strong>City / Region:</strong> {matchingClient?.city || "India"}</div>
+                  {matchingClient?.whatTheyDo && <div><strong>Business Description:</strong> {matchingClient.whatTheyDo}</div>}
+                  {matchingClient?.services && matchingClient.services.length > 0 && (
+                    <div><strong>Active Services:</strong> {matchingClient.services.join(", ")}</div>
+                  )}
                   <div><strong>Billing Currency:</strong> {project?.currency || "INR (₹)"}</div>
                   <div><strong>Portal Status:</strong> <span style={{ color: "#059669", fontWeight: 700 }}>✓ Verified Enterprise Access</span></div>
                 </div>

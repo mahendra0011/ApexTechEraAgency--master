@@ -258,13 +258,27 @@ export default function SuperAdminPage() {
     setInvoices(getStoredInvoices());
     setPayments(getStoredPayments());
     setServices(getStoredServices());
-    setTeam(getStoredTeam());
+    const storedTeam = getStoredTeam();
+    const storedTargets = getStoredTargets();
+    setTeam(storedTeam);
     setMessages(getStoredMessages());
     setFiles(getStoredFiles());
     setCallLogs(getStoredCallLogs());
-    setTargets(getStoredTargets());
+    setTargets(storedTargets);
     setDailyReports(getStoredDailyReports());
     setAuditLogs(getStoredAuditLogs());
+
+    if (storedTeam.length > 0) {
+      setEditingTargetMemberId(storedTeam[0].id);
+      const existing = storedTargets.find((t) => t.userId === storedTeam[0].id);
+      if (existing) {
+        setTargetCalls(existing.calls || 50);
+        setTargetLeads(existing.leadsAdded || 5);
+        setTargetMeetings(existing.meetings || 2);
+        setTargetWon(existing.wonDeals || 1);
+        setTargetRevenue(existing.revenue || 0);
+      }
+    }
 
     // Sync latest leads from MongoDB Atlas
     fetch("/api/leads")
@@ -356,11 +370,11 @@ export default function SuperAdminPage() {
 
   // Today's & Overdue followups
   const todayFollowups = useMemo(() => {
-    return leads.filter((l) => l.nextFollowUpAt === todayStr && l.stage !== "WON" && l.stage !== "LOST");
+    return leads.filter((l) => l.nextFollowUpAt && l.nextFollowUpAt.startsWith(todayStr) && l.stage !== "WON" && l.stage !== "LOST");
   }, [leads, todayStr]);
 
   const overdueFollowups = useMemo(() => {
-    return leads.filter((l) => l.nextFollowUpAt && l.nextFollowUpAt < todayStr && l.stage !== "WON" && l.stage !== "LOST");
+    return leads.filter((l) => l.nextFollowUpAt && l.nextFollowUpAt.slice(0, 10) < todayStr && l.stage !== "WON" && l.stage !== "LOST");
   }, [leads, todayStr]);
 
   const unassignedLeads = useMemo(() => {
@@ -401,7 +415,7 @@ export default function SuperAdminPage() {
     const talkHours = Math.floor(totalDurationSec / 3600);
     const talkMinutes = Math.floor((totalDurationSec % 3600) / 60);
 
-    const todayLeadsAdded = leads.filter((l) => l.createdAt === todayStr);
+    const todayLeadsAdded = leads.filter((l) => l.createdAt && l.createdAt.startsWith(todayStr));
     const interestedLeads = leads.filter((l) => l.responseStatus === "INTERESTED");
     const meetingsBooked = leads.filter((l) => l.stage === "MEETING");
     const proposalsSent = proposals.filter((p) => p.status === "SENT");
@@ -446,7 +460,7 @@ export default function SuperAdminPage() {
       const targetPercent = memberCalls.length > 0 ? Math.min(100, Math.round((memberCalls.length / targetCallsCount) * 100)) : 0;
 
       const memberFollowups = leads.filter((l) => (l.assignedToId === member.id || l.assignedTo === member.name) && l.nextFollowUpAt);
-      const overdueCount = memberFollowups.filter((l) => l.nextFollowUpAt && l.nextFollowUpAt < todayStr).length;
+      const overdueCount = memberFollowups.filter((l) => l.nextFollowUpAt && l.nextFollowUpAt.slice(0, 10) < todayStr).length;
 
       return {
         member,
@@ -470,8 +484,8 @@ export default function SuperAdminPage() {
     return leads.filter((lead) => {
       // Tab filter
       if (leadFilterTab === "UNASSIGNED" && (lead.assignedToId || lead.assignedTo)) return false;
-      if (leadFilterTab === "TODAY" && lead.nextFollowUpAt !== todayStr) return false;
-      if (leadFilterTab === "OVERDUE" && (!lead.nextFollowUpAt || lead.nextFollowUpAt >= todayStr)) return false;
+      if (leadFilterTab === "TODAY" && (!lead.nextFollowUpAt || !lead.nextFollowUpAt.startsWith(todayStr))) return false;
+      if (leadFilterTab === "OVERDUE" && (!lead.nextFollowUpAt || lead.nextFollowUpAt.slice(0, 10) >= todayStr)) return false;
       if (leadFilterTab === "HOT" && lead.priority !== "HOT") return false;
       if (leadFilterTab === "WON" && lead.stage !== "WON") return false;
       if (leadFilterTab === "LOST" && lead.stage !== "LOST") return false;
@@ -630,16 +644,40 @@ export default function SuperAdminPage() {
     alert("✓ Call quality rating & feedback saved!");
   };
 
+  // Target Member Switch
+  const handleSelectTargetMember = (memberId: string) => {
+    setEditingTargetMemberId(memberId);
+    const existing = targets.find((t) => t.userId === memberId);
+    if (existing) {
+      setTargetCalls(existing.calls || 50);
+      setTargetLeads(existing.leadsAdded || 5);
+      setTargetMeetings(existing.meetings || 2);
+      setTargetWon(existing.wonDeals || 1);
+      setTargetRevenue(existing.revenue || 0);
+    } else {
+      setTargetCalls(50);
+      setTargetLeads(5);
+      setTargetMeetings(2);
+      setTargetWon(1);
+      setTargetRevenue(0);
+    }
+  };
+
   // Save Target Settings
   const handleSaveTarget = (e: React.FormEvent) => {
     e.preventDefault();
     const currentTargets = getStoredTargets();
-    const member = team.find((m) => m.id === editingTargetMemberId);
+    const targetMemberId = editingTargetMemberId || team[0]?.id || "";
+    const member = team.find((m) => m.id === targetMemberId);
+    if (!member) {
+      alert("Please select a team member first.");
+      return;
+    }
     const newTarget: Target = {
       id: `tgt-${Date.now()}`,
-      userId: editingTargetMemberId,
-      userName: member?.name,
-      userEmail: member?.email,
+      userId: targetMemberId,
+      userName: member.name,
+      userEmail: member.email,
       period: "DAILY",
       calls: targetCalls,
       leadsAdded: targetLeads,
@@ -648,10 +686,10 @@ export default function SuperAdminPage() {
       revenue: targetRevenue,
       validFrom: todayStr,
     };
-    const updated = [newTarget, ...currentTargets.filter((t) => t.userId !== editingTargetMemberId)];
+    const updated = [newTarget, ...currentTargets.filter((t) => t.userId !== targetMemberId)];
     saveStoredTargets(updated);
     setTargets(updated);
-    alert(`✓ Daily targets updated for ${member?.name}!`);
+    alert(`✓ Daily targets updated for ${member.name}!`);
   };
 
   // Save Member Permission Changes
@@ -2322,8 +2360,8 @@ export default function SuperAdminPage() {
                 <div>
                   <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "4px" }}>Select Team Member</label>
                   <select
-                    value={editingTargetMemberId}
-                    onChange={(e) => setEditingTargetMemberId(e.target.value)}
+                    value={editingTargetMemberId || (team.length > 0 ? team[0].id : "")}
+                    onChange={(e) => handleSelectTargetMember(e.target.value)}
                     style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #E2DED4", fontSize: "13px" }}
                   >
                     {team.map((m) => (

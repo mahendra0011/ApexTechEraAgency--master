@@ -207,10 +207,18 @@ export default function LoginPage() {
         let finalRole: AuthRole = role;
         let route = "/portal";
 
+        let isTeamMember = false;
+        try {
+          const storedTeam = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("ams_team") || "[]") : [];
+          isTeamMember = Array.isArray(storedTeam) && storedTeam.some((m: any) => m.email?.toLowerCase() === targetEmail);
+        } catch {}
+
         if (targetEmail === "mahendrapra0077@gmail.com" || targetEmail.includes("admin")) {
           finalRole = "SUPER_ADMIN";
           route = "/admin";
         } else if (
+          role === "MEMBER" ||
+          isTeamMember ||
           targetEmail === "nishantkushwaha145@gmail.com" ||
           targetEmail === "kshitijbhunjwa@gmail.com" ||
           targetEmail === "ankitkumawat43657@gmail.com" ||
