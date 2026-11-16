@@ -123,6 +123,7 @@ import {
   AlertCircle,
   UserPlus,
   RefreshCw,
+  X,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -745,8 +746,18 @@ export default function SuperAdminPage() {
         color: "#1F1D1A",
         fontFamily: "'DM Sans', 'Plus Jakarta Sans', system-ui, sans-serif",
         boxSizing: "border-box",
+        position: "relative",
       }}
+      className="overflow-x-hidden"
     >
+      {/* Mobile & iPad Sidebar Backdrop */}
+      {isMobileSidebarOpen && (
+        <div
+          onClick={() => setIsMobileSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden"
+        />
+      )}
+
       {/* Hidden File Input for CSV Import */}
       <input
         type="file"
@@ -801,23 +812,19 @@ export default function SuperAdminPage() {
       {/* 1. SUPER ADMIN SIDEBAR */}
       <aside
         style={{
-          width: "250px",
-          minWidth: "250px",
+          width: "260px",
+          minWidth: "260px",
           flexShrink: 0,
           background: "#FBFAF7",
           borderRight: "1px solid #E2DED4",
           display: "flex",
           flexDirection: "column",
-          height: "100vh",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
           boxSizing: "border-box",
           overflowY: "auto",
         }}
-        className={`transition-transform duration-200 ease-in-out ${
-          isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } fixed lg:sticky`}
+        className={`fixed inset-y-0 left-0 z-50 h-full max-h-screen transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:translate-x-0 ${
+          isMobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        }`}
       >
         {/* Brand Strip */}
         <div
@@ -856,9 +863,20 @@ export default function SuperAdminPage() {
               </div>
             </div>
           </div>
-          <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "9999px", background: "#FEF2F2", color: "#B91C1C", fontWeight: 800 }}>
-            Founder
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "9999px", background: "#FEF2F2", color: "#B91C1C", fontWeight: 800 }}>
+              Founder
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsMobileSidebarOpen(false)}
+              style={{ display: "inline-flex", padding: "4px", border: "none", background: "transparent", color: "#5E5A52", cursor: "pointer" }}
+              className="lg:hidden"
+              title="Close menu"
+            >
+              <X style={{ width: "18px", height: "18px" }} />
+            </button>
+          </div>
         </div>
 
         {/* Quick Role Switch Links */}
@@ -1022,7 +1040,6 @@ export default function SuperAdminPage() {
             minHeight: "56px",
             background: "#FFFFFF",
             borderBottom: "1px solid #E2DED4",
-            padding: "0 24px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -1030,26 +1047,28 @@ export default function SuperAdminPage() {
             top: 0,
             zIndex: 30,
           }}
+          className="px-3 sm:px-6"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
             <button
               type="button"
               onClick={() => setIsMobileSidebarOpen(true)}
-              style={{ display: "inline-flex", padding: "6px", border: "none", background: "transparent", color: "#1F1D1A", cursor: "pointer" }}
+              style={{ display: "inline-flex", padding: "6px", border: "none", background: "transparent", color: "#1F1D1A", cursor: "pointer", flexShrink: 0 }}
               className="lg:hidden"
+              title="Open menu"
             >
               <Menu style={{ width: "20px", height: "20px" }} />
             </button>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#5E5A52" }}>
-              <span>ApexTechEra</span>
-              <span>/</span>
-              <span>Super Admin</span>
-              <span>/</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#5E5A52", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span className="hidden sm:inline">ApexTechEra</span>
+              <span className="hidden sm:inline">/</span>
+              <span className="hidden md:inline">Super Admin</span>
+              <span className="hidden md:inline">/</span>
               <span style={{ color: "#0F5C4D", fontWeight: 800 }}>{activeTab}</span>
             </div>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
             <button
               type="button"
               onClick={() => setIsAddLeadOpen(true)}
@@ -1057,18 +1076,19 @@ export default function SuperAdminPage() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "5px",
-                padding: "6px 12px",
+                padding: "6px 10px",
                 borderRadius: "6px",
                 background: "#0F5C4D",
                 color: "#FFFFFF",
-                fontSize: "12px",
+                fontSize: "11px",
                 fontWeight: 700,
                 border: "none",
                 cursor: "pointer",
               }}
             >
-              <Plus style={{ width: "13px", height: "13px" }} />
-              <span>+ Quick Add Lead</span>
+              <Plus style={{ width: "12px", height: "12px" }} />
+              <span className="hidden sm:inline">+ Quick Add Lead</span>
+              <span className="sm:hidden">Add Lead</span>
             </button>
             <button
               type="button"
@@ -1078,24 +1098,36 @@ export default function SuperAdminPage() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "5px",
-                padding: "6px 12px",
+                padding: "6px 10px",
                 borderRadius: "6px",
                 background: "#FBFAF7",
                 border: "1px solid #E2DED4",
                 color: "#1F1D1A",
-                fontSize: "12px",
+                fontSize: "11px",
                 fontWeight: 600,
                 cursor: "pointer",
               }}
             >
-              <Download style={{ width: "13px", height: "13px", color: "#0F5C4D" }} />
-              <span>Full System Backup</span>
+              <Download style={{ width: "12px", height: "12px", color: "#0F5C4D" }} />
+              <span className="hidden sm:inline">Full System Backup</span>
+              <span className="sm:hidden">Backup</span>
             </button>
           </div>
         </header>
 
         {/* WORKSPACE CONTENT BODY */}
-        <main style={{ flex: 1, padding: "24px 28px", display: "flex", flexDirection: "column", gap: "20px", boxSizing: "border-box" }}>
+        <main
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            boxSizing: "border-box",
+            width: "100%",
+            maxWidth: "100%",
+          }}
+          className="p-3 sm:p-5 lg:p-6 overflow-x-hidden"
+        >
 
           {/* ======================================================== */}
           {/* VIEW 1: SUPER ADMIN DASHBOARD (File 01 Section 1A.1)     */}
@@ -1332,7 +1364,7 @@ export default function SuperAdminPage() {
               </div>
 
               {/* Row 3 & 4: Leaderboard & Recent Activity Feed */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 
                 {/* Leaderboard Block */}
                 <div style={{ background: "#FFFFFF", border: "1px solid #E2DED4", borderRadius: "8px", padding: "18px 20px" }}>
@@ -2440,7 +2472,7 @@ export default function SuperAdminPage() {
           {activeTab === "SERVICES" && (
             <div style={{ background: "#FFFFFF", border: "1px solid #E2DED4", borderRadius: "8px", padding: "20px" }}>
               <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 800 }}>Agency Digital Services Catalog (11 Offerings)</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
                 {services.map((srv) => (
                   <div key={srv.id} style={{ background: "#FBFAF7", border: "1px solid #E2DED4", borderRadius: "8px", padding: "16px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

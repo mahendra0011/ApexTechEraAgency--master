@@ -83,6 +83,7 @@ import {
   Menu,
   FileCheck2,
   Flame,
+  X,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -390,28 +391,34 @@ export default function TeamMemberPage() {
         color: "#1F1D1A",
         fontFamily: "'DM Sans', 'Plus Jakarta Sans', system-ui, sans-serif",
         boxSizing: "border-box",
+        position: "relative",
       }}
+      className="overflow-x-hidden"
     >
+      {/* Mobile & iPad Sidebar Backdrop */}
+      {isMobileSidebarOpen && (
+        <div
+          onClick={() => setIsMobileSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden"
+        />
+      )}
+
       {/* 1. TEAM MEMBER SIDEBAR */}
       <aside
         style={{
-          width: "250px",
-          minWidth: "250px",
+          width: "260px",
+          minWidth: "260px",
           flexShrink: 0,
           background: "#FBFAF7",
           borderRight: "1px solid #E2DED4",
           display: "flex",
           flexDirection: "column",
-          height: "100vh",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
           boxSizing: "border-box",
           overflowY: "auto",
         }}
-        className={`transition-transform duration-200 ease-in-out ${
-          isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } fixed lg:sticky`}
+        className={`fixed inset-y-0 left-0 z-50 h-full max-h-screen transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:translate-x-0 ${
+          isMobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        }`}
       >
         {/* Brand Banner */}
         <div
@@ -435,9 +442,20 @@ export default function TeamMemberPage() {
               </div>
             </div>
           </div>
-          <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "9999px", background: "#EFF6FF", color: "#1D4ED8", fontWeight: 800 }}>
-            {currentMember.memberType || "Staff"}
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "9999px", background: "#EFF6FF", color: "#1D4ED8", fontWeight: 800 }}>
+              {currentMember.memberType || "Staff"}
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsMobileSidebarOpen(false)}
+              style={{ display: "inline-flex", padding: "4px", border: "none", background: "transparent", color: "#5E5A52", cursor: "pointer" }}
+              className="lg:hidden"
+              title="Close menu"
+            >
+              <X style={{ width: "18px", height: "18px" }} />
+            </button>
+          </div>
         </div>
 
         {/* Member Perspective Switcher */}
@@ -569,7 +587,6 @@ export default function TeamMemberPage() {
             minHeight: "56px",
             background: "#FFFFFF",
             borderBottom: "1px solid #E2DED4",
-            padding: "0 24px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -577,39 +594,41 @@ export default function TeamMemberPage() {
             top: 0,
             zIndex: 30,
           }}
+          className="px-3 sm:px-6"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
             <button
               type="button"
               onClick={() => setIsMobileSidebarOpen(true)}
-              style={{ display: "inline-flex", padding: "6px", border: "none", background: "transparent", color: "#1F1D1A", cursor: "pointer" }}
+              style={{ display: "inline-flex", padding: "6px", border: "none", background: "transparent", color: "#1F1D1A", cursor: "pointer", flexShrink: 0 }}
               className="lg:hidden"
+              title="Open menu"
             >
               <Menu style={{ width: "20px", height: "20px" }} />
             </button>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#5E5A52" }}>
-              <span>Team Panel</span>
-              <span>/</span>
-              <span>{currentMember.name}</span>
-              <span>/</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#5E5A52", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span className="hidden sm:inline">Team Panel</span>
+              <span className="hidden sm:inline">/</span>
+              <span className="hidden md:inline">{currentMember.name}</span>
+              <span className="hidden md:inline">/</span>
               <span style={{ color: "#0F5C4D", fontWeight: 800 }}>{activeTab}</span>
             </div>
           </div>
 
           {/* Quick Calling Timer Button in Topbar */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
             {isCallTimerRunning ? (
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "9999px", background: "#FEF2F2", border: "1px solid #FECACA" }}>
-                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#EF4444", animation: "pulse 1s infinite" }} />
-                <span style={{ fontSize: "12px", fontFamily: "ui-monospace, monospace", fontWeight: 800, color: "#991B1B" }}>
-                  Call Live: {formatTimerStr(callTimerSeconds)}
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "3px 8px", borderRadius: "9999px", background: "#FEF2F2", border: "1px solid #FECACA" }}>
+                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#EF4444", animation: "pulse 1s infinite" }} />
+                <span style={{ fontSize: "11px", fontFamily: "ui-monospace, monospace", fontWeight: 800, color: "#991B1B" }}>
+                  {formatTimerStr(callTimerSeconds)}
                 </span>
                 <button
                   type="button"
                   onClick={handleEndCallTimer}
-                  style={{ padding: "3px 8px", borderRadius: "4px", background: "#DC2626", color: "#FFFFFF", border: "none", fontSize: "11px", fontWeight: 700, cursor: "pointer" }}
+                  style={{ padding: "2px 6px", borderRadius: "4px", background: "#DC2626", color: "#FFFFFF", border: "none", fontSize: "10px", fontWeight: 700, cursor: "pointer" }}
                 >
-                  End Call &amp; Log
+                  End
                 </button>
               </div>
             ) : (
@@ -619,19 +638,20 @@ export default function TeamMemberPage() {
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "6px",
-                  padding: "6px 14px",
+                  gap: "5px",
+                  padding: "6px 10px",
                   borderRadius: "6px",
                   background: "#0F5C4D",
                   color: "#FFFFFF",
-                  fontSize: "12px",
+                  fontSize: "11px",
                   fontWeight: 700,
                   border: "none",
                   cursor: "pointer",
                 }}
               >
-                <Play style={{ width: "12px", height: "12px", fill: "#FFFFFF" }} />
-                <span>Start Call Timer</span>
+                <Play style={{ width: "11px", height: "11px", fill: "#FFFFFF" }} />
+                <span className="hidden sm:inline">Start Call Timer</span>
+                <span className="sm:hidden">Timer</span>
               </button>
             )}
 
@@ -641,25 +661,37 @@ export default function TeamMemberPage() {
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "5px",
-                padding: "6px 12px",
+                gap: "4px",
+                padding: "6px 10px",
                 borderRadius: "6px",
                 background: "#FFFFFF",
                 border: "1px solid #E2DED4",
                 color: "#1F1D1A",
-                fontSize: "12px",
+                fontSize: "11px",
                 fontWeight: 600,
                 cursor: "pointer",
               }}
             >
-              <Plus style={{ width: "13px", height: "13px" }} />
-              <span>+ Add Lead</span>
+              <Plus style={{ width: "12px", height: "12px" }} />
+              <span className="hidden sm:inline">+ Add Lead</span>
+              <span className="sm:hidden">Lead</span>
             </button>
           </div>
         </header>
 
         {/* WORKSPACE CONTENT BODY */}
-        <main style={{ flex: 1, padding: "24px 28px", display: "flex", flexDirection: "column", gap: "20px", boxSizing: "border-box" }}>
+        <main
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            boxSizing: "border-box",
+            width: "100%",
+            maxWidth: "100%",
+          }}
+          className="p-3 sm:p-5 lg:p-6 overflow-x-hidden"
+        >
 
           {/* ======================================================== */}
           {/* TAB 1: MEMBER DASHBOARD (File 01 Section 1B.1)           */}
@@ -683,7 +715,7 @@ export default function TeamMemberPage() {
                   <span style={{ fontSize: "11px", color: "#8C877C", fontWeight: 600 }}>Super Admin Goal Set</span>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "16px" }}>
                   {/* Calls Progress */}
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 700, color: "#5E5A52", marginBottom: "4px" }}>
@@ -887,7 +919,7 @@ export default function TeamMemberPage() {
               </div>
 
               {/* Bottom Row: Today's Calls Mini-Timeline & Pipeline */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div style={{ background: "#FFFFFF", border: "1px solid #E2DED4", borderRadius: "8px", padding: "18px 20px" }}>
                   <h4 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: 800 }}>Meri Aaj Ki Calls ({myTodayCalls.length})</h4>
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "200px", overflowY: "auto" }}>
@@ -1284,7 +1316,7 @@ export default function TeamMemberPage() {
                 </p>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
                 {services.map((srv, idx) => (
                   <div key={srv.id} style={{ background: "#FBFAF7", border: "1px solid #E2DED4", borderRadius: "8px", padding: "16px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <div>

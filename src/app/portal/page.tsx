@@ -64,6 +64,7 @@ import {
   Menu,
   LogOut,
   LayoutDashboard,
+  X,
 } from "lucide-react";
 import { WhatsAppIcon } from "../../components/ams/SocialIcons";
 
@@ -361,7 +362,7 @@ export default function ClientPortalPage() {
 
   return (
     <div
-      className="portal-app"
+      className="portal-app overflow-x-hidden"
       style={{
         display: "flex",
         minHeight: "100vh",
@@ -370,19 +371,14 @@ export default function ClientPortalPage() {
         color: "#1F1D1A",
         fontFamily: "'DM Sans', 'Plus Jakarta Sans', system-ui, sans-serif",
         boxSizing: "border-box",
+        position: "relative",
       }}
     >
       {/* Mobile Sidebar Backdrop */}
       {isMobileSidebarOpen && (
         <div
           onClick={() => setIsMobileSidebarOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0, 0, 0, 0.4)",
-            zIndex: 45,
-          }}
-          className="lg:hidden"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden"
         />
       )}
 
@@ -391,20 +387,17 @@ export default function ClientPortalPage() {
         style={{
           width: "260px",
           minWidth: "260px",
+          flexShrink: 0,
           background: "#FFFFFF",
           borderRight: "1px solid #E2DED4",
           display: "flex",
           flexDirection: "column",
-          height: "100vh",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
           boxSizing: "border-box",
           overflowY: "auto",
         }}
-        className={`transition-transform duration-200 ease-in-out ${
-          isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } fixed lg:sticky`}
+        className={`fixed inset-y-0 left-0 z-50 h-full max-h-screen transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:translate-x-0 ${
+          isMobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        }`}
       >
         {/* Brand Banner */}
         <div
@@ -441,9 +434,20 @@ export default function ClientPortalPage() {
               </div>
             </div>
           </div>
-          <span style={{ fontSize: "10px", padding: "2px 7px", borderRadius: "9999px", background: "#E8F3EE", color: "#0F5C4D", fontWeight: 800, border: "1px solid #C4E1D4" }}>
-            Client
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontSize: "10px", padding: "2px 7px", borderRadius: "9999px", background: "#E8F3EE", color: "#0F5C4D", fontWeight: 800, border: "1px solid #C4E1D4" }}>
+              Client
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsMobileSidebarOpen(false)}
+              style={{ display: "inline-flex", padding: "4px", border: "none", background: "transparent", color: "#5E5A52", cursor: "pointer" }}
+              className="lg:hidden"
+              title="Close menu"
+            >
+              <X style={{ width: "18px", height: "18px" }} />
+            </button>
+          </div>
         </div>
 
         {/* Client Business / Project Selector */}
@@ -615,7 +619,6 @@ export default function ClientPortalPage() {
             minHeight: "56px",
             background: "#FFFFFF",
             borderBottom: "1px solid #E2DED4",
-            padding: "0 24px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -623,9 +626,10 @@ export default function ClientPortalPage() {
             top: 0,
             zIndex: 30,
           }}
+          className="px-3 sm:px-6"
         >
           {/* Left: Mobile hamburger & breadcrumb */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
             <button
               type="button"
               onClick={() => setIsMobileSidebarOpen(true)}
@@ -637,21 +641,25 @@ export default function ClientPortalPage() {
                 background: "transparent",
                 color: "#1F1D1A",
                 cursor: "pointer",
+                flexShrink: 0,
               }}
               className="lg:hidden"
+              title="Open menu"
             >
               <Menu style={{ width: "20px", height: "20px" }} />
             </button>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#5E5A52" }}>
-              <span>Client Portal</span>
-              <span>/</span>
-              <span style={{ color: "#1F1D1A", fontWeight: 800 }}>{activeTab}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#5E5A52", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span className="hidden sm:inline">ApexTechEra</span>
+              <span className="hidden sm:inline">/</span>
+              <span className="hidden md:inline">Client Portal</span>
+              <span className="hidden md:inline">/</span>
+              <span style={{ color: "#0F5C4D", fontWeight: 800 }}>{activeTab}</span>
             </div>
           </div>
 
           {/* Right: Quick actions */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
             <a
               href={`https://wa.me/919820011223?text=${encodeURIComponent(`Hi ${project?.assignedManager || "Project Manager"} (ApexTechEra), I have an update regarding project: ${project?.title || "Active Sprint"}`)}`}
               target="_blank"
@@ -659,18 +667,19 @@ export default function ClientPortalPage() {
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "6px",
-                padding: "6px 12px",
-                borderRadius: "8px",
+                gap: "5px",
+                padding: "6px 10px",
+                borderRadius: "6px",
                 background: "#25D366",
                 color: "#FFFFFF",
-                fontSize: "12px",
+                fontSize: "11px",
                 fontWeight: 700,
                 textDecoration: "none",
               }}
             >
               <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
-              <span>Project Manager</span>
+              <span className="hidden sm:inline">Project Manager</span>
+              <span className="sm:hidden">Manager</span>
             </a>
 
             <div
@@ -695,7 +704,6 @@ export default function ClientPortalPage() {
         <main
           style={{
             flex: 1,
-            padding: "24px",
             maxWidth: "1280px",
             width: "100%",
             margin: "0 auto",
@@ -704,6 +712,7 @@ export default function ClientPortalPage() {
             gap: "20px",
             boxSizing: "border-box",
           }}
+          className="p-3 sm:p-5 lg:p-6 overflow-x-hidden"
         >
         {/* ======================================================== */}
         {/* TAB 1: OVERVIEW                                          */}
@@ -793,7 +802,7 @@ export default function ClientPortalPage() {
                 </div>
 
                 {/* Quick Sprints & Environments Grid */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
                   {/* Active Sprint Progress */}
                   <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -1336,7 +1345,7 @@ export default function ClientPortalPage() {
             <div style={{ background: "#FFFFFF", border: "1px solid #E2DED4", borderRadius: "14px", padding: "22px 26px" }}>
               <h3 style={{ margin: "0 0 14px", fontSize: "16px", fontWeight: 800, color: "#0F172A" }}>Raise New Request Ticket</h3>
               <form onSubmit={handleCreateSupportTicket} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "10px" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
                       Subject *
@@ -1473,7 +1482,7 @@ export default function ClientPortalPage() {
               <p style={{ margin: "2px 0 0", fontSize: "13px", color: "#64748B" }}>Verified tax credentials and primary communication channels.</p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
               <div style={{ background: "#FFFFFF", border: "1px solid #E2DED4", borderRadius: "14px", padding: "22px 24px" }}>
                 <h3 style={{ margin: "0 0 12px", fontSize: "16px", fontWeight: 800, color: "#0F172A" }}>Client Business Information</h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "13px" }}>
