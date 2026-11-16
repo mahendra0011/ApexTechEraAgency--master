@@ -151,14 +151,15 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
     const hdrLoader = new HDRLoader();
     let envTexture: THREE.Texture | null = null;
 
-    if (isMobile) {
-      const pmrem = new THREE.PMREMGenerator(renderer);
-      const room = new RoomEnvironment();
-      envTexture = pmrem.fromScene(room, 0.04).texture;
-      scene.environment = envTexture;
-      room.dispose();
-      pmrem.dispose();
-    } else {
+    // Setup immediate PMREM RoomEnvironment for instant 0ms initial render
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const room = new RoomEnvironment();
+    envTexture = pmrem.fromScene(room, 0.04).texture;
+    scene.environment = envTexture;
+    room.dispose();
+    pmrem.dispose();
+
+    if (!isMobile) {
       hdrLoader.load(`${BASE}/space.hdr`, (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         envTexture = texture;
