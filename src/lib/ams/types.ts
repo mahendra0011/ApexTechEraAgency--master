@@ -215,6 +215,7 @@ export interface Client {
   outstandingBalance: number;
   notes?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface ProposalItem {

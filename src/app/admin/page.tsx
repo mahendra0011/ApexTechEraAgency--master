@@ -123,6 +123,7 @@ import {
   AlertCircle,
   UserPlus,
   RefreshCw,
+  Trash2,
   X,
   Home,
 } from "lucide-react";
@@ -521,6 +522,58 @@ export default function SuperAdminPage() {
     const updatedLeads = getStoredLeads();
     setLeads(updatedLeads);
     alert(`✓ Lead "${lead.brandName}" successfully converted to Client!`);
+  };
+
+  const formatDateWithTime = (dateStr?: string) => {
+    if (!dateStr) return "—";
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+
+      if (!dateStr.includes("T") && !dateStr.includes(" ") && !dateStr.includes(":")) {
+        return d.toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      return d.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const handleUpdateClientStatus = (clientId: string, newStatus: string) => {
+    const nowIso = new Date().toISOString();
+    const updated = clients.map((c) =>
+      c.id === clientId ? { ...c, status: newStatus, updatedAt: nowIso } : c
+    );
+    setClients(updated);
+    saveStoredClients(updated);
+
+    const matchingClient = clients.find((c) => c.id === clientId);
+    if (matchingClient?.leadId) {
+      const updatedLeads = leads.map((l) =>
+        l.id === matchingClient.leadId ? { ...l, updatedAt: nowIso } : l
+      );
+      setLeads(updatedLeads);
+      saveStoredLeads(updatedLeads);
+    }
+  };
+
+  const handleDeleteClient = (clientId: string, companyName: string) => {
+    if (!window.confirm(`Are you sure you want to remove client "${companyName}" from directory?`)) return;
+    const updated = clients.filter((c) => c.id !== clientId);
+    setClients(updated);
+    saveStoredClients(updated);
   };
 
   const handleOpenLostModal = (lead: Lead) => {
@@ -2142,6 +2195,10 @@ export default function SuperAdminPage() {
                               <div>
                                 <div style={{ fontWeight: 800, color: "#1F1D1A" }}>{lead.brandName}</div>
                                 <div style={{ fontSize: "11px", color: "#8C877C" }}>{lead.industry || "Digital Client"}</div>
+                                <div style={{ fontSize: "10px", color: "#64748B", marginTop: "3px", display: "flex", alignItems: "center", gap: "3px" }}>
+                                  <Calendar style={{ width: "10px", height: "10px", color: "#0F5C4D" }} />
+                                  <span>Added: {formatDateWithTime(lead.createdAt)}</span>
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -2196,7 +2253,13 @@ export default function SuperAdminPage() {
                             )}
                           </td>
                           <td style={{ padding: "12px 12px", fontSize: "12px" }}>
-                            {lead.nextFollowUpAt || "—"}
+                            <div style={{ fontWeight: 600 }}>{lead.nextFollowUpAt || "—"}</div>
+                            {lead.updatedAt && lead.updatedAt !== lead.createdAt && (
+                              <div style={{ fontSize: "10px", color: "#0284C7", marginTop: "2px", fontWeight: 600, display: "flex", alignItems: "center", gap: "3px" }}>
+                                <Clock style={{ width: "10px", height: "10px" }} />
+                                <span>Mod: {formatDateWithTime(lead.updatedAt)}</span>
+                              </div>
+                            )}
                           </td>
                           <td style={{ padding: "12px 14px", textAlign: "right" }}>
                             <div style={{ display: "inline-flex", gap: "6px", alignItems: "center" }}>
@@ -2460,14 +2523,16 @@ export default function SuperAdminPage() {
                       <th style={{ padding: "10px 12px", color: "#8C877C" }}>STATUS</th>
                       <th style={{ padding: "10px 12px", color: "#8C877C" }}>FOLLOWERS &amp; NEEDS</th>
                       <th style={{ padding: "10px 12px", color: "#8C877C" }}>PHONE &amp; CITY</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>ADDED &amp; MODIFIED</th>
                       <th style={{ padding: "10px 12px", color: "#8C877C" }}>FINANCES</th>
-                      <th style={{ padding: "10px 14px", color: "#8C877C", textAlign: "right" }}>PORTAL</th>
+                      <th style={{ padding: "10px 12px", color: "#8C877C" }}>PORTAL</th>
+                      <th style={{ padding: "10px 14px", color: "#8C877C", textAlign: "right" }}>ACTIONS</th>
                     </tr>
                   </thead>
                   <tbody>
                     {clients.length === 0 ? (
                       <tr>
-                        <td colSpan={7} style={{ textAlign: "center", padding: "48px 16px", color: "#8C877C" }}>
+                        <td colSpan={9} style={{ textAlign: "center", padding: "48px 16px", color: "#8C877C" }}>
                           <Users size={32} style={{ margin: "0 auto 10px", opacity: 0.4 }} />
                           <div style={{ fontWeight: 700, fontSize: "14px", color: "#1F1D1A" }}>No clients in directory yet</div>
                           <div style={{ fontSize: "12px", marginTop: "4px" }}>Converted leads or manually added clients will appear here with profile screenshot and status tracking.</div>
@@ -2542,6 +2607,10 @@ export default function SuperAdminPage() {
                                       {c.whatTheyDo}
                                     </div>
                                   )}
+                                  <div style={{ fontSize: "10px", color: "#8C877C", marginTop: "3px", display: "flex", alignItems: "center", gap: "3px" }}>
+                                    <Calendar style={{ width: "10px", height: "10px", color: "#0F5C4D" }} />
+                                    <span>Added: {formatDateWithTime(c.createdAt)}</span>
+                                  </div>
                                 </div>
                               </div>
                             </td>
@@ -2578,40 +2647,37 @@ export default function SuperAdminPage() {
                               </div>
                             </td>
 
-                            {/* Status */}
+                            {/* Status (Interactive Update) */}
                             <td style={{ padding: "12px 12px" }}>
-                              <span
+                              <select
+                                value={c.status || "Not started"}
+                                onChange={(e) => handleUpdateClientStatus(c.id, e.target.value)}
+                                title="Click to change outreach status"
                                 style={{
                                   fontSize: "11px",
                                   fontWeight: 700,
-                                  padding: "3px 9px",
+                                  padding: "4px 8px",
                                   borderRadius: "9999px",
                                   background: statusObj.bg,
                                   color: statusObj.text,
                                   border: `1px solid ${statusObj.border}`,
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  gap: "5px",
-                                  whiteSpace: "nowrap",
+                                  cursor: "pointer",
+                                  outline: "none",
                                 }}
                               >
-                                <span
-                                  style={{
-                                    width: "7px",
-                                    height: "7px",
-                                    borderRadius: "50%",
-                                    backgroundColor: statusObj.dot,
-                                  }}
-                                />
-                                {statusObj.label}
-                              </span>
+                                {CLIENT_STATUS_LIST.map((s) => (
+                                  <option key={s.id} value={s.id}>
+                                    {s.label}
+                                  </option>
+                                ))}
+                              </select>
                             </td>
 
                             {/* Followers & Needs */}
                             <td style={{ padding: "12px 12px" }}>
                               {c.followersCount && (
                                 <div style={{ fontSize: "11px", fontWeight: 700, color: "#0F5C4D" }}>
-                                  {c.followersCount}
+                                  👥 {c.followersCount}
                                 </div>
                               )}
                               {c.whatTheirNeeds && (
@@ -2627,7 +2693,7 @@ export default function SuperAdminPage() {
                                   }}
                                   title={c.whatTheirNeeds}
                                 >
-                                  {c.whatTheirNeeds}
+                                  🎯 {c.whatTheirNeeds}
                                 </div>
                               )}
                               {!c.followersCount && !c.whatTheirNeeds && (
@@ -2641,6 +2707,22 @@ export default function SuperAdminPage() {
                               <div style={{ fontSize: "11px", color: "#64748B" }}>{c.city || "India"}</div>
                             </td>
 
+                            {/* Added & Modified Timestamps */}
+                            <td style={{ padding: "12px 12px", whiteSpace: "nowrap" }}>
+                              <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                                <div style={{ fontSize: "11px", fontWeight: 700, color: "#1F1D1A", display: "flex", alignItems: "center", gap: "5px" }}>
+                                  <Calendar style={{ width: "12px", height: "12px", color: "#0F5C4D", flexShrink: 0 }} />
+                                  <span>Added: {formatDateWithTime(c.createdAt)}</span>
+                                </div>
+                                <div style={{ fontSize: "11px", fontWeight: 600, color: "#475569", display: "flex", alignItems: "center", gap: "5px" }}>
+                                  <Clock style={{ width: "12px", height: "12px", color: "#0284C7", flexShrink: 0 }} />
+                                  <span>
+                                    Modified: {c.updatedAt ? formatDateWithTime(c.updatedAt) : formatDateWithTime(c.createdAt)}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+
                             {/* Finances */}
                             <td style={{ padding: "12px 12px" }}>
                               <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: "12px" }}>
@@ -2652,7 +2734,7 @@ export default function SuperAdminPage() {
                             </td>
 
                             {/* Portal Access */}
-                            <td style={{ padding: "12px 14px", textAlign: "right" }}>
+                            <td style={{ padding: "12px 12px" }}>
                               <span
                                 style={{
                                   fontSize: "11px",
@@ -2665,6 +2747,29 @@ export default function SuperAdminPage() {
                               >
                                 {c.portalEnabled ? "Active" : "Disabled"}
                               </span>
+                            </td>
+
+                            {/* Actions */}
+                            <td style={{ padding: "12px 14px", textAlign: "right" }}>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteClient(c.id, c.companyName)}
+                                title="Delete client from directory"
+                                style={{
+                                  padding: "5px 8px",
+                                  borderRadius: "6px",
+                                  border: "1px solid #FECACA",
+                                  background: "#FFFFFF",
+                                  color: "#DC2626",
+                                  fontSize: "11px",
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "3px",
+                                }}
+                              >
+                                <Trash2 style={{ width: "12px", height: "12px" }} />
+                              </button>
                             </td>
                           </tr>
                         );

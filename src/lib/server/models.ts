@@ -307,6 +307,7 @@ export interface IClient extends Document {
   outstandingBalance: number;
   notes?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 const ClientSchema = new Schema<IClient>(

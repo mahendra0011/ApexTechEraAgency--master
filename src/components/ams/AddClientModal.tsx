@@ -260,7 +260,7 @@ export default function AddClientModal({
       return;
     }
 
-    const today = new Date().toISOString().split("T")[0];
+    const nowIso = new Date().toISOString();
     const cleanCompany = companyName.trim();
     const cleanContact = contactName.trim() || `${cleanCompany} (Founder)`;
     const cleanPhone = phone.trim() || "Pending / IG DM";
@@ -308,7 +308,8 @@ export default function AddClientModal({
       source: "INSTAGRAM",
       reason: whatTheirNeeds.trim() || whatTheyDo.trim() || "Instagram outreach prospect",
       callLogs: [],
-      createdAt: today,
+      createdAt: nowIso,
+      updatedAt: nowIso,
     };
 
     // 2. Create Client Record (for Client Directory, Invoicing & Proposals)
@@ -341,7 +342,8 @@ export default function AddClientModal({
       outstandingBalance: 0,
       notes: notes.trim() || undefined,
       leadId: newLead.id,
-      createdAt: today,
+      createdAt: nowIso,
+      updatedAt: nowIso,
     };
 
     newLead.convertedClientId = newClient.id;
