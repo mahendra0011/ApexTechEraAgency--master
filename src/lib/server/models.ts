@@ -285,8 +285,15 @@ export interface IClient extends Document {
   contactName: string;
   designation?: string;
   contactRole?: string;
+  industry?: string;
   whatTheyDo?: string;
+  websiteUrl?: string;
+  websiteStatus?: string;
   status?: string;
+  priority?: string;
+  budgetMin?: number;
+  budgetMax?: number;
+  nextFollowUpAt?: string;
   followersCount?: string;
   whatTheirNeeds?: string;
   screenshotUrl?: string;
@@ -309,8 +316,15 @@ const ClientSchema = new Schema<IClient>(
     contactName: { type: String, required: true },
     designation: { type: String, default: "Founder / Owner" },
     contactRole: { type: String, default: "Founder" },
+    industry: { type: String, default: "E-commerce & D2C" },
     whatTheyDo: { type: String },
+    websiteUrl: { type: String },
+    websiteStatus: { type: String, default: "NONE" },
     status: { type: String, default: "Not started" },
+    priority: { type: String, default: "WARM" },
+    budgetMin: { type: Number },
+    budgetMax: { type: Number },
+    nextFollowUpAt: { type: String },
     followersCount: { type: String },
     whatTheirNeeds: { type: String },
     screenshotUrl: { type: String },

@@ -1,8 +1,21 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Client, Lead, ServiceCategory } from "../../lib/ams/types";
-import { getStoredClients, getStoredLeads, saveStoredClients, saveStoredLeads } from "../../lib/ams/storage";
+import {
+  Client,
+  Lead,
+  ServiceCategory,
+  Industry,
+  WebsiteStatus,
+  Priority,
+  ResponseStatus,
+} from "../../lib/ams/types";
+import {
+  getStoredClients,
+  getStoredLeads,
+  saveStoredClients,
+  saveStoredLeads,
+} from "../../lib/ams/storage";
 import {
   X,
   Building2,
@@ -22,6 +35,13 @@ import {
   Users,
   Briefcase,
   HelpCircle,
+  Globe,
+  Calendar,
+  Flame,
+  IndianRupee,
+  Link,
+  MessageSquare,
+  ShieldCheck,
 } from "lucide-react";
 
 export interface UnifiedContactModalProps {
@@ -43,6 +63,26 @@ const ALL_SERVICES: ServiceCategory[] = [
   "UI/UX Designing",
   "Video Editing",
   "AI Video Generation",
+];
+
+const ALL_INDUSTRIES: Industry[] = [
+  "E-commerce & D2C",
+  "Restaurant & Cafe",
+  "Clothing & Fashion",
+  "Real Estate & Builders",
+  "Healthcare & Clinic",
+  "Coaching & Education",
+  "Salon & Spa",
+  "Fitness & Gym",
+  "Tech & SaaS",
+  "Other",
+];
+
+const WEBSITE_STATUS_OPTIONS: { value: WebsiteStatus; label: string }[] = [
+  { value: "NONE", label: "Website nahi hai" },
+  { value: "OLD", label: "Website hai (purani / kharab)" },
+  { value: "GOOD", label: "Website hai (achhi)" },
+  { value: "FUTURE", label: "Future me banwayenge" },
 ];
 
 export const CLIENT_STATUS_LIST = [
@@ -102,32 +142,52 @@ export const CLIENT_STATUS_LIST = [
   },
 ];
 
+const PRIORITY_LIST: { id: Priority; label: string; bg: string; text: string; border: string }[] = [
+  { id: "HOT", label: "🔥 Hot", bg: "#FEE2E2", text: "#DC2626", border: "#FECACA" },
+  { id: "WARM", label: "⚡ Warm", bg: "#FEF3C7", text: "#D97706", border: "#FDE68A" },
+  { id: "COLD", label: "❄️ Cold", bg: "#F1F5F9", text: "#64748B", border: "#E2E8F0" },
+];
+
 export default function AddClientModal({
   isOpen,
   onClose,
   onAddClient,
   onAddLead,
 }: UnifiedContactModalProps) {
+  // Brand & Business
   const [companyName, setCompanyName] = useState("");
-  const [contactRole, setContactRole] = useState("Founder");
-  const [contactName, setContactName] = useState("");
+  const [industry, setIndustry] = useState<Industry>("E-commerce & D2C");
   const [whatTheyDo, setWhatTheyDo] = useState("");
-  const [status, setStatus] = useState("intrested");
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [websiteStatus, setWebsiteStatus] = useState<WebsiteStatus>("NONE");
+
+  // Contact Person & Role
+  const [contactRole, setContactRole] = useState("Owner / Founder");
+  const [contactName, setContactName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [city, setCity] = useState("Mumbai");
+
+  // Outreach & Social Memory
   const [followersCount, setFollowersCount] = useState("");
   const [whatTheirNeeds, setWhatTheirNeeds] = useState("");
   const [screenshotUrl, setScreenshotUrl] = useState("");
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [city, setCity] = useState("Mumbai");
-  const [address, setAddress] = useState("");
-  const [gstin, setGstin] = useState("");
+  // Status & Deal Details
+  const [status, setStatus] = useState("intrested");
+  const [priority, setPriority] = useState<Priority>("WARM");
+  const [budgetMin, setBudgetMin] = useState("");
+  const [budgetMax, setBudgetMax] = useState("");
+  const [nextFollowUpAt, setNextFollowUpAt] = useState("");
+
+  // Services & Portal
   const [selectedServices, setSelectedServices] = useState<ServiceCategory[]>([
     "Full Stack Web Development",
   ]);
-  const [notes, setNotes] = useState("");
+  const [gstin, setGstin] = useState("");
   const [portalEnabled, setPortalEnabled] = useState(true);
+  const [notes, setNotes] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -176,9 +236,7 @@ export default function AddClientModal({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      handleFileUpload(file);
-    }
+    if (file) handleFileUpload(file);
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
@@ -210,43 +268,45 @@ export default function AddClientModal({
       email.trim() ||
       `${cleanCompany.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.com`;
 
+    const mappedResponseStatus: ResponseStatus =
+      status === "intrested" || status === "intrested need a sample"
+        ? "INTERESTED"
+        : status === "call is busy"
+        ? "NO_ANSWER"
+        : status === "in future"
+        ? "LATER"
+        : status === "Not intrested"
+        ? "NOT_INTERESTED"
+        : "INTERESTED";
+
     // 1. Create Lead Record (for CRM Pipeline & Calling Queue)
     const newLead: Lead = {
       id: `lead-${Date.now()}`,
       brandName: cleanCompany,
+      industry,
       contactName: cleanContact,
       designation: contactRole.trim(),
       phone: cleanPhone,
       email: cleanEmail,
       city: city.trim() || undefined,
       businessDesc: whatTheyDo.trim() || undefined,
+      websiteUrl: websiteUrl.trim() || undefined,
+      websiteStatus,
       followersCount: followersCount.trim() || undefined,
       whatTheirNeeds: whatTheirNeeds.trim() || undefined,
       screenshotUrl: screenshotUrl || undefined,
       services: selectedServices.length > 0 ? selectedServices : ["Full Stack Web Development"],
-      responseStatus:
-        status === "intrested" || status === "intrested need a sample"
-          ? "INTERESTED"
-          : status === "call is busy"
-          ? "NO_ANSWER"
-          : status === "in future"
-          ? "LATER"
-          : status === "Not intrested"
-          ? "NOT_INTERESTED"
-          : "INTERESTED",
+      responseStatus: mappedResponseStatus,
       stage:
         status === "intrested" || status === "intrested need a sample"
           ? "INTERESTED"
           : "NEW",
-      priority:
-        status === "intrested need a sample"
-          ? "HOT"
-          : status === "intrested"
-          ? "WARM"
-          : "COLD",
+      priority,
+      budgetMin: budgetMin ? parseInt(budgetMin) : undefined,
+      budgetMax: budgetMax ? parseInt(budgetMax) : undefined,
+      nextFollowUpAt: nextFollowUpAt || undefined,
       source: "INSTAGRAM",
-      websiteStatus: "NONE",
-      reason: whatTheirNeeds.trim() || whatTheyDo.trim() || "Outreach prospect",
+      reason: whatTheirNeeds.trim() || whatTheyDo.trim() || "Instagram outreach prospect",
       callLogs: [],
       createdAt: today,
     };
@@ -258,15 +318,21 @@ export default function AddClientModal({
       contactName: cleanContact,
       designation: contactRole.trim(),
       contactRole: contactRole.trim(),
+      industry,
       whatTheyDo: whatTheyDo.trim() || undefined,
+      websiteUrl: websiteUrl.trim() || undefined,
+      websiteStatus,
       status,
+      priority,
+      budgetMin: budgetMin ? parseInt(budgetMin) : undefined,
+      budgetMax: budgetMax ? parseInt(budgetMax) : undefined,
+      nextFollowUpAt: nextFollowUpAt || undefined,
       followersCount: followersCount.trim() || undefined,
       whatTheirNeeds: whatTheirNeeds.trim() || undefined,
       screenshotUrl: screenshotUrl || undefined,
       email: cleanEmail,
       phone: cleanPhone,
       city: city.trim(),
-      address: address.trim() || undefined,
       gstin: gstin.trim().toUpperCase() || undefined,
       services: selectedServices,
       portalEnabled,
@@ -280,11 +346,11 @@ export default function AddClientModal({
 
     newLead.convertedClientId = newClient.id;
 
-    // Call provided callbacks
+    // Call callbacks
     if (onAddClient) onAddClient(newClient);
     if (onAddLead) onAddLead(newLead);
 
-    // Auto-sync storage so the record is immediately in BOTH lists
+    // Auto-sync storage so record is immediately available everywhere
     if (typeof window !== "undefined") {
       if (!onAddLead) {
         const storedLeads = getStoredLeads();
@@ -307,8 +373,8 @@ export default function AddClientModal({
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(4px)",
+        background: "rgba(15, 23, 42, 0.7)",
+        backdropFilter: "blur(5px)",
         zIndex: 9999,
         display: "flex",
         alignItems: "center",
@@ -321,31 +387,31 @@ export default function AddClientModal({
       <div
         style={{
           width: "100%",
-          maxWidth: "680px",
+          maxWidth: "760px",
           maxHeight: "92vh",
           overflowY: "auto",
           background: "#FFFFFF",
           border: "1px solid #E2DED4",
           borderRadius: "16px",
-          boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+          boxShadow: "0 25px 50px -12px rgba(0,0,0,0.3)",
           padding: "24px 28px",
           boxSizing: "border-box",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        {/* Modal Header */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "flex-start",
+            alignItems: "center",
             marginBottom: "18px",
             borderBottom: "1px solid #F1ECE1",
             paddingBottom: "14px",
           }}
         >
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
               <h2
                 style={{
                   margin: 0,
@@ -361,7 +427,7 @@ export default function AddClientModal({
                 style={{
                   fontSize: "11px",
                   fontWeight: 700,
-                  padding: "3px 8px",
+                  padding: "3px 9px",
                   borderRadius: "9999px",
                   background: activeStatusObj.bg,
                   color: activeStatusObj.text,
@@ -382,8 +448,8 @@ export default function AddClientModal({
                 {activeStatusObj.label}
               </span>
             </div>
-            <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#5E5A52" }}>
-              Unified Entry: Automatically saved in both <strong>CRM Pipeline</strong> and <strong>Clients Directory</strong>.
+            <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#64748B" }}>
+              Unified CRM &amp; Client Record &bull; Saved instantly in both <strong>Pipeline</strong> and <strong>Directory</strong>.
             </p>
           </div>
           <button
@@ -391,12 +457,12 @@ export default function AddClientModal({
             onClick={onClose}
             aria-label="Close"
             style={{
-              background: "#F6F4EF",
-              border: "1px solid #E2DED4",
+              background: "#F8FAFC",
+              border: "1px solid #E2E8F0",
               borderRadius: "8px",
               padding: "6px",
               cursor: "pointer",
-              color: "#5E5A52",
+              color: "#64748B",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -407,643 +473,586 @@ export default function AddClientModal({
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {/* Row 1: Company Name & Founder/Manager/Employee Dropdown + Name */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  marginBottom: "4px",
-                  letterSpacing: "0.03em",
-                }}
-              >
-                Company / Brand Name *
-              </label>
-              <input
-                type="text"
-                required
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="e.g. Apex Tech Era / Brand Co."
-                style={{
-                  width: "100%",
-                  padding: "8px 12px",
-                  borderRadius: "8px",
-                  border: "1px solid #CBD5E1",
-                  fontSize: "13px",
-                  boxSizing: "border-box",
-                  outline: "none",
-                }}
-              />
+          {/* ======================================================== */}
+          {/* SECTION 1: BRAND & BUSINESS PROFILE                      */}
+          {/* ======================================================== */}
+          <div
+            style={{
+              background: "#FAFAF9",
+              border: "1px solid #EAE7E1",
+              borderRadius: "12px",
+              padding: "14px 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 800, color: "#1E293B" }}>
+              <Building2 size={15} style={{ color: "#0F5C4D" }} />
+              <span>BRAND &amp; BUSINESS PROFILE</span>
             </div>
 
-            {/* Founder / Manager / Employee selection + Name Input */}
-            <div>
-              <label
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  marginBottom: "4px",
-                  letterSpacing: "0.03em",
-                }}
-              >
-                <span>Founder / Manager / Employee *</span>
-              </label>
-              <div style={{ display: "flex", gap: "6px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "12px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Company / Brand Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  placeholder="e.g. Apex Tech Era / Urban Vogue"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Industry / Niche
+                </label>
+                <select
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value as Industry)}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF", cursor: "pointer" }}
+                >
+                  {ALL_INDUSTRIES.map((ind) => (
+                    <option key={ind} value={ind}>{ind}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* What they do, Website URL & Website Status */}
+            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 1fr", gap: "12px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  What They Do
+                </label>
+                <input
+                  type="text"
+                  value={whatTheyDo}
+                  onChange={(e) => setWhatTheyDo(e.target.value)}
+                  placeholder="What they do (e.g. D2C Fashion, Cafe, SaaS)"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Existing Website URL
+                </label>
+                <input
+                  type="text"
+                  value={websiteUrl}
+                  onChange={(e) => setWebsiteUrl(e.target.value)}
+                  placeholder="https://client.com"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Website Status
+                </label>
+                <select
+                  value={websiteStatus}
+                  onChange={(e) => setWebsiteStatus(e.target.value as WebsiteStatus)}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12px", boxSizing: "border-box", background: "#FFFFFF", cursor: "pointer" }}
+                >
+                  {WEBSITE_STATUS_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* ======================================================== */}
+          {/* SECTION 2: KEY PERSON & CONTACT DETAILS                  */}
+          {/* ======================================================== */}
+          <div
+            style={{
+              background: "#FAFAF9",
+              border: "1px solid #EAE7E1",
+              borderRadius: "12px",
+              padding: "14px 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 800, color: "#1E293B" }}>
+              <User size={15} style={{ color: "#0F5C4D" }} />
+              <span>KEY DECISION MAKER &amp; CONTACT</span>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr 1.2fr", gap: "12px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Founder / Manager / Employee *
+                </label>
                 <select
                   value={contactRole}
                   onChange={(e) => setContactRole(e.target.value)}
-                  style={{
-                    width: "110px",
-                    padding: "8px 8px",
-                    borderRadius: "8px",
-                    border: "1px solid #CBD5E1",
-                    fontSize: "12px",
-                    fontWeight: 700,
-                    background: "#F8FAFC",
-                    color: "#0F172A",
-                    cursor: "pointer",
-                    boxSizing: "border-box",
-                  }}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", fontWeight: 700, background: "#FFFFFF", color: "#0F172A", cursor: "pointer", boxSizing: "border-box" }}
                 >
+                  <option value="Owner / Founder">Owner / Founder</option>
                   <option value="Founder">Founder</option>
                   <option value="Manager">Manager</option>
                   <option value="Employee">Employee</option>
                   <option value="Other">Other</option>
                 </select>
+              </div>
 
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Contact Person Name *
+                </label>
                 <input
                   type="text"
                   required
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
-                  placeholder={
-                    contactRole === "Founder"
-                      ? "Founder's Name (e.g. Mahendra)"
-                      : contactRole === "Manager"
-                      ? "Manager's Name"
-                      : "Employee's Name"
-                  }
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    border: "1px solid #CBD5E1",
-                    fontSize: "13px",
-                    boxSizing: "border-box",
-                    outline: "none",
-                  }}
+                  placeholder="e.g. Mahendra Prajapati"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Phone Number *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+91 98200 11223"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: "12px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Work Email (Optional)
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="founder@company.com"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  City / State
+                </label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="e.g. Mumbai / Jaipur"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
                 />
               </div>
             </div>
           </div>
 
-          {/* Row 2: Status (Matching Image 2 with exact colored pills) */}
+          {/* ======================================================== */}
+          {/* SECTION 3: INSTAGRAM OUTREACH & MEMORY                   */}
+          {/* ======================================================== */}
           <div
             style={{
-              padding: "12px 14px",
-              background: "#FBFBFA",
-              border: "1px solid #E8E5DF",
-              borderRadius: "10px",
+              background: "#FAFAF9",
+              border: "1px solid #EAE7E1",
+              borderRadius: "12px",
+              padding: "14px 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "8px",
-              }}
-            >
-              <label
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#64748B",
-                  letterSpacing: "0.03em",
-                }}
-              >
-                Lead / Outreach Status
-              </label>
-              <span style={{ fontSize: "11px", color: "#94A3B8" }}>
-                Selected: <strong style={{ color: activeStatusObj.text }}>{activeStatusObj.label}</strong>
-              </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 800, color: "#1E293B" }}>
+              <Camera size={15} style={{ color: "#0F5C4D" }} />
+              <span>INSTAGRAM OUTREACH &amp; MEMORY</span>
             </div>
 
-            {/* Status Pills */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>
-              {CLIENT_STATUS_LIST.map((s) => {
-                const isSelected = status === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => setStatus(s.id)}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "5px 11px",
-                      borderRadius: "9999px",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      border: isSelected ? `2px solid ${s.dot}` : `1px solid ${s.border}`,
-                      background: isSelected ? s.bg : "#FFFFFF",
-                      color: s.text,
-                      boxShadow: isSelected ? "0 2px 4px rgba(0,0,0,0.06)" : "none",
-                      transition: "all 0.15s ease",
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: "8px",
-                        height: "8px",
-                        borderRadius: "50%",
-                        backgroundColor: s.dot,
-                      }}
-                    />
-                    <span>{s.label}</span>
-                    {isSelected && <Check size={13} style={{ strokeWidth: 3 }} />}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Row 3: What they do & What their followers/connections */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  marginBottom: "4px",
-                  letterSpacing: "0.03em",
-                }}
-              >
-                What They Do
-              </label>
-              <input
-                type="text"
-                value={whatTheyDo}
-                onChange={(e) => setWhatTheyDo(e.target.value)}
-                placeholder="What they do (e.g. D2C Fashion, Cafe & Lounge, SaaS, Real Estate)"
-                style={{
-                  width: "100%",
-                  padding: "8px 12px",
-                  borderRadius: "8px",
-                  border: "1px solid #CBD5E1",
-                  fontSize: "13px",
-                  boxSizing: "border-box",
-                  outline: "none",
-                }}
-              />
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  marginBottom: "4px",
-                  letterSpacing: "0.03em",
-                }}
-              >
-                What Their Followers / Connections
-              </label>
-              <input
-                type="text"
-                value={followersCount}
-                onChange={(e) => setFollowersCount(e.target.value)}
-                placeholder="What their followers/connections (e.g. 25k Insta, 5k LinkedIn)"
-                style={{
-                  width: "100%",
-                  padding: "8px 12px",
-                  borderRadius: "8px",
-                  border: "1px solid #CBD5E1",
-                  fontSize: "13px",
-                  boxSizing: "border-box",
-                  outline: "none",
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Row 4: What Their Needs */}
-          <div>
-            <label
-              style={{
-                display: "block",
-                fontSize: "11px",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                color: "#8C877C",
-                marginBottom: "4px",
-                letterSpacing: "0.03em",
-              }}
-            >
-              What Their Needs
-            </label>
-            <input
-              type="text"
-              value={whatTheirNeeds}
-              onChange={(e) => setWhatTheirNeeds(e.target.value)}
-              placeholder="What their needs (e.g. Redesign high-converting landing page, AI sales bot, 3D animated hero section)"
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                borderRadius: "8px",
-                border: "1px solid #CBD5E1",
-                fontSize: "13px",
-                boxSizing: "border-box",
-                outline: "none",
-              }}
-            />
-          </div>
-
-          {/* Row 5: Instagram Profile / Screenshot Upload */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "4px",
-              }}
-            >
-              <label
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  letterSpacing: "0.03em",
-                }}
-              >
-                Profile / Instagram Screenshot (For Quick Memory)
-              </label>
-              <span style={{ fontSize: "11px", color: "#94A3B8" }}>
-                Tip: Press Ctrl+V to paste screenshot
-              </span>
-            </div>
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
-
-            {screenshotUrl ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  padding: "10px 14px",
-                  background: "#F0FDF4",
-                  border: "1px solid #BBF7D0",
-                  borderRadius: "8px",
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={screenshotUrl}
-                  alt="Profile Screenshot"
-                  style={{
-                    width: "56px",
-                    height: "56px",
-                    objectFit: "cover",
-                    borderRadius: "6px",
-                    border: "1px solid #86EFAC",
-                  }}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  What Their Followers / Connections
+                </label>
+                <input
+                  type="text"
+                  value={followersCount}
+                  onChange={(e) => setFollowersCount(e.target.value)}
+                  placeholder="e.g. 50k Instagram, 10k LinkedIn"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
                 />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: "13px", fontWeight: 700, color: "#166534" }}>
-                    Screenshot Attached
-                  </div>
-                  <div style={{ fontSize: "11px", color: "#15803D" }}>
-                    Instagram profile preview saved with client profile
-                  </div>
-                </div>
-                <div style={{ display: "flex", gap: "6px" }}>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{
-                      padding: "5px 10px",
-                      borderRadius: "6px",
-                      border: "1px solid #86EFAC",
-                      background: "#FFFFFF",
-                      fontSize: "11px",
-                      fontWeight: 600,
-                      color: "#166534",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Change
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setScreenshotUrl("")}
-                    style={{
-                      padding: "5px 8px",
-                      borderRadius: "6px",
-                      border: "1px solid #FECACA",
-                      background: "#FEF2F2",
-                      color: "#DC2626",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                    title="Remove Screenshot"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
               </div>
-            ) : (
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                style={{
-                  padding: "14px",
-                  border: "1.5px dashed #CBD5E1",
-                  borderRadius: "8px",
-                  background: "#F8FAFC",
-                  textAlign: "center",
-                  cursor: "pointer",
-                  transition: "background 0.15s ease",
-                }}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const file = e.dataTransfer.files?.[0];
-                  if (file) handleFileUpload(file);
-                }}
-              >
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  What Their Needs
+                </label>
+                <input
+                  type="text"
+                  value={whatTheirNeeds}
+                  onChange={(e) => setWhatTheirNeeds(e.target.value)}
+                  placeholder="e.g. Landing page revamp, AI bot"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+            </div>
+
+            {/* Profile Screenshot Upload Box */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                <label style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B" }}>
+                  Profile / Instagram Screenshot (For Quick Memory)
+                </label>
+                <span style={{ fontSize: "11px", color: "#94A3B8" }}>
+                  Tip: Press <strong>Ctrl+V</strong> anywhere to paste screenshot
+                </span>
+              </div>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+
+              {screenshotUrl ? (
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    gap: "8px",
-                    color: "#475569",
+                    gap: "12px",
+                    padding: "10px 14px",
+                    background: "#F0FDF4",
+                    border: "1px solid #BBF7D0",
+                    borderRadius: "8px",
                   }}
                 >
-                  <Camera size={18} style={{ color: "#0F5C4D" }} />
-                  <span style={{ fontSize: "13px", fontWeight: 600 }}>
-                    {isUploadingImage ? "Uploading Screenshot..." : "Click or Drag Screenshot Here (Instagram / Profile SS)"}
-                  </span>
-                </div>
-                <div style={{ fontSize: "11px", color: "#94A3B8", marginTop: "3px" }}>
-                  Upload JPEG, PNG or paste from clipboard (Ctrl+V) to remember their profile
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Row 6: Phone & Email */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  marginBottom: "4px",
-                }}
-              >
-                Phone Number *
-              </label>
-              <input
-                type="text"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 98200 11223"
-                style={{
-                  width: "100%",
-                  padding: "8px 12px",
-                  borderRadius: "8px",
-                  border: "1px solid #CBD5E1",
-                  fontSize: "13px",
-                  boxSizing: "border-box",
-                  outline: "none",
-                }}
-              />
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  marginBottom: "4px",
-                }}
-              >
-                Work Email (Optional)
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="contact@company.com"
-                style={{
-                  width: "100%",
-                  padding: "8px 12px",
-                  borderRadius: "8px",
-                  border: "1px solid #CBD5E1",
-                  fontSize: "13px",
-                  boxSizing: "border-box",
-                  outline: "none",
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Row 7: City & GSTIN */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  marginBottom: "4px",
-                }}
-              >
-                City / State
-              </label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="Mumbai, Maharashtra"
-                style={{
-                  width: "100%",
-                  padding: "8px 12px",
-                  borderRadius: "8px",
-                  border: "1px solid #CBD5E1",
-                  fontSize: "13px",
-                  boxSizing: "border-box",
-                  outline: "none",
-                }}
-              />
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#8C877C",
-                  marginBottom: "4px",
-                }}
-              >
-                GSTIN (Tax Invoicing - Optional)
-              </label>
-              <input
-                type="text"
-                value={gstin}
-                onChange={(e) => setGstin(e.target.value)}
-                placeholder="e.g. 24AAACC1206D1ZM"
-                style={{
-                  width: "100%",
-                  padding: "8px 12px",
-                  borderRadius: "8px",
-                  border: "1px solid #CBD5E1",
-                  fontSize: "13px",
-                  boxSizing: "border-box",
-                  outline: "none",
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Active Services */}
-          <div>
-            <label
-              style={{
-                display: "block",
-                fontSize: "11px",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                color: "#8C877C",
-                marginBottom: "6px",
-              }}
-            >
-              Active / Interested Services (From 11 Digital Services)
-            </label>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-              {ALL_SERVICES.map((srv) => {
-                const isSelected = selectedServices.includes(srv);
-                return (
-                  <button
-                    key={srv}
-                    type="button"
-                    onClick={() => toggleService(srv)}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={screenshotUrl}
+                    alt="Screenshot"
                     style={{
-                      padding: "5px 10px",
+                      width: "56px",
+                      height: "56px",
+                      objectFit: "cover",
                       borderRadius: "6px",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      border: isSelected ? "1px solid #0F5C4D" : "1px solid #E2DED4",
-                      background: isSelected ? "#E3EFEB" : "#FFFFFF",
-                      color: isSelected ? "#0F5C4D" : "#5E5A52",
-                      transition: "all 0.1s ease",
+                      border: "1px solid #86EFAC",
                     }}
-                  >
-                    {srv} {isSelected && "✓"}
-                  </button>
-                );
-              })}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: "13px", fontWeight: 700, color: "#166534" }}>
+                      Instagram Screenshot Attached
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#15803D" }}>
+                      Preview will be saved with contact for instant recall during calls
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{ padding: "5px 10px", borderRadius: "6px", border: "1px solid #86EFAC", background: "#FFFFFF", fontSize: "11px", fontWeight: 600, color: "#166534", cursor: "pointer" }}
+                    >
+                      Change
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setScreenshotUrl("")}
+                      style={{ padding: "5px 8px", borderRadius: "6px", border: "1px solid #FECACA", background: "#FEF2F2", color: "#DC2626", cursor: "pointer", display: "flex", alignItems: "center" }}
+                      title="Remove Screenshot"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{
+                    width: "100%",
+                    padding: "12px 14px",
+                    border: "1.5px dashed #CBD5E1",
+                    borderRadius: "8px",
+                    background: "#FFFFFF",
+                    color: "#475569",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    transition: "all 0.15s ease",
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) handleFileUpload(file);
+                  }}
+                >
+                  <Camera size={16} style={{ color: "#0F5C4D" }} />
+                  <span style={{ fontSize: "13px", fontWeight: 600 }}>
+                    {isUploadingImage ? "Uploading Screenshot..." : "+ Attach Instagram Profile Screenshot (Click, Drag or Ctrl+V)"}
+                  </span>
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Portal Access Toggle */}
+          {/* ======================================================== */}
+          {/* SECTION 4: STATUS, PRIORITY & PIPELINE                   */}
+          {/* ======================================================== */}
           <div
             style={{
+              background: "#FAFAF9",
+              border: "1px solid #EAE7E1",
+              borderRadius: "12px",
+              padding: "14px 16px",
               display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              padding: "10px 14px",
-              background: "#FBFAF7",
-              border: "1px solid #E2DED4",
-              borderRadius: "8px",
+              flexDirection: "column",
+              gap: "12px",
             }}
           >
-            <input
-              type="checkbox"
-              id="portalEnabledCheck"
-              checked={portalEnabled}
-              onChange={(e) => setPortalEnabled(e.target.checked)}
-              style={{ width: "16px", height: "16px", cursor: "pointer" }}
-            />
-            <label
-              htmlFor="portalEnabledCheck"
-              style={{ fontSize: "13px", fontWeight: 600, color: "#1F1D1A", cursor: "pointer" }}
-            >
-              Enable Client Portal Access (Login with email via Brevo REST OTP)
-            </label>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 800, color: "#1E293B" }}>
+              <Sparkles size={15} style={{ color: "#0F5C4D" }} />
+              <span>STATUS, PRIORITY &amp; DEAL PARAMETERS</span>
+            </div>
+
+            {/* Outreach Status Pills */}
+            <div>
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "6px" }}>
+                Lead / Outreach Status
+              </label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>
+                {CLIENT_STATUS_LIST.map((s) => {
+                  const isSelected = status === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setStatus(s.id)}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        padding: "5px 11px",
+                        borderRadius: "9999px",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        border: isSelected ? `2px solid ${s.dot}` : `1px solid ${s.border}`,
+                        background: isSelected ? s.bg : "#FFFFFF",
+                        color: s.text,
+                        boxShadow: isSelected ? "0 2px 4px rgba(0,0,0,0.06)" : "none",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: "8px",
+                          height: "8px",
+                          borderRadius: "50%",
+                          backgroundColor: s.dot,
+                        }}
+                      />
+                      <span>{s.label}</span>
+                      {isSelected && <Check size={13} style={{ strokeWidth: 3 }} />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Priority & Budget & Follow-up Date */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1.2fr", gap: "10px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Lead Priority
+                </label>
+                <div style={{ display: "flex", gap: "4px" }}>
+                  {PRIORITY_LIST.map((p) => {
+                    const isSelected = priority === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setPriority(p.id)}
+                        style={{
+                          flex: 1,
+                          padding: "6px 4px",
+                          borderRadius: "6px",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          border: isSelected ? `2px solid ${p.text}` : `1px solid ${p.border}`,
+                          background: isSelected ? p.bg : "#FFFFFF",
+                          color: p.text,
+                        }}
+                      >
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Min Budget (₹)
+                </label>
+                <input
+                  type="number"
+                  value={budgetMin}
+                  onChange={(e) => setBudgetMin(e.target.value)}
+                  placeholder="Min Budget (₹)"
+                  style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Max Budget (₹)
+                </label>
+                <input
+                  type="number"
+                  value={budgetMax}
+                  onChange={(e) => setBudgetMax(e.target.value)}
+                  placeholder="Max Budget (₹)"
+                  style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                  Scheduled Follow-up Date
+                </label>
+                <input
+                  type="date"
+                  value={nextFollowUpAt}
+                  onChange={(e) => setNextFollowUpAt(e.target.value)}
+                  style={{ width: "100%", padding: "6px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Notes */}
-          <div>
-            <label
-              style={{
-                display: "block",
-                fontSize: "11px",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                color: "#8C877C",
-                marginBottom: "4px",
-              }}
-            >
-              Client Notes / Background / Pitch Idea
-            </label>
-            <textarea
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Commercial terms, meeting summary, Instagram pitch notes..."
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                borderRadius: "8px",
-                border: "1px solid #CBD5E1",
-                fontSize: "13px",
-                boxSizing: "border-box",
-                outline: "none",
-              }}
-            />
+          {/* ======================================================== */}
+          {/* SECTION 5: SERVICES, PORTAL & NOTES                      */}
+          {/* ======================================================== */}
+          <div
+            style={{
+              background: "#FAFAF9",
+              border: "1px solid #EAE7E1",
+              borderRadius: "12px",
+              padding: "14px 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 800, color: "#1E293B" }}>
+              <Layers size={15} style={{ color: "#0F5C4D" }} />
+              <span>SERVICES &amp; PORTAL ACCESS</span>
+            </div>
+
+            {/* Services Pills */}
+            <div>
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "6px" }}>
+                Active / Interested Services ({selectedServices.length} selected)
+              </label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                {ALL_SERVICES.map((srv) => {
+                  const isSelected = selectedServices.includes(srv);
+                  return (
+                    <button
+                      key={srv}
+                      type="button"
+                      onClick={() => toggleService(srv)}
+                      style={{
+                        padding: "5px 10px",
+                        borderRadius: "6px",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        border: isSelected ? "1px solid #0F5C4D" : "1px solid #E2DED4",
+                        background: isSelected ? "#E3EFEB" : "#FFFFFF",
+                        color: isSelected ? "#0F5C4D" : "#5E5A52",
+                        transition: "all 0.1s ease",
+                      }}
+                    >
+                      {srv} {isSelected && "✓"}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Portal Check & GSTIN */}
+            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: "12px", alignItems: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "8px 12px",
+                  background: "#FFFFFF",
+                  border: "1px solid #CBD5E1",
+                  borderRadius: "8px",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  id="portalEnabledCheckUnified"
+                  checked={portalEnabled}
+                  onChange={(e) => setPortalEnabled(e.target.checked)}
+                  style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                />
+                <label
+                  htmlFor="portalEnabledCheckUnified"
+                  style={{ fontSize: "12px", fontWeight: 600, color: "#1F1D1A", cursor: "pointer" }}
+                >
+                  Enable Client Portal Access (Brevo OTP)
+                </label>
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  value={gstin}
+                  onChange={(e) => setGstin(e.target.value)}
+                  placeholder="GSTIN (Tax Invoicing - Optional)"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12px", boxSizing: "border-box", background: "#FFFFFF" }}
+                />
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#64748B", marginBottom: "4px" }}>
+                Client Notes / Pitch Summary
+              </label>
+              <textarea
+                rows={2}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Pitch angle, preferred terms, meeting notes, call observations..."
+                style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "13px", boxSizing: "border-box", background: "#FFFFFF" }}
+              />
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -1052,16 +1061,14 @@ export default function AddClientModal({
               display: "flex",
               justifyContent: "flex-end",
               gap: "10px",
-              marginTop: "4px",
-              paddingTop: "12px",
-              borderTop: "1px solid #F1ECE1",
+              paddingTop: "8px",
             }}
           >
             <button
               type="button"
               onClick={onClose}
               style={{
-                padding: "9px 18px",
+                padding: "10px 20px",
                 borderRadius: "8px",
                 background: "#F6F4EF",
                 border: "1px solid #E2DED4",
@@ -1076,7 +1083,7 @@ export default function AddClientModal({
             <button
               type="submit"
               style={{
-                padding: "9px 24px",
+                padding: "10px 26px",
                 borderRadius: "8px",
                 background: "#0F5C4D",
                 color: "#FFFFFF",
@@ -1085,9 +1092,13 @@ export default function AddClientModal({
                 border: "none",
                 cursor: "pointer",
                 boxShadow: "0 2px 6px rgba(15, 92, 77, 0.25)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
               }}
             >
-              Save Client &amp; Lead
+              <Check size={16} />
+              <span>Save Client &amp; Lead</span>
             </button>
           </div>
         </form>

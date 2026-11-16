@@ -190,8 +190,15 @@ export interface Client {
   contactName: string;
   designation?: string;
   contactRole?: "Founder" | "Manager" | "Employee" | string;
+  industry?: Industry;
   whatTheyDo?: string;
+  websiteUrl?: string;
+  websiteStatus?: WebsiteStatus;
   status?: string;
+  priority?: Priority;
+  budgetMin?: number;
+  budgetMax?: number;
+  nextFollowUpAt?: string;
   followersCount?: string;
   whatTheirNeeds?: string;
   screenshotUrl?: string;
