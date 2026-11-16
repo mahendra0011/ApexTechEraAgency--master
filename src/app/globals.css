@@ -582,7 +582,7 @@ img.apex-simple-slider__video {
   .courses__card-media{flex:0 0 38%}
 }
 @media screen and (max-width:680px){
-  .courses__card{height:auto!important;min-height:auto;margin-bottom:20px!important;border-radius:20px}
+  .courses__card{height:auto!important;min-height:auto;margin-bottom:20px;border-radius:20px}
   .courses__card-inner{flex-direction:column;min-height:auto}
   .courses__card-media{flex:none;max-width:100%;height:160px;border-right:none;border-bottom:1px solid rgba(232,96,46,.12)}
   .courses__card--dark .courses__card-media{border-bottom-color:rgba(232,96,46,.2)}
@@ -721,7 +721,7 @@ img.apex-simple-slider__video {
   .courses__card-media{flex:0 0 38%}
 }
 @media screen and (max-width:680px){
-  .courses__card{height:auto!important;min-height:auto;margin-bottom:20px!important;border-radius:20px}
+  .courses__card{height:auto!important;min-height:auto;margin-bottom:20px;border-radius:20px}
   .courses__card-inner{flex-direction:column;min-height:auto}
   .courses__card-media{flex:none;max-width:100%;height:160px;border-right:none;border-bottom:1px solid rgba(232,96,46,.12)}
   .courses__card--dark .courses__card-media{border-bottom-color:rgba(232,96,46,.2)}

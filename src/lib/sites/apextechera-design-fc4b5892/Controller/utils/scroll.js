@@ -64,7 +64,9 @@ export const scroll = {
         let intensity = this.intensity
         if (context.ids) {
             const currentId = context.ids[context.active]
-            if (currentId === 'courses' || isWhatCreateMobile) {
+            if (currentId === 'courses') {
+                intensity = isMobile ? 0.18 : 0.5
+            } else if (isWhatCreateMobile) {
                 intensity = 0.5
             } else if (currentId === 'apextechera') {
                 intensity = isMobile ? 0.18 : 0.5

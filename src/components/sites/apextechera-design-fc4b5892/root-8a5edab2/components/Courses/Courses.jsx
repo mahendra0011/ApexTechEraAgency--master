@@ -105,29 +105,26 @@ const Courses = memo(function Courses() {
     const cards = cardsRef.current.filter(Boolean);
     if (!el || cards.length < 2) { return }
     const vh = window.innerHeight;
-    if (window.innerWidth <= 680) {
-      cards.forEach((c) => { c.style.marginBottom = ""; c.style.transform = ""; });
-      el.style.height = "auto";
-      return;
-    }
-    const S = Math.max(32, Math.round(0.08 * vh));
+    const isMobile = window.innerWidth <= 680;
+
+    // S is the spacing before each card stacks. On mobile, keep it compact and proportional.
+    const S = isMobile ? Math.max(36, Math.round(0.12 * vh)) : Math.max(32, Math.round(0.08 * vh));
     cards.forEach((c) => { c.style.marginBottom = `${S}px` });
     const tops = cards.map((c) => c.offsetTop);
     const heights = cards.map((c) => c.offsetHeight);
 
     const headerEls = [el.querySelector('.courses__pill'), el.querySelector('.courses__title'), el.querySelector('.courses__subtitle')].filter(Boolean);
     const stackTop = tops[0];
-    const gap = 18; // 18px gap to reveal the card behind
+    const gap = isMobile ? 12 : 18; // 12px gap on mobile to reveal cards stacked behind
     const stackStarts = tops.map((N, i) => Math.max(0, N - stackTop - (i * gap)));
-    const releasePoint = stackStarts[stackStarts.length - 1] + vh * 0.15;
+    const releasePoint = stackStarts[stackStarts.length - 1] + vh * (isMobile ? 0.2 : 0.15);
 
-    layoutRef.current = { tops, heights, S, vh, stackTop, stackStarts, releasePoint, headerEls };
+    layoutRef.current = { tops, heights, S, vh, stackTop, stackStarts, releasePoint, headerEls, isMobile };
     el.style.height = `${releasePoint + vh}px`;
   }
 
   function apply(wheel) {
     if (typeof wheel !== "number") { return }
-    if (window.innerWidth <= 680) { return }
     if (!layoutRef.current) { measure() }
     const L = layoutRef.current;
     if (!L) { return }
@@ -137,6 +134,7 @@ const Courses = memo(function Courses() {
     });
 
     const totalCards = cardsRef.current.length;
+    const isMobile = L.isMobile;
 
     cardsRef.current.forEach((card, i) => {
       if (!card) { return }
@@ -162,7 +160,7 @@ const Courses = memo(function Courses() {
             break;
           }
         }
-        scale = Math.max(0.92, 1 - cardsAbove * 0.02);
+        scale = Math.max(isMobile ? 0.90 : 0.92, 1 - cardsAbove * (isMobile ? 0.025 : 0.02));
       }
 
       card.style.opacity = "1";
