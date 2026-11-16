@@ -59,6 +59,14 @@ export function HeroSection({ id }: Props) {
   const cameraInRef = useRef({ start: -1 });
   const { activeId } = useContext(ControllerContext);
   const [entered, setEntered] = useState(false);
+  const [modelReady, setModelReady] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsMobileDevice(window.innerWidth <= 768);
+    }
+  }, []);
 
   useEffect(() => {
     if (activeId === id) {
@@ -125,16 +133,23 @@ export function HeroSection({ id }: Props) {
             className="select-none whitespace-nowrap text-center text-[min(41.5vw,600px)] font-normal uppercase leading-[0.88] text-[#16a34a] lg:pt-[52px] will-change-transform"
             style={{ fontFamily: "'Dimensions', sans-serif" }}
           >
-            <AnimatedLine text="APEXTECHERA" started={entered} />
+            <AnimatedLine text="APEXTECHERA" started={isMobileDevice ? (entered && modelReady) : entered} />
           </h1>
         </div>
 
         {/* 3D Model Astronaut Scene at z-[2] in FRONT of the text */}
-        <HeroAstronautScene trackRef={trackRef} wheelRef={wheelRef} cameraInRef={cameraInRef} />
+        <HeroAstronautScene
+          trackRef={trackRef}
+          wheelRef={wheelRef}
+          cameraInRef={cameraInRef}
+          onReady={() => setModelReady(true)}
+        />
 
         <div
           ref={bottomRef}
-          className="absolute inset-x-0 bottom-0 z-[3] px-4 pb-12 sm:px-10 sm:pb-16 will-change-[transform,opacity]"
+          className={`absolute inset-x-0 bottom-0 z-[3] px-4 pb-12 sm:px-10 sm:pb-16 will-change-[transform,opacity] transition-opacity duration-500 ease-out ${
+            isMobileDevice && !modelReady ? "opacity-0" : "opacity-100"
+          }`}
         >
           <div className="flex items-end justify-between gap-4 sm:gap-8">
             <div className="mb-2 sm:mb-16">

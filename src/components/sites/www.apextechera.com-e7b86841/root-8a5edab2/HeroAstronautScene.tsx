@@ -106,9 +106,10 @@ interface Props {
   trackRef: RefObject<HTMLElement | null>;
   wheelRef: RefObject<number>;
   cameraInRef: RefObject<{ start: number }>;
+  onReady?: () => void;
 }
 
-export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
+export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -263,9 +264,11 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     bodyMetalnessMap.flipY = false;
     bodyMetalnessMap.generateMipmaps = !profile.isLowEnd;
 
-    const bodyNormalMap = textureLoader.load(`${BASE}/webgl-normal.webp`);
-    bodyNormalMap.flipY = false;
-    bodyNormalMap.generateMipmaps = !profile.isLowEnd;
+    const bodyNormalMap = profile.isLowEnd ? null : textureLoader.load(`${BASE}/webgl-normal.webp`);
+    if (bodyNormalMap) {
+      bodyNormalMap.flipY = false;
+      bodyNormalMap.generateMipmaps = !profile.isLowEnd;
+    }
 
     const bodyMaterial = new THREE.MeshStandardMaterial({
       transparent: true,
@@ -276,7 +279,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       envMapIntensity: profile.isLowEnd ? 0.35 : 0.6,
       roughnessMap: bodyRoughnessMap,
       metalnessMap: bodyMetalnessMap,
-      normalMap: profile.isLowEnd ? null : bodyNormalMap, // Skip normal mapping math on low-end Mali
+      normalMap: bodyNormalMap, // Skip normal mapping math and network download on low-end Mali
     });
 
     const headMaterial = new THREE.MeshStandardMaterial({
@@ -371,6 +374,10 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       videoPlane.position.set(0.015, 1.41, 1.341);
       videoPlane.rotation.set(196 * DEG, 0, Math.PI);
       model.add(videoPlane);
+
+      // Render initial frame immediately so there is zero black frame
+      renderer.render(scene, camera);
+      if (onReady) onReady();
     });
 
     // 8. Resize Handler
@@ -516,7 +523,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       specularMap?.dispose();
       bodyRoughnessMap.dispose();
       bodyMetalnessMap.dispose();
-      bodyNormalMap.dispose();
+      bodyNormalMap?.dispose();
       earth.geometry.dispose();
       earthMaterial.dispose();
       bodyMaterial.dispose();
@@ -538,7 +545,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
         });
       }
     };
-  }, [trackRef, wheelRef, cameraInRef]);
+  }, [trackRef, wheelRef, cameraInRef, onReady]);
 
   return (
     <div

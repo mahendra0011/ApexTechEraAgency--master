@@ -104,9 +104,9 @@ class DetectSwipe {
             if (deltaY) {
                 this.cb({
                     dir: deltaY / Math.abs(deltaY),
-                    // Responsive touch multiplier: deltaY / 3.0 gives natural 1:1 mobile tracking
+                    // Responsive touch multiplier: deltaY / 2.4 gives natural responsive mobile tracking
                     // (touch-only path; desktop mouse wheel in detectWheel.js is untouched)
-                    wheel: deltaY / 3.0
+                    wheel: deltaY / 2.4
                 })
             }
         }

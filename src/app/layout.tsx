@@ -184,6 +184,37 @@ export default function RootLayout({
         <link
           rel="preload"
           as="fetch"
+          href="/draco/draco_decoder.wasm"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          as="script"
+          href="/draco/draco_wasm_wrapper.js"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/webgl-roughness.webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/webgl-metalness.webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/www.apextechera.com-e7b86841/root-8a5edab2/images/texture_earth.webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.webp"
+        />
+        <link
+          rel="preload"
+          as="fetch"
           type="video/mp4"
           href="/sites/apextechera-design-fc4b5892/root-8a5edab2/video/tech-agency-logo.mp4"
           crossOrigin="anonymous"

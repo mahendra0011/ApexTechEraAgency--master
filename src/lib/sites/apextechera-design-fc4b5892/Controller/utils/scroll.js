@@ -60,16 +60,16 @@ export const scroll = {
         const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
         const isWhatCreateMobile = context.ids && context.ids[context.active] === 'whatcreate' && typeof window !== 'undefined' && window.innerWidth <= 576
         // Desktop: apextechera retains 0.5 for cinematic slow mouse wheel rotation.
-        // Mobile / Android touch: 0.5 caused severe crawling (100+ swipes). Using 0.18 on mobile allows natural 3-4 swipe rotation!
+        // Mobile / Android touch: 0.12 allows slightly faster, responsive swipe rotation (not too fast, just right)
         let intensity = this.intensity
         if (context.ids) {
             const currentId = context.ids[context.active]
             if (currentId === 'courses') {
-                intensity = isMobile ? 0.18 : 0.5
+                intensity = isMobile ? 0.12 : 0.5
             } else if (isWhatCreateMobile) {
                 intensity = 0.5
             } else if (currentId === 'apextechera') {
-                intensity = isMobile ? 0.18 : 0.5
+                intensity = isMobile ? 0.12 : 0.5
             }
         }
         context.wheelTo = getScrollCoordsFromElement(ref).windowTop.fromTop + context.wheel / intensity
