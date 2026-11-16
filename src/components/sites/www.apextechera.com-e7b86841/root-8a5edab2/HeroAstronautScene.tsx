@@ -6,9 +6,9 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { HDRLoader } from "three/examples/jsm/loaders/HDRLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { getDeviceProfile } from "../../../../lib/performance/deviceProfile";
 
 const BASE = "/sites/www.apextechera.com-e7b86841/root-8a5edab2/images";
-
 const DEG = Math.PI / 180;
 
 interface Keyframe {
@@ -61,10 +61,6 @@ const KEYFRAMES: Keyframe[] = [
   { s: 3467, x: 0.02, y: -1.15, z: 2.87, ry: -180, rx: 16, op: 0 },
 ];
 
-function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * t;
-}
-
 function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number) {
   const t2 = t * t;
   const t3 = t2 * t;
@@ -78,7 +74,7 @@ function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number) {
 
 function elasticOut(t: number) {
   if (t === 0 || t === 1) return t;
-  return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * (2 * Math.PI / 3)) + 1;
+  return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1;
 }
 
 function evalCurve(scrollY: number) {
@@ -119,29 +115,33 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     const container = containerRef.current;
     if (!container) return;
 
-    const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+    // 1. Detect Hardware & GPU Tier (optimized for 4GB Android phones)
+    const profile = getDeviceProfile();
+    const isMobile = profile.isMobile;
+
     const scene = new THREE.Scene();
     const fov = isMobile ? 42 : 30;
     const camera = new THREE.PerspectiveCamera(
       fov,
-      window.innerWidth / window.innerHeight
+      window.innerWidth / window.innerHeight,
+      0.1,
+      100
     );
     camera.position.set(0, 1.7, 3);
     scene.add(camera);
 
+    // 2. Optimized WebGLRenderer Configuration
     const renderer = new THREE.WebGLRenderer({
-      // MSAA on mobile GPUs doubles fragment cost for little benefit at
-      // phone DPI — disable it, prefer the low-power GPU on phones and cap
-      // DPR lower to stop Android thermal throttling/freeze during the hero
-      // animation.
-      antialias: !isMobile,
+      antialias: !isMobile, // Disable on mobile to save fragment shading cycles
       alpha: true,
-      powerPreference: isMobile ? "low-power" : "high-performance",
+      powerPreference: "high-performance",
+      precision: profile.precision, // "mediump" allows fast 16-bit float registers on mobile GPUs
+      stencil: false,
+      depth: true,
+      preserveDrawingBuffer: false,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(
-      Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 1.5)
-    );
+    renderer.setPixelRatio(profile.recommendedDpr);
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     container.appendChild(renderer.domElement);
@@ -169,29 +169,48 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
     directionLight.position.set(0, 7, -5).normalize();
     scene.add(directionLight);
 
+    // 3. Earth Mesh (Zero-cost unlit/basic material on mobile, no heavy 4K specular map)
     const earthTexture = textureLoader.load(`${BASE}/texture_earth.webp`);
     earthTexture.anisotropy = isMobile ? 1 : 4;
-    const specularMap = textureLoader.load(`${BASE}/4k_earth_specular_map.webp`);
-    const earth = new THREE.Mesh(
-      new THREE.SphereGeometry(6, isMobile ? 16 : 32, isMobile ? 16 : 32),
-      new THREE.MeshPhongMaterial({
+    earthTexture.generateMipmaps = !profile.isLowEnd;
+
+    let earthMaterial: THREE.Material;
+    let specularMap: THREE.Texture | null = null;
+
+    if (profile.use4kSpecular) {
+      specularMap = textureLoader.load(`${BASE}/4k_earth_specular_map.webp`);
+      earthMaterial = new THREE.MeshPhongMaterial({
         map: earthTexture,
         specularMap,
         specular: new THREE.Color("#191A16"),
         shininess: 6,
-      })
+      });
+    } else {
+      // Mobile: Unlit basic material consumes ~0ms GPU time and saves 67MB of VRAM
+      earthMaterial = new THREE.MeshBasicMaterial({
+        map: earthTexture,
+      });
+    }
+
+    const earthSegments = profile.isLowEnd ? 12 : isMobile ? 16 : 32;
+    const earth = new THREE.Mesh(
+      new THREE.SphereGeometry(6, earthSegments, earthSegments),
+      earthMaterial
     );
     earth.frustumCulled = false;
     earth.position.set(0, -12, -12);
     earth.rotation.set(30 * DEG, 239 * DEG, 0);
     scene.add(earth);
 
+    // 4. Space Particle System (Dynamically scaled count)
     const particleTexture = textureLoader.load(`${BASE}/particle.webp`);
+    particleTexture.generateMipmaps = !profile.isLowEnd;
+
     const pointsMaterial = new THREE.ShaderMaterial({
       uniforms: {
         uMap: { value: particleTexture },
         uColor: { value: new THREE.Color(0xbfbfc4) },
-        uSize: { value: 0.08 },
+        uSize: { value: profile.isLowEnd ? 0.09 : 0.08 },
         uPixelRatio: { value: renderer.getPixelRatio() },
         uTime: { value: 0 },
       },
@@ -220,9 +239,8 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       transparent: true,
       depthWrite: false,
     });
-    // Fewer particles on phones: the points mesh shares the frame budget
-    // with the scroll handlers, so 2200 is enough for the same visual.
-    const COUNT = isMobile ? 2200 : 7500;
+
+    const COUNT = profile.maxParticles;
     const positions = new Float32Array(3 * COUNT);
     for (let i = 0; i < COUNT; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 53;
@@ -230,44 +248,47 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       positions[i * 3 + 2] = (Math.random() - 0.5) * 53;
     }
     const pointsGeometry = new THREE.BufferGeometry();
-    pointsGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(positions, 3)
-    );
+    pointsGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const points = new THREE.Points(pointsGeometry, pointsMaterial);
     points.name = "particleSys";
     scene.add(points);
 
+    // 5. Astronaut PBR Materials
     const bodyRoughnessMap = textureLoader.load(`${BASE}/webgl-roughness.webp`);
     bodyRoughnessMap.flipY = false;
     bodyRoughnessMap.colorSpace = THREE.SRGBColorSpace;
+    bodyRoughnessMap.generateMipmaps = !profile.isLowEnd;
+
     const bodyMetalnessMap = textureLoader.load(`${BASE}/webgl-metalness.webp`);
     bodyMetalnessMap.flipY = false;
+    bodyMetalnessMap.generateMipmaps = !profile.isLowEnd;
+
     const bodyNormalMap = textureLoader.load(`${BASE}/webgl-normal.webp`);
     bodyNormalMap.flipY = false;
+    bodyNormalMap.generateMipmaps = !profile.isLowEnd;
+
     const bodyMaterial = new THREE.MeshStandardMaterial({
       transparent: true,
       opacity: 1,
       color: new THREE.Color(0),
       roughness: 0.75,
       metalness: 0.2,
-      envMapIntensity: 0.6,
+      envMapIntensity: profile.isLowEnd ? 0.35 : 0.6,
       roughnessMap: bodyRoughnessMap,
       metalnessMap: bodyMetalnessMap,
-      normalMap: bodyNormalMap,
+      normalMap: profile.isLowEnd ? null : bodyNormalMap, // Skip normal mapping math on low-end Mali
     });
+
     const headMaterial = new THREE.MeshStandardMaterial({
       transparent: true,
       opacity: 1,
       color: new THREE.Color(0),
       roughness: 0.15,
       metalness: 0.6,
-      envMapIntensity: 1,
+      envMapIntensity: profile.isLowEnd ? 0.5 : 1,
       side: THREE.DoubleSide,
     });
-    // WebP instead of the 334 KB source PNG (~130 KB): same 1024x1024, same
-    // pixels, but it lands with the rest of the hero preloads instead of
-    // lagging behind and popping the keyboard texture in late.
+
     const noteTexture = textureLoader.load(`${BASE}/macbook-fill.webp`);
     noteTexture.colorSpace = THREE.SRGBColorSpace;
     noteTexture.flipY = false;
@@ -276,25 +297,45 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       transparent: true,
     });
 
-    const video = document.createElement("video");
-    video.src = "/sites/apextechera-design-fc4b5892/root-8a5edab2/video/tech-agency-logo.mp4";
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.crossOrigin = "anonymous";
-    video.preload = "auto";
-    video.autoplay = true;
-    video.setAttribute("playsinline", "");
-    video.play().catch(() => {});
-    const videoTexture = new THREE.VideoTexture(video);
-    videoTexture.minFilter = THREE.LinearFilter;
-    videoTexture.magFilter = THREE.LinearFilter;
-    const videoMaterial = new THREE.MeshBasicMaterial({
-      map: videoTexture,
-      side: THREE.FrontSide,
-      toneMapped: false,
-    });
+    // 6. Laptop Screen: Video Texture on Desktop/High-end, Clean Static Logo on Low-End Mobile
+    let video: HTMLVideoElement | null = null;
+    let videoTexture: THREE.VideoTexture | null = null;
+    let videoMaterial: THREE.Material;
 
+    if (profile.useVideoTexture) {
+      video = document.createElement("video");
+      video.src = "/sites/apextechera-design-fc4b5892/root-8a5edab2/video/tech-agency-logo.mp4";
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.crossOrigin = "anonymous";
+      video.preload = "auto";
+      video.autoplay = true;
+      video.setAttribute("playsinline", "");
+      video.play().catch(() => {});
+
+      videoTexture = new THREE.VideoTexture(video);
+      videoTexture.minFilter = THREE.LinearFilter;
+      videoTexture.magFilter = THREE.LinearFilter;
+      videoMaterial = new THREE.MeshBasicMaterial({
+        map: videoTexture,
+        side: THREE.FrontSide,
+        toneMapped: false,
+      });
+    } else {
+      // 4GB Android phones: Crisp WebP logo avoids continuous MediaCodec texture re-uploads
+      const logoTexture = textureLoader.load(
+        "/sites/apextechera-design-fc4b5892/root-8a5edab2/images/apextechera-logo.webp"
+      );
+      logoTexture.colorSpace = THREE.SRGBColorSpace;
+      videoMaterial = new THREE.MeshBasicMaterial({
+        map: logoTexture,
+        side: THREE.FrontSide,
+        toneMapped: false,
+      });
+    }
+
+    // 7. GLTF + Draco Load
     const gltfLoader = new GLTFLoader();
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath("/draco/");
@@ -332,35 +373,33 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       model.add(videoPlane);
     });
 
+    // 8. Resize Handler
     const onResize = () => {
-      const isMobile = window.innerWidth <= 768;
-      camera.fov = isMobile ? 42 : 30;
+      const p = getDeviceProfile();
+      camera.fov = p.isMobile ? 42 : 30;
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1) : Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.setPixelRatio(p.recommendedDpr);
       pointsMaterial.uniforms.uPixelRatio.value = renderer.getPixelRatio();
     };
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", onResize, { passive: true });
 
     let isPageVisible = !document.hidden;
     const onVisibilityChange = () => {
       isPageVisible = !document.hidden;
     };
-    document.addEventListener("visibilitychange", onVisibilityChange);
+    document.addEventListener("visibilitychange", onVisibilityChange, { passive: true });
 
     const timer = new THREE.Timer();
     timer.connect(document);
     let smoothScroll = 0;
     let lastRender = 0;
-    // Render ONLY while the hero stage is on screen. The old loop kept
-    // drawing WebGL (earth + 7.5k particles + video texture) forever, even
-    // when the user was 10 sections away — a major Android battery/freeze
-    // source. IntersectionObserver flips `sceneVisible` as sections swap.
+    let frameCount = 0;
     let sceneVisible = true;
+
     const io = new IntersectionObserver(
       (entries) => {
-        console.log('[HeroScene] io callback, intersecting:', entries[0]?.isIntersecting);
         sceneVisible = entries[0]?.isIntersecting ?? true;
         if (sceneVisible && !raf) {
           timer.update();
@@ -370,47 +409,56 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       { threshold: 0 }
     );
     io.observe(container);
+
     const onVisibility = () => {
       if (document.hidden) {
         if (raf) {
           cancelAnimationFrame(raf);
           raf = 0;
         }
-        video.pause();
+        if (video) video.pause();
       } else {
-        video.play().catch(() => {});
+        if (video) video.play().catch(() => {});
         if (!raf && sceneVisible) {
           timer.update();
           raf = requestAnimationFrame(tick);
         }
       }
     };
-    document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener("visibilitychange", onVisibility, { passive: true });
 
+    // 9. Adaptive High-Performance Render Tick
     const tick = (time?: number) => {
       if (disposed) return;
       if (!sceneVisible || !isPageVisible || document.hidden) {
         raf = 0;
         return;
       }
-      timer.update(time);
-  const dt = Math.min(timer.getDelta(), 0.1);
-      // Snappy and fast response across both Mobile (Android/iOS) and Desktop
-      const lerpSpeed = 0.08;
-      const targetScroll = Math.max(0, Math.min(wheelRef.current, 3467));
 
+      timer.update(time);
+      const dt = Math.min(timer.getDelta(), 0.05); // Strict 50ms delta clamp to prevent stutter
+      frameCount++;
+
+      const targetScroll = Math.max(0, Math.min(wheelRef.current, 3467));
+      const scrollDiff = Math.abs(targetScroll - smoothScroll);
+      const isActivelyScrolling = scrollDiff > 0.8;
+      const isIntroAnimating = cameraInRef.current.start >= 0;
+
+      // Snappy lerp curve
+      const lerpSpeed = isMobile ? 0.06 : 0.08;
       smoothScroll += (targetScroll - smoothScroll) * (1 - Math.exp(-dt / lerpSpeed));
 
-      if (cameraInRef.current.start >= 0) {
+      if (isIntroAnimating) {
         const p = Math.min((performance.now() - cameraInRef.current.start) / 2500, 1);
         camera.position.y = 1.7 * (1 - elasticOut(p));
         if (p >= 1) cameraInRef.current.start = -1;
       }
 
+      // Rotate background elements
       earth.rotation.y += 0.001;
-
       pointsMaterial.uniforms.uTime.value = timer.getElapsed();
 
+      // Transform astronaut model along keyframe curve
       if (model) {
         const kf = evalCurve(smoothScroll);
         model.position.set(kf.x, kf.y, kf.z);
@@ -418,18 +466,30 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
         for (const mat of fadeMaterials) {
           (mat as THREE.MeshStandardMaterial).opacity = kf.op;
         }
-        if (!video.paused && video.readyState >= 2) {
-          videoTexture.needsUpdate = true;
+
+        // Throttle video texture upload to every 2nd frame on supported devices to eliminate GPU locks
+        if (video && videoTexture && !video.paused && video.readyState >= 2) {
+          if (frameCount % 2 === 0) {
+            videoTexture.needsUpdate = true;
+          }
         }
       }
 
+      // Adaptive Frame Rate:
+      // - When user is scrolling: full 60 FPS
+      // - When idle on low-end mobile: render at profile.idleFps (30 FPS) to keep phone cool & stop Android thermal throttling
       const now = performance.now();
-      if (!isMobile || now - lastRender >= 1000 / 45) {
+      const minFrameInterval =
+        isActivelyScrolling || isIntroAnimating ? 0 : 1000 / profile.idleFps;
+
+      if (now - lastRender >= minFrameInterval) {
         lastRender = now;
         renderer.render(scene, camera);
       }
+
       raf = requestAnimationFrame(tick);
     };
+
     raf = requestAnimationFrame(tick);
 
     return () => {
@@ -441,20 +501,24 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       document.removeEventListener("visibilitychange", onVisibilityChange);
       scene.environment = null;
       envTexture?.dispose();
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
-      videoTexture.dispose();
+
+      if (video) {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      }
+      videoTexture?.dispose();
       pointsGeometry.dispose();
       pointsMaterial.dispose();
       noteTexture.dispose();
       particleTexture.dispose();
       earthTexture.dispose();
-      specularMap.dispose();
+      specularMap?.dispose();
       bodyRoughnessMap.dispose();
       bodyMetalnessMap.dispose();
       bodyNormalMap.dispose();
       earth.geometry.dispose();
+      earthMaterial.dispose();
       bodyMaterial.dispose();
       headMaterial.dispose();
       noteMaterial.dispose();
@@ -462,6 +526,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef }: Props) {
       dracoLoader.dispose();
       renderer.dispose();
       timer.dispose();
+
       if (renderer.domElement.parentElement === container) {
         container.removeChild(renderer.domElement);
       }

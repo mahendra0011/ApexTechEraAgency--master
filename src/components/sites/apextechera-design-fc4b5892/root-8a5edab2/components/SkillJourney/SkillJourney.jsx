@@ -172,19 +172,23 @@ const SkillJourney = memo(function SkillJourney() {
         progressRef.current.style.width = `${progressWidth}%`;
       }
 
-      // Highlight active timeline items
+      // Highlight active timeline items (dirty-checked to eliminate mobile composite thrashing)
       itemRefs.current.forEach((el, index) => {
         if (!el) return;
         const threshold = ITEM_THRESHOLDS[index];
         const isActive = p >= threshold;
-        if (isActive) {
-          el.style.opacity = "1";
-          el.style.transform = "scale(1.05)";
-          el.style.filter = "drop-shadow(0 0 16px rgba(168,85,247,0.6))";
-        } else {
-          el.style.opacity = "0.45";
-          el.style.transform = "scale(0.95)";
-          el.style.filter = "none";
+        const wasActive = el.dataset.activeState === "true";
+        if (isActive !== wasActive) {
+          el.dataset.activeState = String(isActive);
+          if (isActive) {
+            el.style.opacity = "1";
+            el.style.transform = "scale(1.05)";
+            el.style.filter = "drop-shadow(0 0 16px rgba(168,85,247,0.6))";
+          } else {
+            el.style.opacity = "0.45";
+            el.style.transform = "scale(0.95)";
+            el.style.filter = "none";
+          }
         }
       });
     };
