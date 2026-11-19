@@ -1,7 +1,7 @@
 .what-create-mobile {
   padding: 4rem 1.25rem 5rem;
-  background: #0a0a0a;
-  color: #fff;
+  background: #ffffff;
+  color: #111827;
 }
 
 .wcm-header {
@@ -23,7 +23,7 @@
   font-weight: 800;
   letter-spacing: -0.02em;
   margin: 0;
-  color: #fff;
+  color: #111827;
 }
 
 .wcm-grid {
@@ -33,13 +33,14 @@
 }
 
 .wcm-card {
-  background: #18181b;
+  background: #ffffff;
   border-radius: 1rem;
   overflow: hidden;
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.5s ease, transform 0.5s ease;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .wcm-card.is-visible {
@@ -77,7 +78,7 @@
   font-size: 0.95rem;
   font-weight: 700;
   margin: 0.35rem 0 0.6rem;
-  color: #fff;
+  color: #111827;
   line-height: 1.25;
 }
 

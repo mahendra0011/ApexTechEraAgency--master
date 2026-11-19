@@ -396,19 +396,6 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
     let smoothScroll = 0;
     let lastRender = 0;
     let frameCount = 0;
-    let sceneVisible = true;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        sceneVisible = entries[0]?.isIntersecting ?? true;
-        if (sceneVisible && !raf) {
-          timer.update();
-          raf = requestAnimationFrame(tick);
-        }
-      },
-      { threshold: 0 }
-    );
-    io.observe(container);
 
     const onVisibility = () => {
       if (document.hidden) {
@@ -419,7 +406,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
         if (video) video.pause();
       } else {
         if (video) video.play().catch(() => {});
-        if (!raf && sceneVisible) {
+        if (!raf) {
           timer.update();
           raf = requestAnimationFrame(tick);
         }
@@ -430,7 +417,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
     // 9. Adaptive High-Performance Render Tick
     const tick = (time?: number) => {
       if (disposed) return;
-      if (!sceneVisible || !isPageVisible || document.hidden) {
+      if (!isPageVisible || document.hidden) {
         raf = 0;
         return;
       }
@@ -445,7 +432,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
       const isIntroAnimating = cameraInRef.current.start >= 0;
 
       // Snappy lerp curve
-      const lerpSpeed = isMobile ? 0.06 : 0.08;
+       const lerpSpeed = isMobile ? 0.02 : 0.05;
       smoothScroll += (targetScroll - smoothScroll) * (1 - Math.exp(-dt / lerpSpeed));
 
       if (isIntroAnimating) {
@@ -495,7 +482,6 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
-      io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibilityChange);
