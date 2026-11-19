@@ -79,39 +79,20 @@ export function HeroSection({ id }: Props) {
     }
   }, [activeId, id]);
 
-  const WHEEL_MAX = 3467;
-  const END_RANGE = 770;
+  const WHEEL_MAX = 2700;
 
   function apply(wheel: number) {
     wheelRef.current = wheel;
     if (stageRef.current) {
-      const w = Math.max(0, Math.min(wheel, WHEEL_MAX));
-      const start = WHEEL_MAX - END_RANGE;
-      let counter: number;
-      if (w <= start) {
-        counter = w;
-      } else {
-        const f = (w - start) / END_RANGE;
-        const s = f * f * (3 - 2 * f);
-        counter = w - END_RANGE * s;
-      }
-      stageRef.current.style.transform = `translate3d(0, ${counter}px, 0)`;
+      const w = Math.max(0, wheel);
+      stageRef.current.style.transform = `translate3d(0, ${w}px, 0)`;
 
-      // As you scroll down (w increases), text scrolls upward behind the 3D model
       if (titleRef.current) {
-        const yOffset = -w * 0.9;
-        titleRef.current.style.transform = `translate3d(0, ${yOffset}px, 0)`;
+        titleRef.current.style.transform = `translate3d(0, 0px, 0)`;
       }
 
-      // Bottom text fades out smoothly during the exit range together with the 3D model
       if (bottomRef.current) {
-        if (w <= start) {
-          bottomRef.current.style.opacity = "1";
-        } else {
-          const f = (w - start) / END_RANGE;
-          const fade = Math.max(0, 1 - f * f);
-          bottomRef.current.style.opacity = `${fade}`;
-        }
+        bottomRef.current.style.opacity = "1";
       }
     }
   }
@@ -122,7 +103,7 @@ export function HeroSection({ id }: Props) {
   );
 
   return (
-    <div id="hero-anim" ref={trackRef} className="relative" style={{ height: "calc(3467px + 100vh)" }}>
+    <div id="hero-anim" ref={trackRef} className="relative" style={{ height: "calc(2700px + 100vh)" }}>
       <div
         ref={stageRef}
         className="absolute inset-x-0 top-0 z-[1] h-screen overflow-hidden"
