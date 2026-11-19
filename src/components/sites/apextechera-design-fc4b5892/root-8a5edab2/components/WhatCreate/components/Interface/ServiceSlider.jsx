@@ -214,7 +214,8 @@ const ServiceSlider = () => {
       const winW = window.innerWidth
       // On mobile viewports, the notch/address bar heights can make rect.height/width slightly less than 95% of innerHeight/innerWidth.
       // We check if it covers 85% of screen height/width on mobile, and COVER_RATIO (95%) on desktop.
-      const ratio = winW <= 576 ? 0.85 : COVER_RATIO
+      const isTouch = 'ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0
+      const ratio = (isTouch && winW <= 768) ? 0.85 : COVER_RATIO
       const isCovered = rect.height >= window.innerHeight * ratio
         && rect.width >= window.innerWidth * ratio
 
@@ -262,7 +263,8 @@ const ServiceSlider = () => {
         sequenceActiveRef.current = true
         setSequenceActive(true)
         context.snapWheelTo = true
-        context.wheelTo = winW <= 576 ? winW + 750 : winW * 2
+        const isTouch2 = 'ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0
+        context.wheelTo = (isTouch2 && winW <= 768) ? winW + 750 : winW * 2
         return
       }
     }
@@ -351,7 +353,8 @@ const ServiceSlider = () => {
     let lastWheel = 0
     const onCustomWheel = (e) => {
       const winW = window.innerWidth
-      if (winW > 576) { return } // ONLY trigger on mobile responsive viewports
+      const isTouch3 = 'ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0
+      if (!(isTouch3 && winW <= 768)) { return } // ONLY trigger on mobile responsive viewports
       // ONLY trigger when the active section is WhatCreate — customwheel fires
       // for every section's scroll, so without this guard the portal would
       // incorrectly activate on other sections (e.g. About Tech Era).
@@ -412,7 +415,8 @@ const ServiceSlider = () => {
         sequenceActiveRef.current = true
         setSequenceActive(true)
         context.snapWheelTo = true
-        context.wheelTo = winW <= 576 ? winW + 750 : winW * 2
+        const isTouch2 = 'ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0
+        context.wheelTo = (isTouch2 && winW <= 768) ? winW + 750 : winW * 2
       }
     }
 

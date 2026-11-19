@@ -116,7 +116,7 @@ export function HeroSection({ id }: Props) {
             className="select-none whitespace-nowrap text-center text-[min(41.5vw,600px)] font-normal uppercase leading-[0.88] text-[#16a34a] lg:pt-[52px] will-change-transform"
             style={{ fontFamily: "'Dimensions', sans-serif" }}
           >
-            <AnimatedLine text="APEXTECHERA" started={entered && modelReady} />
+            <AnimatedLine text="APEXTECHERA" started={entered} />
           </h1>
         </div>
 
@@ -132,9 +132,7 @@ export function HeroSection({ id }: Props) {
 
         <div
           ref={bottomRef}
-          className={`absolute inset-x-0 bottom-0 z-[3] px-4 pb-12 sm:px-10 sm:pb-16 will-change-[transform,opacity] transition-opacity duration-700 ease-out ${
-            !modelReady ? "opacity-0" : "opacity-100"
-          }`}
+          className={`absolute inset-x-0 bottom-0 z-[3] px-4 pb-12 sm:px-10 sm:pb-16 will-change-[transform,opacity] transition-opacity duration-700 ease-out opacity-100`}
         >
           <div className="flex items-end justify-between gap-4 sm:gap-8">
             <div className="mb-2 sm:mb-16">

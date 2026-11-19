@@ -11,18 +11,20 @@ import { useEffect, useState } from 'react'
 // hang/freeze on phones. On mobile we swap every <video> in this section
 // for a static poster <img> instead — desktop/Windows keeps the videos
 // exactly as before.
-const MOBILE_BREAKPOINT = 576
+const MOBILE_BREAKPOINT = 768
+
+// Touch-aware: only treat as "mobile" on actual touch devices, so Windows
+// desktop (even with a small resized window) never switches to mobile mode.
+function isTouchDevice() {
+  if (typeof window === 'undefined') { return false }
+  return 'ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0
+}
 
 export function useIsMobileViewport() {
-  // Always start false so the client's first render matches the server's
-  // SSR output (which has no window and can't know the viewport). The
-  // effect below corrects it immediately after mount — this trades a
-  // one-frame video/poster flash on mobile for avoiding a hydration
-  // mismatch.
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT)
+    const check = () => setIsMobile(isTouchDevice() && window.innerWidth <= MOBILE_BREAKPOINT)
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)

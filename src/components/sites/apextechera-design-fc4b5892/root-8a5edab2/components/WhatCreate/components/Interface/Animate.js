@@ -5,6 +5,11 @@ import { itl } from "../../../../../../../../lib/sites/apextechera-design-fc4b58
 import { Timeline } from "./timeline"
 import { isElementVisible } from "../../../../../../../../lib/sites/apextechera-design-fc4b5892/Animator/js/coords/index"
 
+function isTouchDevice() {
+  if (typeof window === 'undefined') { return false }
+  return 'ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0
+}
+
 const Animate = ({ parent, target, initRefs, children }) => {
     // Caches slider/mainInterface measurements so the per-scroll-tick
     // Timeline() calc doesn't force a synchronous layout reflow on every
@@ -69,6 +74,51 @@ const Animate = ({ parent, target, initRefs, children }) => {
         const timeline = Timeline(refs, dimsCache.current)
         const t = itl(timeline, refs.wheel)
         // console.log(t)
+
+        const isMobileScreen = isTouchDevice() && typeof window !== 'undefined' && window.innerWidth <= 768
+
+        if (isMobileScreen) {
+            refs.container.style.transform = 'translate3d(0, 0, 0) scale(1)'
+            refs.content.style.opacity = '1'
+            refs.mode.style.transform = 'translate3d(0, 0, 0)'
+            refs.view.style.transform = 'translate3d(0, 0, 0)'
+            refs.stage1.style.opacity = '0'
+            refs.stage1.style.visibility = 'hidden'
+            refs.stage1.style.pointerEvents = 'none'
+            refs.stage2.style.opacity = '1'
+            refs.stage2.style.visibility = 'visible'
+            refs.stage2.style.pointerEvents = 'auto'
+            refs.stage3.style.opacity = '0'
+            refs.stage3.style.visibility = 'hidden'
+            refs.stage3.style.pointerEvents = 'none'
+            refs.grid.style.opacity = t.grid.opacity
+            refs.mode.style.width = '100%'
+            refs.modeTrX.style.transform = 'translate3d(0, 0, 0)'
+            refs.dHeader.style.opacity = '1'
+            refs.sidebar.style.opacity = '1'
+            refs.otherOps.style.opacity = '1'
+            if (refs.title) refs.title.style.opacity = '1'
+            if (refs.sideCard1) { refs.sideCard1.style.opacity = '1'; refs.sideCard1.style.pointerEvents = 'auto' }
+            if (refs.sideCard3) { refs.sideCard3.style.opacity = '1'; refs.sideCard3.style.pointerEvents = 'auto' }
+            if (refs.sideCard4) { refs.sideCard4.style.opacity = '1'; refs.sideCard4.style.pointerEvents = 'auto' }
+            if (refs.sideCard6) { refs.sideCard6.style.opacity = '1'; refs.sideCard6.style.pointerEvents = 'auto' }
+            refs.title.style.transform = 'translate3d(0, 0, 0)'
+            refs.row.style.transform = 'translate3d(0, 0, 0)'
+            refs.tasks.style.transform = 'translate3d(0, 0, 0)'
+            if (refs.slot) refs.slot.style.transform = 'translate3d(0, 0, 0)'
+            refs.cursor1.style.transform = 'translate3d(0, 0, 0)'
+            refs.cursor2.style.transform = 'translate3d(0, 0, 0)'
+            refs.cursor3.style.transform = 'translate3d(0, 0, 0)'
+            refs.cursor4.style.transform = 'translate3d(0, 0, 0)'
+            refs.cursor5.style.transform = 'translate3d(0, 0, 0)'
+            refs.cursor6.style.transform = 'translate3d(0, 0, 0)'
+            if (refs.tagContainer) refs.tagContainer.style.opacity = '0'
+            if (refs.tag1) refs.tag1.style.opacity = '0'
+            if (refs.tag2) refs.tag2.style.opacity = '0'
+            if (refs.tag3) refs.tag3.style.opacity = '0'
+            if (refs.tag4) refs.tag4.style.opacity = '0'
+            return
+        }
 
         refs.container.style.transform = `translate3d(${t.container.x}px, ${t.container.y}px, 0) scale(${t.container.scale})`
         refs.view.style.transform = `translate3d(${t.view.x}px, 0, 0)`
