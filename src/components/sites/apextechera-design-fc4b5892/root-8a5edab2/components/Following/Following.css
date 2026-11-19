@@ -1,12 +1,12 @@
 .following {
   background: #000000;
-  height: 350vh;
+  height: 100vh;
   position: relative;
   width: 100%;
 }
 
 .following__sticky {
-  background: #000000;
+  background: #ffffff;
   height: 100vh;
   left: 0;
   overflow: hidden;

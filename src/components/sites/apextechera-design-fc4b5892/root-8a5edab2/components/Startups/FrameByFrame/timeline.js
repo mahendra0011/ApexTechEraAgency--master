@@ -83,7 +83,7 @@ const Timeline = (refs, cachedDist) => {
                 scale: 3,
             },
             blur: {
-                size: calcBlurScale(),
+                size: 0,
             }
         }
     ]
