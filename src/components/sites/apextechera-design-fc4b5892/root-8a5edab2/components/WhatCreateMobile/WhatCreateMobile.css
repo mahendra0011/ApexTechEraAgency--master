@@ -1,0 +1,103 @@
+.what-create-mobile {
+  padding: 4rem 1.25rem 5rem;
+  background: #0a0a0a;
+  color: #fff;
+}
+
+.wcm-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.wcm-eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #71717a;
+  margin-bottom: 0.5rem;
+}
+
+.wcm-title {
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #fff;
+}
+
+.wcm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.875rem;
+}
+
+.wcm-card {
+  background: #18181b;
+  border-radius: 1rem;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.wcm-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.wcm-card-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: #000;
+  overflow: hidden;
+}
+
+.wcm-card-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wcm-card-body {
+  padding: 0.875rem;
+}
+
+.wcm-card-num {
+  font-size: 0.7rem;
+  color: #71717a;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.wcm-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0.35rem 0 0.6rem;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.wcm-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.wcm-tag {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 380px) {
+  .wcm-grid {
+    grid-template-columns: 1fr;
+  }
+}

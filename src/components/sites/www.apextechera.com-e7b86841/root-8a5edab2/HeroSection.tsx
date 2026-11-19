@@ -121,7 +121,7 @@ export function HeroSection({ id }: Props) {
         </div>
 
         {/* 3D Model Astronaut Scene at z-[2] in FRONT of the text */}
-        <div className={`transition-opacity duration-700 ease-out ${modelReady ? "opacity-100" : "opacity-0"}`}>
+        <div className="transition-opacity duration-700 ease-out opacity-100">
           <HeroAstronautScene
             trackRef={trackRef}
             wheelRef={wheelRef}

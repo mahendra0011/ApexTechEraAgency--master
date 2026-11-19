@@ -25,6 +25,7 @@ const load = (loader) => dynamic(loader, { ssr: false })
 
 const About = load(() => import("./components/About/About"))
 const Following = load(() => import("./components/Following/Following"))
+const WhatCreateMobile = load(() => import("./components/WhatCreateMobile/WhatCreateMobile"))
 const Startups = load(() => import("./components/Startups/Startups"))
 const SkillJourney = load(() => import("./components/SkillJourney/SkillJourney"))
 const WhatCreate = load(() => import("./components/WhatCreate/WhatCreate"))
@@ -55,6 +56,8 @@ const Home = () => {
 
   const { isMaxWidth } = useContext(BreakpointsContext)
 
+  const isMobileDevice = typeof window !== 'undefined' && ('ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0) && window.innerWidth <= 768
+
   return (
     <>
       <Controller 
@@ -70,7 +73,7 @@ const Home = () => {
           <Following id={screens.FOLLOWED} />
           <Startups id={screens.STARTUPS} />
           <SkillJourney id={screens.SKILLJOURNEY} />
-          <WhatCreate id={screens.WHATCREATE} />
+          {isMobileDevice ? <WhatCreateMobile id={screens.WHATCREATE} /> : <WhatCreate id={screens.WHATCREATE} />}
           <TechReelGallery />
           <TechStackBreakdown id={screens.TECHBREAKDOWN} />
           <MeetFounder id={screens.FOUNDER} />
