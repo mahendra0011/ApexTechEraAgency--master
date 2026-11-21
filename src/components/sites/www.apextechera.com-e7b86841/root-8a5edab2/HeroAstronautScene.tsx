@@ -341,6 +341,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
     let fadeMaterials: THREE.Material[] = [];
     let disposed = false;
     let raf = 0;
+    let isInView = true;
 
     gltfLoader.load(`${BASE}/astro-compressed.glb.txt`, (gltf) => {
       if (disposed) return;
@@ -405,8 +406,8 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
         }
         if (video) video.pause();
       } else {
-        if (video) video.play().catch(() => {});
-        if (!raf) {
+        if (video && isInView) video.play().catch(() => {});
+        if (!raf && isInView) {
           timer.update();
           raf = requestAnimationFrame(tick);
         }
@@ -417,7 +418,7 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
     // 9. Adaptive High-Performance Render Tick
     const tick = (time?: number) => {
       if (disposed) return;
-      if (!isPageVisible || document.hidden) {
+      if (!isPageVisible || document.hidden || !isInView) {
         raf = 0;
         return;
       }
@@ -477,10 +478,34 @@ export function HeroAstronautScene({ trackRef, wheelRef, cameraInRef, onReady }:
       raf = requestAnimationFrame(tick);
     };
 
+    // 10. Mobile only: the controller translates whole sections, so once the
+    // hero scrolls away this loop renders invisible frames forever. Stop it
+    // while offscreen and resume on re-entry. Desktop keeps the old loop.
+    let viewObserver: IntersectionObserver | null = null;
+    if (isMobile && typeof IntersectionObserver !== "undefined") {
+      viewObserver = new IntersectionObserver(
+        ([entry]) => {
+          isInView = entry.isIntersecting;
+          if (!isInView) {
+            if (video) video.pause();
+            return;
+          }
+          if (video && !document.hidden) video.play().catch(() => {});
+          if (!raf && !document.hidden) {
+            timer.update();
+            raf = requestAnimationFrame(tick);
+          }
+        },
+        { threshold: 0 }
+      );
+      viewObserver.observe(container);
+    }
+
     raf = requestAnimationFrame(tick);
 
     return () => {
       disposed = true;
+      viewObserver?.disconnect();
       cancelAnimationFrame(raf);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);

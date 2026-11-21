@@ -22,6 +22,7 @@ const FrameByFrame = ({ screen, fillRef, logoBlur }) => {
     // time — same forced-reflow jank pattern already fixed elsewhere in
     // this codebase. Only re-measured on resize.
     const distCache = useRef(null)
+    const isActiveRef = useRef(false)
     useEffect(() => {
         const measure = () => {
             if (screen.current) {
@@ -53,7 +54,11 @@ const FrameByFrame = ({ screen, fillRef, logoBlur }) => {
             bottom: ${t.logo.y}%;
         `
         refs.blur.style.cssText = `width: ${t.blur.size}px; height: ${t.blur.size}px`
-        setIsActive(t.fill.opacity >= .6)
+        const nextActive = t.fill.opacity >= .6
+        if (nextActive !== isActiveRef.current) {
+            isActiveRef.current = nextActive
+            setIsActive(nextActive)
+        }
     }
 
     useEffect(() => {

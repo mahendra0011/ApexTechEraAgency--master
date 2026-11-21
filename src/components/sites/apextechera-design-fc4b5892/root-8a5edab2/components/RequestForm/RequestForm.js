@@ -24,9 +24,10 @@ const RequestForm = memo(function RequestForm() {
 
   return (
     <div className="rq-form-plug">
-      {/* <Preview /> */}
-      { !isMaxWidth.mobile && <FormBlock />}
-      {/* <FormBlock/> */}
+      {/* Desktop renders the form inline; mobile does too now — the split
+          contact area was otherwise an empty white block. The fixed mobile
+          overlay (FormBlock fixed) is still used by the header/footer CTAs. */}
+      <FormBlock />
     </div>
   )
 })

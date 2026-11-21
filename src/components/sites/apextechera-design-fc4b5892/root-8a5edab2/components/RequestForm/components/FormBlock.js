@@ -36,7 +36,7 @@ const FormBlock = ({ fixed }) => {
   return (
     <section
       className={cn("req-form", fixed ? "-fixed" : "", activeForm ? "-active" : "", modalActive ? "-success" : "")}
-      id="contacts"
+      id={fixed || !isMaxWidth.mobile ? "contacts" : undefined}
     >
       {isMaxWidth.mobile && <div onClick={closeForm} className="req-form__cross"></div>}
       <div className="req-form__content">

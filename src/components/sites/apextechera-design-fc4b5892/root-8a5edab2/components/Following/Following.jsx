@@ -1,4 +1,4 @@
-import { useContext, useRef, memo } from "react";
+import { useContext, useRef, memo, useEffect } from "react";
 import { $t } from "../../../../../../lib/sites/apextechera-design-fc4b5892/i18n/i18n";
 import RandomSpelling from "../../../shared/RandomSpelling/RandomSpelling";
 import Canvas from "../Portfolio/Canvas/Canvas";
@@ -22,6 +22,30 @@ const Following = memo(function Following() {
   const { parent } = useTransform({ onChange }, { id: screens.FOLLOWED });
   const wrapSticky = useTransform("sticky", { id: screens.FOLLOWED, parent });
 
+  const distRef = useRef(0);
+  const lastWheelRef = useRef(null);
+
+  // Cache the scroll distance so onChange never reads layout mid-scroll.
+  useEffect(() => {
+    const measure = () => {
+      if (parent.current) {
+        distRef.current = parent.current.getBoundingClientRect().height - window.innerHeight;
+      }
+      if (lineFillRef.current) {
+        if (window.innerWidth <= 768) {
+          lineFillRef.current.style.height = "100%";
+          lineFillRef.current.style.transform = "scaleY(0)";
+        } else {
+          lineFillRef.current.style.height = "0%";
+          lineFillRef.current.style.transform = "none";
+        }
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [parent]);
+
   function onChange({ wheel }) {
     const par = parent.current;
     const line = lineRef.current;
@@ -34,7 +58,16 @@ const Following = memo(function Following() {
       return;
     }
 
-    const dist = par.getBoundingClientRect().height - window.innerHeight;
+    if (lastWheelRef.current === wheel) {
+      return;
+    }
+    lastWheelRef.current = wheel;
+
+    let dist = distRef.current;
+    if (!dist) {
+      dist = par.getBoundingClientRect().height - window.innerHeight;
+      distRef.current = dist;
+    }
     if (dist <= 0) {
       return;
     }
@@ -43,7 +76,12 @@ const Following = memo(function Following() {
 
     // Phase 1: Vertical line draws from top to bottom (0.0 -> 0.15)
     const lineP = Math.max(0, Math.min(progress / 0.15, 1));
-    lineFill.style.height = `${lineP * 100}%`;
+    if (window.innerWidth <= 768) {
+      // scaleY is compositor-only; animating height forces layout each frame
+      lineFill.style.transform = `scaleY(${lineP})`;
+    } else {
+      lineFill.style.height = `${lineP * 100}%`;
+    }
 
     // Phase 2: Split Curtains Parting (0.15 -> 0.40)
     let splitP = 0;

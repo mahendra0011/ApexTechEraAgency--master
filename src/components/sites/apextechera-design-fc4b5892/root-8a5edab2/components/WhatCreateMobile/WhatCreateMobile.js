@@ -17,26 +17,73 @@ const WhatCreateMobile = memo(function WhatCreateMobile({ id }) {
 
   useEffect(() => {
     const cards = cardRefs.current.filter(Boolean)
+    // Mobile GPUs/decoders choke with 6 simultaneous video sessions. Keep at
+    // most 2 playing: the most recently visible cards win, older ones pause
+    // until they become the newest visible card again.
+    const MAX_PLAYING = 2
+    const playing = new Map()
+
+    const playCard = (card) => {
+      const video = card.querySelector('video')
+      if (!video) return
+      playing.delete(video)
+      playing.set(video, card)
+      if (video.paused) {
+        const p = video.play()
+        if (p && p.catch) { p.catch(() => {}) }
+      }
+      while (playing.size > MAX_PLAYING) {
+        const oldest = playing.keys().next().value
+        playing.delete(oldest)
+        oldest.pause()
+      }
+    }
+
+    const pauseCard = (card) => {
+      const video = card.querySelector('video')
+      if (!video) return
+      playing.delete(video)
+      if (!video.paused) { video.pause() }
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible')
-            const video = entry.target.querySelector('video')
-            if (video && video.paused) {
-              const p = video.play()
-              if (p && p.catch) { p.catch(() => {}) }
-            }
+            playCard(entry.target)
           } else {
-            const video = entry.target.querySelector('video')
-            if (video && !video.paused) { video.pause() }
+            pauseCard(entry.target)
           }
         })
       },
       { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
     )
     cards.forEach((c) => observer.observe(c))
-    return () => observer.disconnect()
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        playing.forEach((card) => {
+          const video = card.querySelector('video')
+          if (video && !video.paused) { video.pause() }
+        })
+        playing.clear()
+        return
+      }
+      // Resume only what is actually on screen, newest first
+      const visible = cards.filter((card) => {
+        const rect = card.getBoundingClientRect()
+        return rect.bottom > 0 && rect.top < window.innerHeight
+      })
+      visible.forEach(playCard)
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', onVisibility)
+      playing.clear()
+    }
   }, [])
 
   return (
@@ -60,7 +107,7 @@ const WhatCreateMobile = memo(function WhatCreateMobile({ id }) {
                 playsInline
                 preload="none"
                 poster={s.poster}
-                data-autoplay
+                data-gate-manual
               >
                 <source src={s.video} type="video/mp4" />
               </video>

@@ -29,6 +29,29 @@ const Portfolio = memo(function Portfolio() {
   const { setActiveForm } = useContext(ModalContext);
   const { parent, target } = useTransform({ onChange }, { id: screens.PORTFOLIO });
 
+  // These four heights are read on every scroll tick in onChange. They only
+  // change on resize (all containers use fixed vh sizes), so measure once and
+  // re-measure on resize instead of forcing layout during scrolling.
+  const heightsRef = useRef({ fewPeopleH: 0, portContainerH: 0, targetH: 0, splitTotalH: 0 });
+  useEffect(() => {
+    const measure = () => {
+      const vh = window.innerHeight;
+      heightsRef.current = {
+        fewPeopleH: fewPeopleRef.current ? fewPeopleRef.current.offsetHeight : vh,
+        portContainerH: portfolioContainer.current ? portfolioContainer.current.offsetHeight : 2 * vh,
+        targetH: target.current ? target.current.offsetHeight : 507,
+        splitTotalH: splitContainerRef.current ? splitContainerRef.current.offsetHeight : 3 * vh,
+      };
+    };
+    measure();
+    const settle = setTimeout(measure, 600);
+    window.addEventListener("resize", measure);
+    return () => {
+      clearTimeout(settle);
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   function initRefs() {
     const par = parent.current;
     const tar = target.current;
@@ -82,10 +105,10 @@ const Portfolio = memo(function Portfolio() {
 
     const vh = window.innerHeight;
 
-    // 1. Calculate section boundaries
-    const fewPeopleH = refs.fewPeople ? refs.fewPeople.offsetHeight : vh;
-    const portContainerH = refs.portContainer ? refs.portContainer.offsetHeight : 2 * vh;
-    const targetH = refs.tar ? refs.tar.offsetHeight : 507;
+    // 1. Section boundaries (cached; see heightsRef effect above)
+    const fewPeopleH = heightsRef.current.fewPeopleH || vh;
+    const portContainerH = heightsRef.current.portContainerH || 2 * vh;
+    const targetH = heightsRef.current.targetH || 507;
 
     // 2. Stage 1: Hand video scale & Curved SVG Line drawing
     // Starts as the user finishes scrolling the project cards marquee
@@ -104,7 +127,7 @@ const Portfolio = memo(function Portfolio() {
     // 3. Stage 2 & 3: Single Vertical Line & Split Screen Transition
     // splitSticky starts right after target element
     const splitOffset = fewPeopleH + portContainerH + targetH * 0.4;
-    const splitTotalH = refs.splitContainer ? refs.splitContainer.offsetHeight : 3 * vh;
+    const splitTotalH = heightsRef.current.splitTotalH || 3 * vh;
     const splitScrollDist = Math.max(1, splitTotalH - vh);
 
     const splitRaw = Math.max(0, Math.min((wheel - splitOffset) / splitScrollDist, 1));
@@ -155,19 +178,23 @@ const Portfolio = memo(function Portfolio() {
     }
     const contactEased = 1 - Math.pow(1 - contactP, 2);
 
+    // On mobile the contact form renders inline and is visible immediately;
+    // the sticky-curtain reveal animation doesn't apply.
+    const contactIsMobile = window.innerWidth <= 768
+
     if (refs.contact) {
-      refs.contact.style.opacity = contactEased.toString();
-      refs.contact.style.visibility = contactP > 0 ? 'visible' : 'hidden';
-      refs.contact.style.pointerEvents = contactP > 0.5 ? 'auto' : 'none';
-      refs.contact.style.transform = `translate3d(0, ${(1 - contactEased) * 20}px, 0)`;
+      refs.contact.style.opacity = contactIsMobile ? '1' : contactEased.toString()
+      refs.contact.style.visibility = contactIsMobile ? 'visible' : (contactP > 0 ? 'visible' : 'hidden')
+      refs.contact.style.pointerEvents = contactIsMobile ? 'auto' : (contactP > 0.5 ? 'auto' : 'none')
+      refs.contact.style.transform = contactIsMobile ? 'none' : `translate3d(0, ${(1 - contactEased) * 20}px, 0)`
     }
 
-    const innerForm = refs.contact.querySelector('.req-form');
+    const innerForm = refs.contact.querySelector('.req-form')
     if (innerForm) {
-      innerForm.style.setProperty('opacity', contactEased.toString(), 'important');
-      innerForm.style.setProperty('visibility', contactP > 0 ? 'visible' : 'hidden', 'important');
-      innerForm.style.setProperty('pointer-events', contactP > 0.5 ? 'auto' : 'none', 'important');
-      innerForm.style.setProperty('transform', `translateY(${(1 - contactEased) * 20}px)`, 'important');
+      innerForm.style.setProperty('opacity', contactIsMobile ? '1' : contactEased.toString(), 'important')
+      innerForm.style.setProperty('visibility', contactIsMobile ? 'visible' : (contactP > 0 ? 'visible' : 'hidden'), 'important')
+      innerForm.style.setProperty('pointer-events', contactIsMobile ? 'auto' : (contactP > 0.5 ? 'auto' : 'none'), 'important')
+      innerForm.style.setProperty('transform', contactIsMobile ? 'none' : `translateY(${(1 - contactEased) * 20}px)`, 'important')
     }
   }
 

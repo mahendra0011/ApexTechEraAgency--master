@@ -473,6 +473,48 @@
   will-change: height;
 }
 
+/* Mobile: render the real contact form inline instead of the sticky,
+   curtain-based split. The desktop split stays exactly as before. */
+@media screen and (max-width: 768px) {
+  .portfolio__split {
+    height: auto !important;
+  }
+
+  .portfolio__split-sticky {
+    position: static !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .portfolio__split-contact {
+    position: static !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    padding-top: 5rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  .portfolio__split-contact .req-form:not(.-fixed) {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    min-height: 0 !important;
+  }
+
+  .portfolio__split-contact .req-form:not(.-fixed) .req-form__cross {
+    display: none !important;
+  }
+
+  .portfolio__split-half,
+  .portfolio__split-line {
+    display: none !important;
+  }
+}
+
 @media screen and (max-width: 992px) {
   .portfolio__split-contact .req-form {
     padding: 6.5rem 1.5rem 2.5rem !important;

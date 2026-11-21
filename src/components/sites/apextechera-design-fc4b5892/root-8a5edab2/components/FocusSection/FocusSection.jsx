@@ -162,10 +162,11 @@ const FocusSection = memo(function FocusSection() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [industriesRevealed, setIndustriesRevealed] = useState(false);
-  const [quoteProgress, setQuoteProgress] = useState(0);
 
   const industriesRef = useRef(null);
   const quoteRef = useRef(null);
+  const quoteLinesRef = useRef([]);
+  const industriesRevealedRef = useRef(false);
   const maxDistanceRef = useRef(0);
   const lastWheelRef = useRef(0);
 
@@ -203,46 +204,78 @@ const FocusSection = memo(function FocusSection() {
     const p = cfg?.parent || parent.current;
     const t = cfg?.target || target.current;
     const wheel = cfg?.wheel ?? 0;
-    if (!p || !t || typeof window === "undefined" || window.innerWidth <= 768) return;
+    if (!p || !t || typeof window === "undefined") return;
 
-    let maxDist = maxDistanceRef.current;
-    if (!maxDist) {
-      const totalWidth = Math.max(t.scrollWidth || 0, t.getBoundingClientRect()?.width || 0);
-      maxDist = Math.max(0, totalWidth - window.innerWidth);
-      maxDistanceRef.current = maxDist;
-      p.style.position = "relative";
-      p.style.height = `${maxDist + window.innerHeight}px`;
-      t.style.position = "absolute";
-      t.style.top = "0";
-      t.style.left = "0";
+    if (window.innerWidth > 768) {
+      let maxDist = maxDistanceRef.current;
+      if (!maxDist) {
+        const totalWidth = Math.max(t.scrollWidth || 0, t.getBoundingClientRect()?.width || 0);
+        maxDist = Math.max(0, totalWidth - window.innerWidth);
+        maxDistanceRef.current = maxDist;
+        p.style.position = "relative";
+        p.style.height = `${maxDist + window.innerHeight}px`;
+        t.style.position = "absolute";
+        t.style.top = "0";
+        t.style.left = "0";
+      }
+
+      const currentWheel = Math.max(0, wheel || 0);
+      lastWheelRef.current = currentWheel;
+
+      const scrollX = Math.min(currentWheel, maxDist);
+      const pinnedY = Math.min(currentWheel, maxDist);
+
+      t.style.transform = `translate3d(${-scrollX}px, ${pinnedY}px, 0)`;
     }
 
-    const currentWheel = Math.max(0, wheel || 0);
-    lastWheelRef.current = currentWheel;
-
-    const scrollX = Math.min(currentWheel, maxDist);
-    const pinnedY = Math.min(currentWheel, maxDist);
-
-    t.style.transform = `translate3d(${-scrollX}px, ${pinnedY}px, 0)`;
-
     // Reveal Industries We Serve section when it approaches the viewport
-    if (industriesRef.current) {
+    if (industriesRef.current && !industriesRevealedRef.current) {
       const rect = industriesRef.current.getBoundingClientRect();
       if (rect.top < window.innerHeight * 0.9) {
+        industriesRevealedRef.current = true;
         setIndustriesRevealed(true);
       }
     }
 
-    // Scroll scrub for Quote section
-    if (quoteRef.current) {
-      const rect = quoteRef.current.getBoundingClientRect();
-      const windowH = window.innerHeight;
-      const start = windowH * 0.9;
-      const end = windowH * 0.1;
-      const pRatio = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
-      setQuoteProgress(pRatio);
-    }
+    // Scroll scrub for Quote section (runs on mobile too, so the quote is
+    // no longer stuck blurred at 0 opacity there)
+    applyQuoteProgress(getQuoteRatio());
   };
+
+  function getQuoteRatio() {
+    if (!quoteRef.current || typeof window === "undefined") return 0;
+    const rect = quoteRef.current.getBoundingClientRect();
+    const windowH = window.innerHeight;
+    const start = windowH * 0.9;
+    const end = windowH * 0.1;
+    return Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
+  }
+
+  function applyQuoteProgress(ratio) {
+    const clamped = Math.max(0, Math.min(1, ratio));
+    const lines = quoteLinesRef.current;
+    const totalLines = lines.length || 4;
+    const step = 0.85 / totalLines;
+    const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+
+    for (let i = 0; i < totalLines; i++) {
+      const el = lines[i];
+      if (!el) continue;
+      const lineStart = i * step * 0.65;
+      const lineEnd = lineStart + step;
+      const p = Math.max(0, Math.min(1, (clamped - lineStart) / (lineEnd - lineStart)));
+      el.style.opacity = String(0.2 + 0.8 * p);
+      el.style.transform = `translateY(${(1 - p) * 18}px)`;
+      if (isMobile) {
+        // Blur filters are costly on mobile GPUs and were never needed there
+        el.style.filter = "none";
+        el.style.transition = "none";
+      } else {
+        el.style.filter = `blur(${(1 - p) * 4}px)`;
+        el.style.transition = "opacity 0.2s ease-out, transform 0.2s ease-out, filter 0.2s ease-out";
+      }
+    }
+  }
 
   const { parent, target } = useTransform(
     { onChange: handleScroll, onResize: handleResize },
@@ -263,6 +296,7 @@ const FocusSection = memo(function FocusSection() {
       if (parent.current && target.current) {
         handleResize({ parent: parent.current, target: target.current });
       }
+      applyQuoteProgress(getQuoteRatio());
     }, 150);
     return () => clearTimeout(timer);
   }, []);
@@ -272,7 +306,8 @@ const FocusSection = memo(function FocusSection() {
     if (!industriesRef.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !industriesRevealedRef.current) {
+          industriesRevealedRef.current = true;
           setIndustriesRevealed(true);
         }
       },
@@ -282,16 +317,11 @@ const FocusSection = memo(function FocusSection() {
     return () => observer.disconnect();
   }, []);
 
-  // Native scroll scrub fallback (for mobile <= 768px)
+  // Native scroll scrub fallback (harmless on the scroll-jacked homepage,
+  // needed wherever the document itself is the scroll container)
   useEffect(() => {
     const handleWindowScroll = () => {
-      if (!quoteRef.current) return;
-      const rect = quoteRef.current.getBoundingClientRect();
-      const windowH = window.innerHeight;
-      const start = windowH * 0.9;
-      const end = windowH * 0.1;
-      const pRatio = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
-      setQuoteProgress(pRatio);
+      applyQuoteProgress(getQuoteRatio());
     };
 
     window.addEventListener("scroll", handleWindowScroll, { passive: true });
@@ -299,11 +329,11 @@ const FocusSection = memo(function FocusSection() {
     return () => window.removeEventListener("scroll", handleWindowScroll);
   }, []);
 
-  const getLineStyle = (lineIndex, totalLines = 4) => {
+  const getInitialLineStyle = (lineIndex, totalLines = 4) => {
     const step = 0.85 / totalLines;
     const lineStart = lineIndex * step * 0.65;
     const lineEnd = lineStart + step;
-    const p = Math.max(0, Math.min(1, (quoteProgress - lineStart) / (lineEnd - lineStart)));
+    const p = 0;
 
     return {
       opacity: 0.2 + 0.8 * p,
@@ -398,16 +428,32 @@ const FocusSection = memo(function FocusSection() {
         </div>
         <div ref={quoteRef} className="focus-quote-wrap">
           <h3 className="focus-quote-text">
-            <span className="focus-quote-line" style={getLineStyle(0)}>
+            <span
+              ref={(el) => (quoteLinesRef.current[0] = el)}
+              className="focus-quote-line"
+              style={getInitialLineStyle(0)}
+            >
               At ApextechEra, we transform bold ideas
             </span>
-            <span className="focus-quote-line" style={getLineStyle(1)}>
+            <span
+              ref={(el) => (quoteLinesRef.current[1] = el)}
+              className="focus-quote-line"
+              style={getInitialLineStyle(1)}
+            >
               into immersive digital experiences
             </span>
-            <span className="focus-quote-line" style={getLineStyle(2)}>
+            <span
+              ref={(el) => (quoteLinesRef.current[2] = el)}
+              className="focus-quote-line"
+              style={getInitialLineStyle(2)}
+            >
               through good design and relentless
             </span>
-            <span className="focus-quote-line" style={getLineStyle(3)}>
+            <span
+              ref={(el) => (quoteLinesRef.current[3] = el)}
+              className="focus-quote-line"
+              style={getInitialLineStyle(3)}
+            >
               creativity.
             </span>
           </h3>

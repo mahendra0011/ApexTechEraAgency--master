@@ -49,6 +49,8 @@ const SkillJourney = memo(function SkillJourney() {
 
   const targetProgressRef = useRef(0);
   const currentProgressRef = useRef(0);
+  const isVisibleRef = useRef(true);
+  const lastProgressRef = useRef(null);
   // Caches parent height so onChange (runs on every scroll tick) doesn't
   // force a synchronous layout reflow via getBoundingClientRect() 60-120x/
   // sec — same forced-reflow jank pattern already fixed elsewhere in this
@@ -69,6 +71,21 @@ const SkillJourney = memo(function SkillJourney() {
     return () => window.removeEventListener("resize", measure);
   }, [parent]);
 
+  // The global renderer ticks even while this section is far offscreen.
+  // Track visibility so renderLoop can bail out instead of writing ~10
+  // styles per frame for an invisible section.
+  useEffect(() => {
+    if (!parent.current || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { rootMargin: "120px" }
+    );
+    observer.observe(parent.current);
+    return () => observer.disconnect();
+  }, [parent]);
+
   function onChange({ wheel }) {
     if (typeof wheel !== "number") return;
     if (target.current) {
@@ -85,6 +102,12 @@ const SkillJourney = memo(function SkillJourney() {
 
     // 60fps/120fps smooth lerp render loop
     const renderLoop = () => {
+      if (!isVisibleRef.current) {
+        currentProgressRef.current = targetProgressRef.current;
+        lastProgressRef.current = null;
+        return;
+      }
+
       currentProgressRef.current = lerp(
         currentProgressRef.current,
         targetProgressRef.current,
@@ -92,6 +115,13 @@ const SkillJourney = memo(function SkillJourney() {
       );
 
       const p = currentProgressRef.current;
+
+      // Skip the whole DOM write batch when the lerp barely moved. Item
+      // thresholds and the glow cannot visibly change below this delta.
+      if (lastProgressRef.current !== null && Math.abs(p - lastProgressRef.current) < 0.0004) {
+        return;
+      }
+      lastProgressRef.current = p;
 
       // Transition ranges:
       // Movement phase: p: 0 -> 0.50 (hands glide in from sides to center)
@@ -169,7 +199,16 @@ const SkillJourney = memo(function SkillJourney() {
       }
 
       if (progressRef.current) {
-        progressRef.current.style.width = `${progressWidth}%`;
+        if (window.innerWidth <= 768) {
+          // scaleX is compositor-only; animating width forces layout on every
+          // frame, which is the main scroll jank source on Android.
+          progressRef.current.style.width = "100%";
+          progressRef.current.style.transformOrigin = "left center";
+          progressRef.current.style.transform = `scaleX(${progressWidth / 100})`;
+        } else {
+          progressRef.current.style.transform = "none";
+          progressRef.current.style.width = `${progressWidth}%`;
+        }
       }
 
       // Highlight active timeline items (dirty-checked to eliminate mobile composite thrashing)

@@ -166,3 +166,29 @@
     height: 300px;
   }
 }
+
+/* Mobile: the jumper stays mounted for the whole session, parked off-screen,
+   while its spinning rings and pulsing blurred glow animate forever. Hide it
+   completely (no compositing) and only run those animations during the
+   external-change transition it exists for. Desktop is left untouched. */
+@media screen and (max-width: 768px) {
+  .jumper {
+    visibility: hidden;
+  }
+
+  .controller.-external-changing .jumper {
+    visibility: visible;
+  }
+
+  .jumper-ambient-glow,
+  .jumper-ring--outer,
+  .jumper-ring--inner {
+    animation-play-state: paused;
+  }
+
+  .controller.-external-changing .jumper-ambient-glow,
+  .controller.-external-changing .jumper-ring--outer,
+  .controller.-external-changing .jumper-ring--inner {
+    animation-play-state: running;
+  }
+}
